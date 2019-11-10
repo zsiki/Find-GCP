@@ -3,7 +3,8 @@ Find ArUco markers in digital photos
 
 This small utility can be used together with photogrammetric programs like Open Drone Map to create the necessary Ground Control Point (GCP) file containing image coordinates and projected coordinates of GCPs.
 
-```usage: gcp_find.py [-h] [-d DICT] [-o OUTPUT] [-i INPUT] [-s SEPARATOR] [-v]
+```
+usage: gcp_find.py [-h] [-d DICT] [-o OUTPUT] [-i INPUT] [-s SEPARATOR] [-v]
                    [-l]
                    [file_names [file_names ...]]
 
