@@ -38,3 +38,35 @@ python3 gcp_find.py samples/markers.png
 ```
 ![found markers](samples/found_markers.png)
 
+## Sample 2
+
+```
+python3 gcp_find.py -v -i samples/aruco.txt -o test.txt samples/2019*.jpg
+Loading GCP coordinates from samples/aruco.txt
+processing samples/20191029_110429.jpg
+  5 GCP markers found
+processing samples/20191029_110437.jpg
+  6 GCP markers found
+GCP6: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
+GCP5: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
+GCP4: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
+GCP1: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
+GCP3: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
+GCP2: on 1 images ['samples/20191029_110437.jpg']
+```
+The test.txt output file
+```
+1.041 3.712 -0.560 205 3050 20191029_110429.jpg
+4.119 3.764 -0.518 3658 2886 20191029_110429.jpg
+2.173 4.202 -0.153 1639 2487 20191029_110429.jpg
+4.482 4.201 0.370 3851 1981 20191029_110429.jpg
+2.822 4.201 0.359 2310 1977 20191029_110429.jpg
+4.482 4.201 0.370 4069 2075 20191029_110437.jpg
+2.822 4.201 0.359 2514 2064 20191029_110437.jpg
+1.041 3.712 -0.560 461 3159 20191029_110437.jpg
+5.758 3.859 -0.557 5301 3000 20191029_110437.jpg
+4.119 3.764 -0.518 3852 3017 20191029_110437.jpg
+2.173 4.202 -0.153 1847 2565 20191029_110437.jpg
+```
+
+Note: You have to add projection parameters at the beginning of the file to use with ODM
