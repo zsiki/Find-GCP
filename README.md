@@ -36,5 +36,5 @@ python3 gcp_find.py samples/markers.png
 12 327 141 markers.png
 11 152 141 markers.png
 ```
-![found markers][found_markers.png]
+![found markers][samples/found_markers.png]
 
