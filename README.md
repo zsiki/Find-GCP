@@ -24,3 +24,17 @@ optional arguments:
   -l, --list            output dictionary names and ids and exit
 ```
 
+## Sample 1
+
+```
+python3 gcp_find.py samples/markers.png
+
+16 502 342 markers.png
+15 327 342 markers.png
+14 152 342 markers.png
+13 502 141 markers.png
+12 327 141 markers.png
+11 152 141 markers.png
+```
+![found markers][found_markers.png]
+
