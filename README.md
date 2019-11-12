@@ -44,7 +44,7 @@ python3 gcp_find.py samples/markers.png
 
 ## Sample 2
 
-Coordinates of GCPs were measured by GNSS and stored in [aruco.txt](samples/aruco.txt) file
+Coordinates of GCPs were measured by GNSS and stored in [aruco.txt](samples/aruco.txt) file. This GCPs should be used in ODM or WebODM. The next command will generate the necessary text file for ODM.
 
 ```
 python3 gcp_find.py -v -i samples/aruco.txt -o test.txt samples/2019*.jpg
