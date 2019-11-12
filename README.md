@@ -1,6 +1,7 @@
 # Find-GCP
 Find ArUco markers in digital photos
 
+[ArUco markers](http://chev.me/arucogen) are black and white square marker which has unique pattern and ID.
 This small utility can be used together with photogrammetric programs like Open Drone Map to create the necessary Ground Control Point (GCP) file containing image coordinates and projected coordinates of GCPs.
 
 ```
