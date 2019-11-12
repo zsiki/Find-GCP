@@ -28,6 +28,8 @@ optional arguments:
 
 ## Sample 1
 
+Find ArUco markers in an image and output marker IDs and image coordinates of marker centers.
+
 ```
 python3 gcp_find.py samples/markers.png
 
@@ -41,6 +43,8 @@ python3 gcp_find.py samples/markers.png
 ![found markers](samples/found_markers.png)
 
 ## Sample 2
+
+Coordinates of GCPs were measured by GNSS and stored in [aruco.txt](samples/aruco.txt) file
 
 ```
 python3 gcp_find.py -v -i samples/aruco.txt -o test.txt samples/2019*.jpg
