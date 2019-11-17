@@ -79,4 +79,4 @@ The test.txt output file
 2.173 4.202 -0.153 1847 2565 20191029_110437.jpg
 ```
 
-Note: You have to add projection parameters at the beginning of the file to use it with ODM or WebODM.
+Note: You have to add [projection parameters](https://github.com/OpenDroneMap/ODM/wiki/Running-OpenDroneMap) at the beginning of the file to use it with ODM or WebODM.
