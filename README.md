@@ -48,6 +48,8 @@ python3 gcp_find.py samples/markers.png
 
 Coordinates of GCPs were measured by total station and stored in [aruco.txt](samples/aruco.txt) file. This GCPs should be used in ODM or WebODM. The next command will generate the necessary text file for ODM.
 
+<img src="samples/20191029_110429.jpg" alt="img1" width="600"/>
+
 ```
 python3 gcp_find.py -v -i samples/aruco.txt -o test.txt samples/2019*.jpg
 Loading GCP coordinates from samples/aruco.txt
