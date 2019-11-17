@@ -1,9 +1,11 @@
 # Find-GCP
 Find ArUco markers in digital photos
 
-[ArUco markers](http://chev.me/arucogen) are black and white square marker which has unique pattern and ID. [OpenCV](https://opencv.org) library has a modul to find ArUco markers in images.
+[ArUco markers](http://chev.me/arucogen) are black and white square marker which have unique pattern and ID. [OpenCV](https://opencv.org) library has a modul to find ArUco markers in images.
 
-This small utility can be used together with photogrammetric programs like Open Drone Map to create the necessary Ground Control Point (GCP) file containing image coordinates and projected coordinates of GCPs.
+Before taking the photos the diffrent ArUco markers have to be printed in the suitable size and put on the field. The coordinates of markers have to be measured by GNSS (GPS) or total station.
+
+This small utility can be used together with photogrammetric programs like Open Drone Map or WebODM to create the necessary Ground Control Point (GCP) file containing image coordinates and projected coordinates of GCPs. It has command line interface (CLI) only.
 
 ```
 usage: gcp_find.py [-h] [-d DICT] [-o OUTPUT] [-i INPUT] [-s SEPARATOR] [-v]
@@ -44,7 +46,7 @@ python3 gcp_find.py samples/markers.png
 
 ## Sample 2
 
-Coordinates of GCPs were measured by GNSS and stored in [aruco.txt](samples/aruco.txt) file. This GCPs should be used in ODM or WebODM. The next command will generate the necessary text file for ODM.
+Coordinates of GCPs were measured by total station and stored in [aruco.txt](samples/aruco.txt) file. This GCPs should be used in ODM or WebODM. The next command will generate the necessary text file for ODM.
 
 ```
 python3 gcp_find.py -v -i samples/aruco.txt -o test.txt samples/2019*.jpg
@@ -75,4 +77,4 @@ The test.txt output file
 2.173 4.202 -0.153 1847 2565 20191029_110437.jpg
 ```
 
-Note: You have to add projection parameters at the beginning of the file to use with ODM
+Note: You have to add projection parameters at the beginning of the file to use it with ODM or WebODM.
