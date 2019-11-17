@@ -3,7 +3,7 @@ Find ArUco markers in digital photos
 
 [ArUco markers](http://chev.me/arucogen) are black and white square marker which have unique pattern and ID. [OpenCV](https://opencv.org) library has a modul to find ArUco markers in images.
 
-Before taking the photos the diffrent ArUco markers have to be printed in the suitable size and put on the field. The coordinates of markers have to be measured by GNSS (GPS) or total station.
+Before taking the photos the diffrent ArUco markers have to be printed in the suitable size and put on the field. The coordinates of markers have to be measured by GNSS (GPS) or total station. we prefer the 4x4 ArUco library and those markers where there is a corner at the center of the marker (easy to center your GPS or prism on the field).
 
 This small utility can be used together with photogrammetric programs like Open Drone Map or WebODM to create the necessary Ground Control Point (GCP) file containing image coordinates and projected coordinates of GCPs. It has command line interface (CLI) only.
 
