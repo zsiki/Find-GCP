@@ -76,6 +76,8 @@ if args.separator:
 # prepare aruco
 aruco_dict = aruco.Dictionary_get(def_dict)
 parameters = aruco.DetectorParameters_create()
+# set some parameters
+parameters.minMarkerPerimeterRate = 0.005
 # initialize gcp to image dictionary
 gcp_found = {}
 # load coordinates from input file
@@ -105,6 +107,10 @@ for fn in args.names:
     corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
     frame_markers = aruco.drawDetectedMarkers(frame.copy(), corners, ids)
 
+    #print(rejectedImgPoints)
+    if ids is None:
+        print('No markers found on image {}'.format(fn))
+        continue
     corners2 = np.array([c[0] for c in corners])
     data = pd.DataFrame({"x": corners2[:, :, 0].flatten(),
         "y": corners2[:, :, 1].flatten()},
