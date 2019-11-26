@@ -83,17 +83,19 @@ Note: You have to add [projection parameters](https://docs.opendronemap.org/tuto
 
 ## Sample 3
 
-Photos (DJI0086.jpg and DJI0087.jpg) made by a DJI Phantom 4.
+Photos (DJI0087.jpg and DJI0088.jpg) made by a DJI Phantom 4.
 
 ```
-python3 gcp\_find.py samples/bme/DJI\_008[56].jpg
+python3 gcp\_find.py samples/bme/DJI\_008[78].jpg
 
-5 2607 3247 DJI\_0086.JPG
-6 3370 1185 DJI\_0086.JPG
-3 2609 2116 DJI\_0086.JPG
-5 2831 1844 DJI\_0087.JPG
-4 1962 1764 DJI\_0087.JPG
-3 2471 731 DJI\_0087.JPG
-17 525 1225 DJI\_0087.JPG
+5 2831 1844 DJI_0087.jpg
+4 1962 1764 DJI_0087.jpg
+3 2471 731 DJI_0087.jpg
+17 525 1225 DJI_0087.jpg                           !!!! False match !!!!
+5 3024 3555 DJI_0088.jpg
+3 2654 2458 DJI_0088.jpg
+0 2448 1315 DJI_0088.jpg
+6 3093 1299 DJI_0088.jpg
+```
 
 
