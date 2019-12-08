@@ -105,9 +105,6 @@ for fn in args.names:
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # find markers
     corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
-    frame_markers = aruco.drawDetectedMarkers(frame.copy(), corners, ids)
-
-    #print(rejectedImgPoints)
     if ids is None:
         print('No markers found on image {}'.format(fn))
         continue
