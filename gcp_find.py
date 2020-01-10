@@ -9,6 +9,7 @@
     Parameters:
         -d, --dict aruco dictionary id (int), default 1 (4X4)
         -o, --output name of output text file, default stdout
+        -t, --type target program (ODM, VisualSfM), default ODM
         -i, --input name of input GCP coordinate list file, default None
         -s, --separator separator character in input file, default space
         -v, --verbose verbose output to stdout
@@ -27,6 +28,7 @@ def_dict = aruco.DICT_4X4_100   # default dictionary 4X4
 def_output = sys.stdout         # default output to stdout
 def_input = None                # default no input coordinates
 def_separator = " "             # default separator is space
+def_type = "ODM"                # default output type
 # set up command line argument parser
 parser = argparse.ArgumentParser()
 parser.add_argument('names', metavar='file_names', type=str, nargs='*',
@@ -35,6 +37,8 @@ parser.add_argument('-d', '--dict', type=int,
     help='marker dictionary id, default={} (DICT_4X4_100)'.format(def_dict))
 parser.add_argument('-o', '--output', type=str,
     help='name of output GCP list file, default stdout')
+parser.add_argument('-t', '--type', choices=['ODM', 'VisualSfM'],
+    help='target program ODM or VisualSfM, default ODM')
 parser.add_argument('-i', '--input', type=str,
     help='name of input GCP coordinate file, default None')
 parser.add_argument('-s', '--separator', type=str,
@@ -64,6 +68,8 @@ if args.output:
     except:
         print('cannot open output file')
         exit(1)
+if args.type:
+    def_type = args.type
 if args.input:
     try:
         def_input = open(args.input, 'r')
@@ -133,7 +139,10 @@ for fn in args.names:
         x = int(data['o'][j]['x'])
         y = int(data['o'][j]['y'])
         if j in coords:
-            def_output.write('{:.3f} {:.3f} {:.3f} {} {} {}\n'.format(coords[j][0], coords[j][1], coords[j][2], x, y, os.path.basename(fn)))
+            if def_type == 'ODM':
+                def_output.write('{:.3f} {:.3f} {:.3f} {} {} {}\n'.format(coords[j][0], coords[j][1], coords[j][2], x, y, os.path.basename(fn)))
+            elif def_type == 'VisualSfM':
+                def_output.write('{} {} {} {:.3f} {:.3f} {:.3f}\n'.format(os.path.basename(fn), x, y, coords[j][0], coords[j][1], coords[j][2]))
         else:
             def_output.write('{} {} {} {}\n'.format(j, x, y, os.path.basename(fn)))
 if args.verbose:
