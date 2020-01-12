@@ -18,8 +18,8 @@ flying 50 m above the ground.
 This small utility can be used together with photogrammetric programs like Open Drone Map or WebODM to create the necessary Ground Control Point (GCP) file containing image coordinates and projected coordinates of GCPs. It has command line interface (CLI) only.
 
 ```
-usage: gcp_find.py [-h] [-d DICT] [-o OUTPUT] [-i INPUT] [-s SEPARATOR] [-v]
-                   [-l]
+usage: gcp_find.py [-h] [-d DICT] [-o OUTPUT] [-t {ODM,VisualSfM}][-i INPUT]
+                   [-s SEPARATOR] [-v] [-l]
                    [file_names [file_names ...]]
 
 positional arguments:
@@ -63,32 +63,32 @@ The next command will generate the necessary text file for ODM.
 <img src="samples/20191029_110429.jpg" alt="img1" width="400"/> <img src="samples/20191029_110437.jpg" alt="img2" width="400"/>
 
 ```
-python3 gcp\_find.py -v -i samples/aruco.txt -o test.txt samples/2019\*.jpg
+python3 gcp_find.py -v -i samples/aruco.txt -o test.txt samples/2019*.jpg
 Loading GCP coordinates from samples/aruco.txt
-processing samples/20191029\_110429.jpg
+processing samples/20191029_110429.jpg
   5 GCP markers found
-processing samples/20191029\_110437.jpg
+processing samples/20191029_110437.jpg
   6 GCP markers found
-GCP6: on 2 images ['samples/20191029\_110429.jpg', 'samples/20191029\_110437.jpg']
-GCP5: on 2 images ['samples/20191029\_110429.jpg', 'samples/20191029\_110437.jpg']
-GCP4: on 2 images ['samples/20191029\_110429.jpg', 'samples/20191029\_110437.jpg']
-GCP1: on 2 images ['samples/20191029\_110429.jpg', 'samples/20191029\_110437.jpg']
-GCP3: on 2 images ['samples/20191029\_110429.jpg', 'samples/20191029\_110437.jpg']
+GCP6: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
+GCP5: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
+GCP4: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
+GCP1: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
+GCP3: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
 GCP2: on 1 images ['samples/20191029\_110437.jpg']
 ```
 The test.txt output file
 ```
-1.041 3.712 -0.560 205 3050 20191029\_110429.jpg
-4.119 3.764 -0.518 3658 2886 20191029\_110429.jpg
-2.173 4.202 -0.153 1639 2487 20191029\_110429.jpg
-4.482 4.201 0.370 3851 1981 20191029\_110429.jpg
-2.822 4.201 0.359 2310 1977 20191029\_110429.jpg
-4.482 4.201 0.370 4069 2075 20191029\_110437.jpg
-2.822 4.201 0.359 2514 2064 20191029\_110437.jpg
-1.041 3.712 -0.560 461 3159 20191029\_110437.jpg
-5.758 3.859 -0.557 5301 3000 20191029\_110437.jpg
-4.119 3.764 -0.518 3852 3017 20191029\_110437.jpg
-2.173 4.202 -0.153 1847 2565 20191029\_110437.jpg
+1.041 3.712 -0.560 205 3050 20191029_110429.jpg
+4.119 3.764 -0.518 3658 2886 20191029_110429.jpg
+2.173 4.202 -0.153 1639 2487 20191029_110429.jpg
+4.482 4.201 0.370 3851 1981 20191029_110429.jpg
+2.822 4.201 0.359 2310 1977 20191029_110429.jpg
+4.482 4.201 0.370 4069 2075 20191029_110437.jpg
+2.822 4.201 0.359 2514 2064 20191029_110437.jpg
+1.041 3.712 -0.560 461 3159 20191029_110437.jpg
+5.758 3.859 -0.557 5301 3000 20191029_110437.jpg
+4.119 3.764 -0.518 3852 3017 20191029_110437.jpg
+2.173 4.202 -0.153 1847 2565 20191029_110437.jpg
 ```
 
 Note: You have to add [projection parameters](https://docs.opendronemap.org/tutorials.html#ground-control-points) at the beginning of the file to use it with ODM or WebODM.
@@ -100,16 +100,15 @@ There are three GCPs (id=3, id=4, id=5) on image DJI\_0087.jpg and five
 (id=0, id=3, id=4, id=5, id=6) on image DJI\_0088.jpg.
 
 ```
-python3 gcp\_find.py samples/bme/DJI\_008[78].jpg
+python3 gcp_find.py samples/bme/DJI_008[78].jpg
 
-5 2831 1844 DJI\_0087.jpg
-4 1962 1764 DJI\_0087.jpg
-3 2471 731 DJI\_0087.jpg
-17 525 1225 DJI\_0087.jpg                           !!!! False match !!!!
-5 3024 3555 DJI\_0088.jpg
-3 2654 2458 DJI\_0088.jpg
-0 2448 1315 DJI\_0088.jpg
-6 3093 1299 DJI\_0088.jpg
+5 2831 1844 DJI_0087.jpg
+4 1962 1764 DJI_0087.jpg
+3 2471 731 DJI_0087.jpg
+17 525 1225 DJI_0087.jpg                           !!!! False match !!!!
+5 3024 3555 DJI_0088.jpg
+3 2654 2458 DJI_0088.jpg
+0 2448 1315 DJI_0088.jpg
+6 3093 1299 DJI_0088.jpg
 ```
-
 
