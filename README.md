@@ -46,11 +46,11 @@ Find ArUco markers in an image and output marker IDs and image coordinates of ma
 python3 gcp_find.py samples/markers.png
 
 16 502 342 markers.png
-15 327 342 markers.png
+15 328 342 markers.png
 14 152 342 markers.png
-13 502 141 markers.png
-12 327 141 markers.png
-11 152 141 markers.png
+13 502 142 markers.png
+12 328 142 markers.png
+11 152 142 markers.png
 ```
 ![found markers](samples/found_markers.png)
 
@@ -74,21 +74,21 @@ GCP5: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
 GCP4: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
 GCP1: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
 GCP3: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
-GCP2: on 1 images ['samples/20191029\_110437.jpg']
+GCP2: on 1 images ['samples/20191029_110437.jpg']
 ```
 The test.txt output file
 ```
-1.041 3.712 -0.560 205 3050 20191029_110429.jpg
+1.041 3.712 -0.560 204 3051 20191029_110429.jpg
 4.119 3.764 -0.518 3658 2886 20191029_110429.jpg
 2.173 4.202 -0.153 1639 2487 20191029_110429.jpg
-4.482 4.201 0.370 3851 1981 20191029_110429.jpg
-2.822 4.201 0.359 2310 1977 20191029_110429.jpg
+4.482 4.201 0.370 3852 1981 20191029_110429.jpg
+2.822 4.201 0.359 2311 1978 20191029_110429.jpg
 4.482 4.201 0.370 4069 2075 20191029_110437.jpg
 2.822 4.201 0.359 2514 2064 20191029_110437.jpg
-1.041 3.712 -0.560 461 3159 20191029_110437.jpg
-5.758 3.859 -0.557 5301 3000 20191029_110437.jpg
-4.119 3.764 -0.518 3852 3017 20191029_110437.jpg
-2.173 4.202 -0.153 1847 2565 20191029_110437.jpg
+1.041 3.712 -0.560 462 3160 20191029_110437.jpg
+5.758 3.859 -0.557 5302 3001 20191029_110437.jpg
+4.119 3.764 -0.518 3853 3017 20191029_110437.jpg
+2.173 4.202 -0.153 1848 2566 20191029_110437.jpg
 ```
 
 Note: You have to add [projection parameters](https://docs.opendronemap.org/tutorials.html#ground-control-points) at the beginning of the file to use it with ODM or WebODM.
@@ -102,13 +102,12 @@ There are three GCPs (id=3, id=4, id=5) on image DJI\_0087.jpg and five
 ```
 python3 gcp_find.py samples/bme/DJI_008[78].jpg
 
-5 2831 1844 DJI_0087.jpg
+5 2832 1845 DJI_0087.jpg
 4 1962 1764 DJI_0087.jpg
-3 2471 731 DJI_0087.jpg
-17 525 1225 DJI_0087.jpg                           !!!! False match !!!!
-5 3024 3555 DJI_0088.jpg
+3 2472 731 DJI_0087.jpg
+5 3024 3556 DJI_0088.jpg
 3 2654 2458 DJI_0088.jpg
 0 2448 1315 DJI_0088.jpg
-6 3093 1299 DJI_0088.jpg
+6 3094 1299 DJI_0088.jpg
 ```
 

@@ -19,7 +19,6 @@ import sys
 import os
 import argparse
 import numpy as np
-import pandas as pd
 import cv2
 from cv2 import aruco
 
@@ -84,6 +83,7 @@ aruco_dict = aruco.Dictionary_get(def_dict)
 parameters = aruco.DetectorParameters_create()
 # set some parameters
 parameters.minMarkerPerimeterRate = 0.005
+parameters.detectInvertedMarker = True
 # initialize gcp to image dictionary
 gcp_found = {}
 # load coordinates from input file
@@ -110,41 +110,40 @@ for fn in args.names:
     # convert image to gray
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # find markers
-    corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
+    corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict,
+        parameters=parameters)
     if ids is None:
         print('No markers found on image {}'.format(fn))
         continue
-    corners2 = np.array([c[0] for c in corners])
-    data = pd.DataFrame({"x": corners2[:, :, 0].flatten(),
-        "y": corners2[:, :, 1].flatten()},
-         index=pd.MultiIndex.from_product(
-            [ids.flatten(), ["c{0}".format(i)
-                for i in np.arange(4)+1]], names=["marker", ""]))
-
-    data = data.unstack().swaplevel(0, 1, axis=1).stack()
-    # calculate center of markers
-    data["m1"] = data[["c1", "c2"]].mean(axis=1)
-    data["m2"] = data[["c2", "c3"]].mean(axis=1)
-    data["m3"] = data[["c3", "c4"]].mean(axis=1)
-    data["m4"] = data[["c4", "c1"]].mean(axis=1)
-    data["o"] = data[["m1", "m2", "m3", "m4"]].mean(axis=1)
-    # output found markers
+    # check duplicate ids
+    idsl = [pid[0] for pid in ids]
+    if len(ids) - len(set(idsl)):
+        print('duplicate markers on image {}'.format(fn))
+        print('marker ids: {}'.format(sorted(ids)))
+        continue
+    # calculate center & output found markers
     if args.verbose:
         print('  {} GCP markers found'.format(ids.size))
     for i in range(ids.size):
-        j = ids[i, 0]
+        j = idsl[i]
         if j not in gcp_found:
             gcp_found[j] = []
         gcp_found[j].append(fn)
-        x = int(data['o'][j]['x'])
-        y = int(data['o'][j]['y'])
+        # calculate center of aruco code
+        x = int(round(np.average(corners[i][0][:,0])))
+        y = int(round(np.average(corners[i][0][:,1])))
         if j in coords:
             if def_type == 'ODM':
-                def_output.write('{:.3f} {:.3f} {:.3f} {} {} {}\n'.format(coords[j][0], coords[j][1], coords[j][2], x, y, os.path.basename(fn)))
+                def_output.write('{:.3f} {:.3f} {:.3f} {} {} {}\n'.format(
+                    coords[j][0], coords[j][1], coords[j][2], x, y,
+                    os.path.basename(fn)))
             elif def_type == 'VisualSfM':
-                def_output.write('{} {} {} {:.3f} {:.3f} {:.3f}\n'.format(os.path.basename(fn), x, y, coords[j][0], coords[j][1], coords[j][2]))
+                def_output.write('{} {} {} {:.3f} {:.3f} {:.3f}\n'.format(
+                    os.path.basename(fn), x, y, coords[j][0], coords[j][1], 
+                    coords[j][2]))
         else:
-            def_output.write('{} {} {} {}\n'.format(j, x, y, os.path.basename(fn)))
+            def_output.write('{} {} {} {}\n'.format(j, x, y,
+                os.path.basename(fn)))
 if args.verbose:
     for j in gcp_found:
         print('GCP{}: on {} images {}'.format(j, len(gcp_found[j]), gcp_found[j]))
