@@ -32,18 +32,21 @@ def_type = "ODM"                # default output type
 parser = argparse.ArgumentParser()
 parser.add_argument('names', metavar='file_names', type=str, nargs='*',
     help='image files to process')
-parser.add_argument('-d', '--dict', type=int,
+parser.add_argument('-d', '--dict', type=int, default=def_dict,
     help='marker dictionary id, default={} (DICT_4X4_100)'.format(def_dict))
-parser.add_argument('-o', '--output', type=str,
-    help='name of output GCP list file, default stdout')
+parser.add_argument('-o', '--output', type=str, default=def_output,
+    help='name of output GCP list file, default {}'.format(def_output))
 parser.add_argument('-t', '--type', choices=['ODM', 'VisualSfM'],
-    help='target program ODM or VisualSfM, default ODM')
-parser.add_argument('-i', '--input', type=str,
-    help='name of input GCP coordinate file, default None')
-parser.add_argument('-s', '--separator', type=str,
-    help='input file separator, default space')
+    default=def_type,
+    help='target program ODM or VisualSfM, default {}'.format(def_type))
+parser.add_argument('-i', '--input', type=str, default=def_input,
+    help='name of input GCP coordinate file, default {}'.format(def_input))
+parser.add_argument('-s', '--separator', type=str, default=' ',
+    help='input file separator, default {}'.format(def_separator))
 parser.add_argument('-v', '--verbose', action="store_true",
     help='verbose output to stdout')
+parser.add_argument('-r', '--inverted', action="store_true",
+    help='detect inverted markers')
 parser.add_argument('-l', '--list', action="store_true",
     help='output dictionary names and ids and exit')
 # parse command line arguments
@@ -58,32 +61,27 @@ if not args.names:
     print("no input images given")
     parser.print_help()
     exit(0)
-# overwrite defaults if param given in command line
-if args.dict:
-    def_dict = args.dict
-if args.output:
+if args.output == sys.stdout:
+    foutput = args.output
+else:
     try:
-        def_output = open(args.output, 'w')
+        foutput = open(args.output, 'w')
     except:
         print('cannot open output file')
         exit(1)
-if args.type:
-    def_type = args.type
 if args.input:
     try:
-        def_input = open(args.input, 'r')
+        finput = open(args.input, 'r')
     except:
         print('cannot open input file')
         exit(2)
-if args.separator:
-    def_separator = args.separator[0]
 
 # prepare aruco
-aruco_dict = aruco.Dictionary_get(def_dict)
+aruco_dict = aruco.Dictionary_get(args.dict)
 parameters = aruco.DetectorParameters_create()
 # set some parameters
 parameters.minMarkerPerimeterRate = 0.005
-parameters.detectInvertedMarker = True
+parameters.detectInvertedMarker = args.inverted
 # initialize gcp to image dictionary
 gcp_found = {}
 # load coordinates from input file
@@ -91,8 +89,8 @@ coords = {}
 if def_input:
     if args.verbose:
         print("Loading GCP coordinates from {}".format(args.input))
-    for line in def_input:
-        co = line.strip().split(def_separator)
+    for line in finput:
+        co = line.strip().split(args.separator)
         if len(co) < 4:
             print("Illegal input: {}".format(line))
             continue
@@ -130,21 +128,21 @@ for fn in args.names:
             gcp_found[j] = []
         gcp_found[j].append(fn)
         # calculate center of aruco code
-        x = int(round(np.average(corners[i][0][:,0])))
-        y = int(round(np.average(corners[i][0][:,1])))
+        x = int(round(np.average(corners[i][0][:, 0])))
+        y = int(round(np.average(corners[i][0][:, 1])))
         if j in coords:
-            if def_type == 'ODM':
-                def_output.write('{:.3f} {:.3f} {:.3f} {} {} {}\n'.format(
+            if args.type == 'ODM':
+                foutput.write('{:.3f} {:.3f} {:.3f} {} {} {}\n'.format(
                     coords[j][0], coords[j][1], coords[j][2], x, y,
                     os.path.basename(fn)))
-            elif def_type == 'VisualSfM':
-                def_output.write('{} {} {} {:.3f} {:.3f} {:.3f}\n'.format(
+            elif args.type == 'VisualSfM':
+                foutput.write('{} {} {} {:.3f} {:.3f} {:.3f}\n'.format(
                     os.path.basename(fn), x, y, coords[j][0], coords[j][1], 
                     coords[j][2]))
         else:
-            def_output.write('{} {} {} {}\n'.format(j, x, y,
+            foutput.write('{} {} {} {}\n'.format(j, x, y,
                 os.path.basename(fn)))
 if args.verbose:
     for j in gcp_found:
         print('GCP{}: on {} images {}'.format(j, len(gcp_found[j]), gcp_found[j]))
-def_output.close()
+foutput.close()
