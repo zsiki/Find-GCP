@@ -12,7 +12,13 @@
         -t, --type target program (ODM, VisualSfM), default ODM
         -i, --input name of input GCP coordinate list file, default None
         -s, --separator separator character in input file, default space
+        -r, --inverted inverted aruco markers
         -v, --verbose verbose output to stdout
+        -m, --minrate minimum marker perimeter rate
+        -a, --maxrate maximum marker perimeter rate
+        -w, --winmin adaptive treshold for window min size
+        -x, --winmax adaptive treshold for window max size
+        -p, --winstep window size step
         names of input image files
 """
 import sys
@@ -28,6 +34,11 @@ def_output = sys.stdout         # default output to stdout
 def_input = None                # default no input coordinates
 def_separator = " "             # default separator is space
 def_type = "ODM"                # default output type
+def_min_rate = 0.003            # default minMarkerPerimeterRate
+def_max_rate = 0.15             # default minMarkerPerimeterRate
+def_win_min = 3                 # default adaptiveThreshWinSizeMin
+def_win_max = 80                # default adaptiveThreshWinSizeMax
+def_win_step = 10               # default adaptiveThreshWinSizeStep
 # set up command line argument parser
 parser = argparse.ArgumentParser()
 parser.add_argument('names', metavar='file_names', type=str, nargs='*',
@@ -35,7 +46,7 @@ parser.add_argument('names', metavar='file_names', type=str, nargs='*',
 parser.add_argument('-d', '--dict', type=int, default=def_dict,
     help='marker dictionary id, default={} (DICT_4X4_100)'.format(def_dict))
 parser.add_argument('-o', '--output', type=str, default=def_output,
-    help='name of output GCP list file, default {}'.format(def_output))
+    help='name of output GCP list file, default stdout')
 parser.add_argument('-t', '--type', choices=['ODM', 'VisualSfM'],
     default=def_type,
     help='target program ODM or VisualSfM, default {}'.format(def_type))
@@ -47,6 +58,16 @@ parser.add_argument('-v', '--verbose', action="store_true",
     help='verbose output to stdout')
 parser.add_argument('-r', '--inverted', action="store_true",
     help='detect inverted markers')
+parser.add_argument('-m', '--minrate', type=float, default=def_min_rate,
+    help='min marker perimeter rate, default {}'.format(def_min_rate))
+parser.add_argument('-a', '--maxrate', type=float, default=def_max_rate,
+    help='max marker perimeter rate, default {}'.format(def_max_rate))
+parser.add_argument('-w', '--winmin', type=float, default=def_win_min,
+    help='adaptive treshold for window min size, default {}'.format(def_win_min))
+parser.add_argument('-x', '--winmax', type=float, default=def_win_max,
+    help='adaptive treshold for window max size, default {}'.format(def_win_max))
+parser.add_argument('-p', '--winstep', type=float, default=def_win_step,
+    help='adaptive treshold for window step size, default {}'.format(def_win_step))
 parser.add_argument('-l', '--list', action="store_true",
     help='output dictionary names and ids and exit')
 # parse command line arguments
@@ -80,7 +101,11 @@ if args.input:
 aruco_dict = aruco.Dictionary_get(args.dict)
 parameters = aruco.DetectorParameters_create()
 # set some parameters
-parameters.minMarkerPerimeterRate = 0.005
+parameters.adaptiveThreshWinSizeMin = args.winmin
+parameters.adaptiveThreshWinSizeMax = args.winmax
+parameters.adaptiveThreshWinSizeStep = args.winstep
+parameters.maxMarkerPerimeterRate = args.maxrate
+parameters.minMarkerPerimeterRate = args.minrate
 parameters.detectInvertedMarker = args.inverted
 # initialize gcp to image dictionary
 gcp_found = {}
