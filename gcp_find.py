@@ -19,12 +19,14 @@
         -w, --winmin adaptive treshold for window min size
         -x, --winmax adaptive treshold for window max size
         -p, --winstep window size step
+        --debug show found markers on image
         names of input image files
 """
 import sys
 import os
 import argparse
 import numpy as np
+import matplotlib.pyplot as plt
 import cv2
 from cv2 import aruco
 
@@ -58,15 +60,17 @@ parser.add_argument('-v', '--verbose', action="store_true",
     help='verbose output to stdout')
 parser.add_argument('-r', '--inverted', action="store_true",
     help='detect inverted markers')
-parser.add_argument('-m', '--minrate', type=float, default=def_min_rate,
+parser.add_argument('--debug', action="store_true",
+    help='show detected markers on image')
+parser.add_argument('--minrate', type=float, default=def_min_rate,
     help='min marker perimeter rate, default {}'.format(def_min_rate))
-parser.add_argument('-a', '--maxrate', type=float, default=def_max_rate,
+parser.add_argument('--maxrate', type=float, default=def_max_rate,
     help='max marker perimeter rate, default {}'.format(def_max_rate))
-parser.add_argument('-w', '--winmin', type=float, default=def_win_min,
+parser.add_argument('--winmin', type=float, default=def_win_min,
     help='adaptive treshold for window min size, default {}'.format(def_win_min))
-parser.add_argument('-x', '--winmax', type=float, default=def_win_max,
+parser.add_argument('--winmax', type=float, default=def_win_max,
     help='adaptive treshold for window max size, default {}'.format(def_win_max))
-parser.add_argument('-p', '--winstep', type=float, default=def_win_step,
+parser.add_argument('--winstep', type=float, default=def_win_step,
     help='adaptive treshold for window step size, default {}'.format(def_win_step))
 parser.add_argument('-l', '--list', action="store_true",
     help='output dictionary names and ids and exit')
@@ -142,13 +146,16 @@ for fn in args.names:
     idsl = [pid[0] for pid in ids]
     if len(ids) - len(set(idsl)):
         print('duplicate markers on image {}'.format(fn))
-        print('marker ids: {}'.format(sorted(ids)))
-        continue
+        print('marker ids: {}'.format(sorted(idsl)))
+        #continue
     # calculate center & output found markers
     if args.verbose:
         print('  {} GCP markers found'.format(ids.size))
+    if args.debug:  # show found ids in debug mode
+        plt.figure()
+        plt.imshow(frame)
     for i in range(ids.size):
-        j = idsl[i]
+        j = ids[i][0]
         if j not in gcp_found:
             gcp_found[j] = []
         gcp_found[j].append(fn)
@@ -167,6 +174,12 @@ for fn in args.names:
         else:
             foutput.write('{} {} {} {}\n'.format(j, x, y,
                 os.path.basename(fn)))
+        if args.debug:
+            plt.plot(x, y, "o", label="id={}".format(ids[i]))
+    if args.debug:
+        plt.legend()
+        plt.show()
+            
 if args.verbose:
     for j in gcp_found:
         print('GCP{}: on {} images {}'.format(j, len(gcp_found[j]), gcp_found[j]))
