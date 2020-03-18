@@ -1,9 +1,9 @@
 # Find-GCP
 Find ArUco markers in digital photos
 
-[ArUco markers](http://chev.me/arucogen) are black and white square marker which have unique pattern and ID. [OpenCV](https://opencv.org) library has a modul to find ArUco markers in images (you should pip install opencv-python and opencv-contrib-python).
+[ArUco markers](http://chev.me/arucogen) are black and white square markers which have unique pattern and ID. [OpenCV](https://opencv.org) library has a modul to find ArUco markers in images (you should pip install opencv-python and opencv-contrib-python).
 
-Before taking the photos the diffrent ArUco markers have to be printed in the
+Before taking the photos the different ArUco markers have to be printed in the
 suitable size and put on the field. The coordinates of markers have to be
 measured by GNSS (GPS), total station or other surveyor's method. We prefer the
 4x4 ArUco library and those markers where there is a corner at the center of
@@ -18,8 +18,16 @@ flying 50 m above the ground.
 This small utility can be used together with photogrammetric programs like Open Drone Map or WebODM to create the necessary Ground Control Point (GCP) file containing image coordinates and projected coordinates of GCPs. It has command line interface (CLI) only.
 
 ```
-usage: gcp_find.py [-h] [-d DICT] [-o OUTPUT] [-t {ODM,VisualSfM}][-i INPUT]
-                   [-s SEPARATOR] [-v] [-l]
+usage: gcp_find.py [-h] [-d DICT] [-o OUTPUT] [-t {ODM,VisualSfM}] [-i INPUT]
+                   [-s SEPARATOR] [-v] [-r] [--debug] [--winmin WINMIN]
+                   [--winmax WINMAX] [--winstep WINSTEP] [--thres THRES]
+                   [--minrate MINRATE] [--maxrate MAXRATE] [--poly POLY]
+                   [--corner CORNER] [--markerdist MARKERDIST]
+                   [--borderdist BORDERDIST] [--borderbits BORDERBITS]
+                   [--otsu OTSU] [--persp PERSP] [--ignore IGNORE]
+                   [--error ERROR] [--correct CORRECT]
+                   [--refinement REFINEMENT] [--refwin REFWIN]
+                   [--maxiter MAXITER] [--minacc MINACC] [-l]
                    [file_names [file_names ...]]
 
 positional arguments:
@@ -30,13 +38,49 @@ optional arguments:
   -d DICT, --dict DICT  marker dictionary id, default=1 (DICT_4X4_100)
   -o OUTPUT, --output OUTPUT
                         name of output GCP list file, default stdout
+  -t {ODM,VisualSfM}, --type {ODM,VisualSfM}
+                        target program ODM or VisualSfM, default ODM
   -i INPUT, --input INPUT
                         name of input GCP coordinate file, default None
   -s SEPARATOR, --separator SEPARATOR
-                        input file separator, default space
+                        input file separator, default
   -v, --verbose         verbose output to stdout
+  -r, --inverted        detect inverted markers
+  --debug               show rejected and detected markers on image
+  --winmin WINMIN       adaptive tresholding window min size, default 3
+  --winmax WINMAX       adaptive thresholding window max size, default 23
+  --winstep WINSTEP     adaptive thresholding window size step , default 10
+  --thres THRES         adaptive threshold constant, default 7.0
+  --minrate MINRATE     min marker perimeter rate, default 0.03
+  --maxrate MAXRATE     max marker perimeter rate, default 4.0
+  --poly POLY           polygonal approx accuracy rate, default 0.03
+  --corner CORNER       minimum distance any pair of corners in the same
+                        marker, default 0.05
+  --markerdist MARKERDIST
+                        minimum distance any pair of corners from different
+                        markers, default 0.05
+  --borderdist BORDERDIST
+                        minimum distance any marker corner to image border,
+                        default 3
+  --borderbits BORDERBITS
+                        width of marker border, default 1
+  --otsu OTSU           minimum stddev of pixel values, default 5.0
+  --persp PERSP         number of pixels per cells, default 4
+  --ignore IGNORE       Ignored pixels at cell borders, default 0.13
+  --error ERROR         Border bits error rate, default 0.35
+  --correct CORRECT     Bit correction rate, default 0.6
+  --refinement REFINEMENT
+                        Subpixel process method, default 0
+  --refwin REFWIN       Window size for subpixel refinement, default 5
+  --maxiter MAXITER     Stop criteria for subpixel process, default 30
+  --minacc MINACC       Stop criteria for subpixel process, default 0.1
   -l, --list            output dictionary names and ids and exit
 ```
+
+There are two small utility in this repo.
+
+* exif\_pos.py list GPS position from exif information of  images
+* dicti\_gen\_3x3.py generate custom 3x3 ArUco dictionary
 
 ## Sample 1
 
