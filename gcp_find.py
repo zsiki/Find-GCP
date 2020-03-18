@@ -5,22 +5,11 @@
     (c) Zoltan Siki siki (dot) zoltan (at) epito.bme.hu
     This code based on
     https://mecaruco2.readthedocs.io/en/latest/notebooks_rst/Aruco/aruco_basics.html
+    for details see:
+    https://docs.opencv.org/trunk/d5/dae/tutorial_aruco_detection.html
 
-    Parameters:
-        -d, --dict aruco dictionary id (int), default 1 (4X4)
-        -o, --output name of output text file, default stdout
-        -t, --type target program (ODM, VisualSfM), default ODM
-        -i, --input name of input GCP coordinate list file, default None
-        -s, --separator separator character in input file, default space
-        -r, --inverted inverted aruco markers
-        -v, --verbose verbose output to stdout
-        -m, --minrate minimum marker perimeter rate
-        -a, --maxrate maximum marker perimeter rate
-        -w, --winmin adaptive treshold for window min size
-        -x, --winmax adaptive treshold for window max size
-        -p, --winstep window size step
-        --debug show found markers on image
-        names of input image files
+    for usage help:
+    gcp_find.py --help
 """
 import sys
 import os
@@ -28,19 +17,15 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
-from cv2 import aruco
 
+aruco = cv2.aruco
+params = aruco.DetectorParameters_create()
 # set defaults
 def_dict = aruco.DICT_4X4_100   # default dictionary 4X4
 def_output = sys.stdout         # default output to stdout
 def_input = None                # default no input coordinates
 def_separator = " "             # default separator is space
 def_type = "ODM"                # default output type
-def_min_rate = 0.003            # default minMarkerPerimeterRate
-def_max_rate = 0.15             # default minMarkerPerimeterRate
-def_win_min = 3                 # default adaptiveThreshWinSizeMin
-def_win_max = 80                # default adaptiveThreshWinSizeMax
-def_win_step = 10               # default adaptiveThreshWinSizeStep
 # set up command line argument parser
 parser = argparse.ArgumentParser()
 parser.add_argument('names', metavar='file_names', type=str, nargs='*',
@@ -61,26 +46,59 @@ parser.add_argument('-v', '--verbose', action="store_true",
 parser.add_argument('-r', '--inverted', action="store_true",
     help='detect inverted markers')
 parser.add_argument('--debug', action="store_true",
-    help='show detected markers on image')
-parser.add_argument('--minrate', type=float, default=def_min_rate,
-    help='min marker perimeter rate, default {}'.format(def_min_rate))
-parser.add_argument('--maxrate', type=float, default=def_max_rate,
-    help='max marker perimeter rate, default {}'.format(def_max_rate))
-parser.add_argument('--winmin', type=float, default=def_win_min,
-    help='adaptive treshold for window min size, default {}'.format(def_win_min))
-parser.add_argument('--winmax', type=float, default=def_win_max,
-    help='adaptive treshold for window max size, default {}'.format(def_win_max))
-parser.add_argument('--winstep', type=float, default=def_win_step,
-    help='adaptive treshold for window step size, default {}'.format(def_win_step))
+    help='show rejected and detected markers on image')
+parser.add_argument('--winmin', type=float, default=params.adaptiveThreshWinSizeMin,
+    help='adaptive tresholding window min size, default {}'.format(params.adaptiveThreshWinSizeMin))
+parser.add_argument('--winmax', type=float, default=params.adaptiveThreshWinSizeMax,
+    help='adaptive thresholding window max size, default {}'.format(params.adaptiveThreshWinSizeMax))
+parser.add_argument('--winstep', type=float, default=params.adaptiveThreshWinSizeStep,
+    help='adaptive thresholding window size step , default {}'.format(params.adaptiveThreshWinSizeStep))
+parser.add_argument('--thres', type=float, default=params.adaptiveThreshConstant,
+    help='adaptive threshold constant, default {}'.format(params.adaptiveThreshConstant))
+parser.add_argument('--minrate', type=float, default=params.minMarkerPerimeterRate,
+    help='min marker perimeter rate, default {}'.format(params.minMarkerPerimeterRate))
+parser.add_argument('--maxrate', type=float, default=params.maxMarkerPerimeterRate,
+    help='max marker perimeter rate, default {}'.format(params.maxMarkerPerimeterRate))
+parser.add_argument('--poly', type=float, default=params.polygonalApproxAccuracyRate,
+    help='polygonal approx accuracy rate, default {}'.format(params.polygonalApproxAccuracyRate))
+parser.add_argument('--corner', type=float, default=params.minCornerDistanceRate,
+    help='minimum distance any pair of corners in the same marker, default {}'.format(params.minCornerDistanceRate))
+parser.add_argument('--markerdist', type=float, default=params.minMarkerDistanceRate,
+    help='minimum distance any pair of corners from different markers, default {}'.format(params.minMarkerDistanceRate))
+parser.add_argument('--borderdist', type=float, default=params.minDistanceToBorder,
+    help='minimum distance any marker corner to image border, default {}'.format(params.minDistanceToBorder))
+parser.add_argument('--borderbits', type=float, default=params.markerBorderBits,
+    help='width of marker border, default {}'.format(params.markerBorderBits))
+parser.add_argument('--otsu', type=float, default=params.minOtsuStdDev,
+    help='minimum stddev of pixel values, default {}'.format(params.minOtsuStdDev))
+parser.add_argument('--persp', type=float, default=params.perspectiveRemovePixelPerCell,
+    help='number of pixels per cells, default {}'.format(params.perspectiveRemovePixelPerCell))
+parser.add_argument('--ignore', type=float, default=params.perspectiveRemoveIgnoredMarginPerCell,
+    help='Ignored pixels at cell borders, default {}'.format(params.perspectiveRemoveIgnoredMarginPerCell))
+parser.add_argument('--error', type=float, default=params.maxErroneousBitsInBorderRate,
+    help='Border bits error rate, default {}'.format(params.maxErroneousBitsInBorderRate))
+parser.add_argument('--correct', type=float, default=params.errorCorrectionRate,
+    help='Bit correction rate, default {}'.format(params.errorCorrectionRate))
+parser.add_argument('--refinement', type=int, default=params.cornerRefinementMethod,
+    help='Subpixel process method, default {}'.format(params.cornerRefinementMethod))
+parser.add_argument('--refwin', type=int, default=params.cornerRefinementWinSize,
+    help='Window size for subpixel refinement, default {}'.format(params.cornerRefinementWinSize))
+parser.add_argument('--maxiter', type=int, default=params.cornerRefinementMaxIterations,
+    help='Stop criteria for subpixel process, default {}'.format(params.cornerRefinementMaxIterations))
+parser.add_argument('--minacc', type=float, default=params.cornerRefinementMinAccuracy,
+    help='Stop criteria for subpixel process, default {}'.format(params.cornerRefinementMinAccuracy))
 parser.add_argument('-l', '--list', action="store_true",
     help='output dictionary names and ids and exit')
 # parse command line arguments
 args = parser.parse_args()
 if args.list:
     # list available aruco dictionary names & exit
+    wl = [(99, 'DICT_3X3_32 custom')]
     for name in aruco.__dict__:
         if name.startswith('DICT_'):
-            print('{} : {}'.format(aruco.__dict__[name], name))
+            wl.append((aruco.__dict__[name], name))
+    for w in sorted(wl):
+        print('{} : {}'.format(w[0], w[1]))
     exit(0)
 if not args.names:
     print("no input images given")
@@ -102,15 +120,33 @@ if args.input:
         exit(2)
 
 # prepare aruco
-aruco_dict = aruco.Dictionary_get(args.dict)
-parameters = aruco.DetectorParameters_create()
-# set some parameters
-parameters.adaptiveThreshWinSizeMin = args.winmin
-parameters.adaptiveThreshWinSizeMax = args.winmax
-parameters.adaptiveThreshWinSizeStep = args.winstep
-parameters.maxMarkerPerimeterRate = args.maxrate
-parameters.minMarkerPerimeterRate = args.minrate
-parameters.detectInvertedMarker = args.inverted
+if args.dict == 99:     # use special 3x3 dictionary
+    aruco_dict = aruco.Dictionary_create(32, 3)
+else:
+    aruco_dict = aruco.Dictionary_get(args.dict)
+    
+# set parameters
+params.detectInvertedMarker = args.inverted
+params.adaptiveThreshWinSizeMin = args.winmin
+params.adaptiveThreshWinSizeMax = args.winmax
+params.adaptiveThreshWinSizeStep = args.winstep
+params.adaptiveThreshConstant = args.thres
+params.minMarkerPerimeterRate = args.minrate
+params.maxMarkerPerimeterRate = args.maxrate
+params.polygonalApproxAccuracyRate = args.poly
+params.minCornerDistanceRate = args.corner
+params.minMarkerDistanceRate = args.markerdist
+params.minDistanceToBorder = args.borderdist
+params.markerBorderBits = args.borderbits
+params.minOtsuStdDev = args.otsu
+params.perspectiveRemovePixelPerCell = args.persp
+params.perspectiveRemoveIgnoredMarginPerCell = args.ignore
+params.maxErroneousBitsInBorderRate = args.error
+params.errorCorrectionRate = args.correct
+params.cornerRefinementMethod = args.refinement
+params.cornerRefinementWinSize = args.refwin
+params.cornerRefinementMaxIterations = args.maxiter
+params.cornerRefinementMinAccuracy = args.minacc
 # initialize gcp to image dictionary
 gcp_found = {}
 # load coordinates from input file
@@ -138,7 +174,17 @@ for fn in args.names:
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # find markers
     corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict,
-        parameters=parameters)
+        parameters=params)
+    if args.debug and rejectedImgPoints:
+        print('{} rejected points'.format(len(rejectedImgPoints)))
+        plt.figure()
+        plt.title("rejected")
+        plt.imshow(frame)
+        for i in range(len(rejectedImgPoints)):
+            x = int(round(np.average(rejectedImgPoints[i][:, 0])))
+            y = int(round(np.average(rejectedImgPoints[i][:, 1])))
+            plt.plot(x, y, "o", label="id={}".format(i))
+        plt.show()
     if ids is None:
         print('No markers found on image {}'.format(fn))
         continue
@@ -153,6 +199,7 @@ for fn in args.names:
         print('  {} GCP markers found'.format(ids.size))
     if args.debug:  # show found ids in debug mode
         plt.figure()
+        plt.title("found")
         plt.imshow(frame)
     for i in range(ids.size):
         j = ids[i][0]
