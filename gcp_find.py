@@ -47,11 +47,11 @@ parser.add_argument('-r', '--inverted', action="store_true",
     help='detect inverted markers')
 parser.add_argument('--debug', action="store_true",
     help='show rejected and detected markers on image')
-parser.add_argument('--winmin', type=float, default=params.adaptiveThreshWinSizeMin,
+parser.add_argument('--winmin', type=int, default=params.adaptiveThreshWinSizeMin,
     help='adaptive tresholding window min size, default {}'.format(params.adaptiveThreshWinSizeMin))
-parser.add_argument('--winmax', type=float, default=params.adaptiveThreshWinSizeMax,
+parser.add_argument('--winmax', type=int, default=params.adaptiveThreshWinSizeMax,
     help='adaptive thresholding window max size, default {}'.format(params.adaptiveThreshWinSizeMax))
-parser.add_argument('--winstep', type=float, default=params.adaptiveThreshWinSizeStep,
+parser.add_argument('--winstep', type=int, default=params.adaptiveThreshWinSizeStep,
     help='adaptive thresholding window size step , default {}'.format(params.adaptiveThreshWinSizeStep))
 parser.add_argument('--thres', type=float, default=params.adaptiveThreshConstant,
     help='adaptive threshold constant, default {}'.format(params.adaptiveThreshConstant))
@@ -65,13 +65,13 @@ parser.add_argument('--corner', type=float, default=params.minCornerDistanceRate
     help='minimum distance any pair of corners in the same marker, default {}'.format(params.minCornerDistanceRate))
 parser.add_argument('--markerdist', type=float, default=params.minMarkerDistanceRate,
     help='minimum distance any pair of corners from different markers, default {}'.format(params.minMarkerDistanceRate))
-parser.add_argument('--borderdist', type=float, default=params.minDistanceToBorder,
+parser.add_argument('--borderdist', type=int, default=params.minDistanceToBorder,
     help='minimum distance any marker corner to image border, default {}'.format(params.minDistanceToBorder))
-parser.add_argument('--borderbits', type=float, default=params.markerBorderBits,
+parser.add_argument('--borderbits', type=int, default=params.markerBorderBits,
     help='width of marker border, default {}'.format(params.markerBorderBits))
 parser.add_argument('--otsu', type=float, default=params.minOtsuStdDev,
     help='minimum stddev of pixel values, default {}'.format(params.minOtsuStdDev))
-parser.add_argument('--persp', type=float, default=params.perspectiveRemovePixelPerCell,
+parser.add_argument('--persp', type=int, default=params.perspectiveRemovePixelPerCell,
     help='number of pixels per cells, default {}'.format(params.perspectiveRemovePixelPerCell))
 parser.add_argument('--ignore', type=float, default=params.perspectiveRemoveIgnoredMarginPerCell,
     help='Ignored pixels at cell borders, default {}'.format(params.perspectiveRemoveIgnoredMarginPerCell))
