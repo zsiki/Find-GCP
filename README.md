@@ -77,10 +77,33 @@ optional arguments:
   -l, --list            output dictionary names and ids and exit
 ```
 
-There are two small utility in this repo.
+Parameters from *winmin* to *minacc* are explaned in OpenCV 
+[Aruco documentation](https://docs.opencv.org/trunk/d5/dae/tutorial_aruco_detection.html).
+The two most important parameters are *minrate* and *ignore*. Usually the default value of these parameters are not perfect.
 
-* exif\_pos.py list GPS position from exif information of  images
+*minrate* defines the minimal size of a marker in a relative way. For example is
+the larger image size is 5472 pixels and the *minrate* parameter is 0.01, the
+minimal perimeter of an ArUco marker is 0.01 \* 5472 = 54 pixels, and the
+minimal side of the marker is 54 / 4 = 13 pixels. Smaller marker candidates 
+are dropped. Our exprerience is the minimal marker side should be 20-30 pixels
+to detect 4x4 markers. Using the special 3x3 markers (see: dict\_gen\_3x3.py)
+the size of the marker can be reduced.
+
+So you can calculate marker size in centimeteres if you know
+the pixel size in centimetres, in case of 30-50 metres flight altitude, it is
+1-2 cm (DJI Phantom Pro). You should use 20-40 cm large markers.
+
+*ignore* is also a relative value. It defines the percent of pixels to ignore 
+at the elemens of the marker matrix. In strong sunshine the white area are
+burnt on the image. A 0.33 value (33%) is good for burnt images. There is an
+othr solution to reduce the burnt effect, use grey paper to print hte aruco
+des.
+
+There are some small utilities in this repo.
+
+* exif\_pos.py list GPS position from exif information of images
 * dicti\_gen\_3x3.py generate custom 3x3 ArUco dictionary
+* aruco\_make.py generate aruco markers of different dictionaries
 
 ## Sample 1
 
