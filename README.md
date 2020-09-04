@@ -99,6 +99,8 @@ burnt on the image. A 0.33 value (33%) is good for burnt images. There is an
 othr solution to reduce the burnt effect, use grey paper to print hte aruco
 des.
 
+![gray black marker](samples/grey_black.png)
+
 There are some small utilities in this repo.
 
 * exif\_pos.py list GPS position from exif information of images
