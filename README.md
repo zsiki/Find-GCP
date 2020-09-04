@@ -89,15 +89,15 @@ are dropped. Our exprerience is the minimal marker side should be 20-30 pixels
 to detect 4x4 markers. Using the special 3x3 markers (see: dict\_gen\_3x3.py)
 the size of the marker can be reduced.
 
-So you can calculate marker size in centimeteres if you know
+So you can calculate marker size in centimetres if you know
 the pixel size in centimetres, in case of 30-50 metres flight altitude, it is
 1-2 cm (DJI Phantom Pro). You should use 20-40 cm large markers.
 
 *ignore* is also a relative value. It defines the percent of pixels to ignore 
 at the elemens of the marker matrix. In strong sunshine the white area are
 burnt on the image. A 0.33 value (33%) is good for burnt images. There is an
-othr solution to reduce the burnt effect, use grey paper to print hte aruco
-des.
+other solution to reduce the burnt effect, use grey paper to print the aruco
+codes.
 
 ![gray black marker](samples/grey_black.png)
 
