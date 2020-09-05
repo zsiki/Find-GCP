@@ -1,7 +1,7 @@
 # Find-GCP
 Find ArUco markers in digital photos
 
-[ArUco markers](http://chev.me/arucogen) are black and white square markers which have unique pattern and ID. [OpenCV](https://opencv.org) library has a modul to find ArUco markers in images (you should pip install opencv-python and opencv-contrib-python).
+[ArUco markers](http://chev.me/arucogen) are black and white square markers which have unique pattern and ID. [OpenCV](https://opencv.org) library has a modul to find ArUco markers in images (you should pip install *opencv-python* and *opencv-contrib-python*).
 
 Before taking the photos the different ArUco markers have to be printed in the
 suitable size and put on the field. The coordinates of markers have to be
