@@ -103,22 +103,38 @@ the pixel size in centimetres, in case of 30-50 metres flight altitude, it is
 *ignore* is also a relative value. It defines the percent of pixels to ignore 
 at the border of the elemens of the marker matrix. In strong sunshine the white
 areas are burnt on the image. A 0.33 value (33%) is good for burnt images, the
-green squares on the image below.  There is an other solution to reduce the
+green squares on Fig.1. below will be used to detect black/white elements.
+There is an other solution to reduce the
 burnt effect, use grey paper to print the aruco codes. The second figure below
 shows the original black/grey marker and the marker on the image. Thanks to the
 adaptive thresholding in the ArUco module, grey and black can be separated.
 
 ![burnt in effect](samples/burnt.png)
-Burnt in effect and the --ignore
+
+Fig.1. Burnt in effect and the --ignore
 
 ![gray black marker](samples/grey_black.png)
-Burnt in effect reduced by black/grey marker
+
+Fig.2. Burnt in effect reduced by black/grey marker. Original marker left, marker on image right.
 
 There are some small utilities in this repo, too.
 
 * exif\_pos.py list GPS position from exif information of images
-* dict\_gen\_3x3.py generate 32 custom 3x3 ArUco dictionary in dict_3x3 subdirectory (png files)
+* dict\_gen\_3x3.py generate 32 custom 3x3 ArUco dictionary in dict\_3x3 subdirectory (png files)
 * aruco\_make.py generate aruco markers of different dictionaries
+
+```
+usage: aruco_make.py [-h] [-d DICT] [-s START] [-e END] [-v]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -d DICT, --dict DICT  marker dictionary id (use 99 for 3x3 markers),
+                        default= 1 (DICT_4X4_100)
+  -s START, --start START
+                        first marker to generate, default= 0
+  -e END, --end END     last marker to generate default= -1
+  -v, --view            show marker on monitor
+```
 
 ## Sample 1
 
