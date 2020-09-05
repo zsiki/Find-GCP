@@ -1,21 +1,27 @@
 # Find-GCP
 Find ArUco markers in digital photos
 
-[ArUco markers](http://chev.me/arucogen) are black and white square markers which have unique pattern and ID. [OpenCV](https://opencv.org) library has a modul to find ArUco markers in images (you should pip install *opencv-python* and *opencv-contrib-python*).
+[ArUco markers](http://chev.me/arucogen) are black and white square markers 
+which have unique pattern and ID. [OpenCV](https://opencv.org) library has
+a modul to find ArUco markers in images (you should pip install 
+*opencv-python* and *opencv-contrib-python*).
 
 Before taking the photos the different ArUco markers have to be printed in the
 suitable size and put on the field. The coordinates of markers have to be
 measured by GNSS (GPS), total station or other surveyor's method. We prefer the
-4x4 ArUco library and those markers where there is a corner at the center of
-the marker (easy to center your GPS or prism on the field). For example marker
-with ID 16 is not suitable for this condition, see Figure 1.
+3x3 or 4x4 ArUco library, the larger the squares in the marker, the smaller the 
+the total marker size can be.
 
-The ArUco marker on the image should be minimum 20 x 20 pixels, the optimal
+The 3x3 or 4x4 ArUco markers on the image should be minimum 20 x 20 pixels to be
+detected, the optimal
 marker size is 30 x 30 pixels. You should plan the marker size depending on the 
-target distance. For example 30 x 30 cm markers are enough for a DJI Phantom 4P
-flying 50 m above the ground.
+flight altitude and camera parameters. For example 30 x 30 cm markers are enough
+for a DJI Phantom 4P flying 50 m above the ground.
 
-This small utility can be used together with photogrammetric programs like Open Drone Map or WebODM to create the necessary Ground Control Point (GCP) file containing image coordinates and projected coordinates of GCPs. It has command line interface (CLI) only.
+This small utility can be used together with photogrammetric programs like Open
+Drone Map or WebODM to create the necessary Ground Control Point (GCP) file 
+containing image coordinates and projected coordinates of GCPs. 
+It has command line interface (CLI) only. There ore 
 
 ```
 usage: gcp_find.py [-h] [-d DICT] [-o OUTPUT] [-t {ODM,VisualSfM}] [-i INPUT]
@@ -77,25 +83,26 @@ optional arguments:
   -l, --list            output dictionary names and ids and exit
 ```
 
-Parameters from *winmin* to *minacc* are explaned in OpenCV 
+Parameters from *winmin* to *minacc* are customizable parameters for ArUco detection
+and are explaned in the OpenCV 
 [Aruco documentation](https://docs.opencv.org/trunk/d5/dae/tutorial_aruco_detection.html).
-The two most important parameters are *minrate* and *ignore*. Usually the default value of these parameters are not perfect.
+The two most important parameters are *minrate* and *ignore*. Usually the 
+default values of these parameters are not perfect.
 
-*minrate* defines the minimal size of a marker in a relative way. For example is
-the larger image size is 5472 pixels and the *minrate* parameter is 0.01, the
-minimal perimeter of an ArUco marker is 0.01 \* 5472 = 54 pixels, and the
-minimal side of the marker is 54 / 4 = 13 pixels. Smaller marker candidates 
+*minrate* defines the minimal size of a marker in a relative way. For example if
+the larger image size is 5472 pixels and the *minrate* parameter is 0.01, then the
+minimal perimeter of an ArUco marker should be 0.01 \* 5472 = 54 pixels, and the
+minimal size of the marker side is 54 / 4 = 13 pixels. Smaller marker candidates 
 are dropped. Our exprerience is the minimal marker side should be 20-30 pixels
 to detect 4x4 markers. Using the special 3x3 markers (see: dict\_gen\_3x3.py)
 the size of the marker can be reduced.
-
 So you can calculate marker size in centimetres if you know
 the pixel size in centimetres, in case of 30-50 metres flight altitude, it is
 1-2 cm (DJI Phantom Pro). You should use 20-40 cm large markers.
 
 *ignore* is also a relative value. It defines the percent of pixels to ignore 
-at the elemens of the marker matrix. In strong sunshine the white area are
-burnt on the image. A 0.33 value (33%) is good for burnt images. There is an
+at the border of the elemens of the marker matrix. In strong sunshine the white
+areas are burnt on the image. A 0.33 value (33%) is good for burnt images. There is an
 other solution to reduce the burnt effect, use grey paper to print the aruco
 codes.
 
