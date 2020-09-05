@@ -1,6 +1,6 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
-""" Ceate special 3x3 (32) ArUco dictionary in subfolde "dict_3x3"
+""" Ceate special 3x3 (32) ArUco dictionary in subfolder "dict_3x3"
 """
 import cv2
 import os

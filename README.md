@@ -102,16 +102,22 @@ the pixel size in centimetres, in case of 30-50 metres flight altitude, it is
 
 *ignore* is also a relative value. It defines the percent of pixels to ignore 
 at the border of the elemens of the marker matrix. In strong sunshine the white
-areas are burnt on the image. A 0.33 value (33%) is good for burnt images. There is an
-other solution to reduce the burnt effect, use grey paper to print the aruco
-codes.
+areas are burnt on the image. A 0.33 value (33%) is good for burnt images, the
+green squares on the image below.  There is an other solution to reduce the
+burnt effect, use grey paper to print the aruco codes. The second figure below
+shows the original black/grey marker and the marker on the image. Thanks to the
+adaptive thresholding in the ArUco module, grey and black can be separated.
+
+![burnt in effect](samples/burnt.png)
+Burnt in effect and the --ignore
 
 ![gray black marker](samples/grey_black.png)
+Burnt in effect reduced by black/grey marker
 
-There are some small utilities in this repo.
+There are some small utilities in this repo, too.
 
 * exif\_pos.py list GPS position from exif information of images
-* dicti\_gen\_3x3.py generate custom 3x3 ArUco dictionary
+* dict\_gen\_3x3.py generate 32 custom 3x3 ArUco dictionary in dict_3x3 subdirectory (png files)
 * aruco\_make.py generate aruco markers of different dictionaries
 
 ## Sample 1
@@ -139,7 +145,7 @@ The next command will generate the necessary text file for ODM.
 <img src="samples/20191029_110429.jpg" alt="img1" width="400"/> <img src="samples/20191029_110437.jpg" alt="img2" width="400"/>
 
 ```
-python3 gcp_find.py -v -i samples/aruco.txt -o test.txt samples/2019*.jpg
+python3 gcp\_find.py -v -i samples/aruco.txt -o test.txt samples/2019*.jpg
 Loading GCP coordinates from samples/aruco.txt
 processing samples/20191029_110429.jpg
   5 GCP markers found
@@ -171,15 +177,14 @@ Note: You have to add [projection parameters](https://docs.opendronemap.org/tuto
 
 ## Sample 3
 
-Photos (DJI0087.jpg and DJI0088.jpg) made by a DJI Phantom 4.
-There are three GCPs (id=3, id=4, id=5) on image DJI\_0087.jpg and five
+Photos (DJI0087.jpg and DJI0088.jpg) made by a DJI Phantom 4 Pro.
+There are three 4x4 GCPs (id=3, id=4, id=5) on image DJI\_0087.jpg and five
 (id=0, id=3, id=4, id=5, id=6) on image DJI\_0088.jpg.
 
 ```
-python3 gcp_find.py samples/bme/DJI_008[78].jpg
+python3 gcp_find.py --minrate 0.01 samples/bme/DJI_008[78].jpg
 
 5 2832 1845 DJI_0087.jpg
-4 1962 1764 DJI_0087.jpg
 3 2472 731 DJI_0087.jpg
 5 3024 3556 DJI_0088.jpg
 3 2654 2458 DJI_0088.jpg
@@ -187,3 +192,35 @@ python3 gcp_find.py samples/bme/DJI_008[78].jpg
 6 3094 1299 DJI_0088.jpg
 ```
 
+Marker 4 not detected.
+
+## Sample 4
+
+Photos (DJI\_0180.jpg and DJI\_0181.jpg) made by DJI Phantom 4 Pro, flying
+alttitude 50 m.
+There are eight 3x3 black/grey GCPs on image DJI\_0180.png and ten on 
+DJI\_0181.png.
+
+```
+python3 gcp_find.py -d 99 --minrate 0.01 --ignore 0.33 samples/bme/DJI_018[01].jpg 
+3 3458 3251 DJI_0180.jpg
+4 2700 3229 DJI_0180.jpg
+2 2981 2414 DJI_0180.jpg
+1 2663 2114 DJI_0180.jpg
+7 2644 1038 DJI_0180.jpg
+0 3401 2042 DJI_0180.jpg
+5 2879 1655 DJI_0180.jpg
+6 3328 1214 DJI_0180.jpg
+9 3671 2746 DJI_0181.jpg
+8 2897 2733 DJI_0181.jpg
+3 3602 2322 DJI_0181.jpg
+4 2850 2299 DJI_0181.jpg
+2 3128 1502 DJI_0181.jpg
+1 2812 1207 DJI_0181.jpg
+0 3545 1138 DJI_0181.jpg
+7 2792 152 DJI_0181.jpg
+5 3026 758 DJI_0181.jpg
+6 3471 327 DJI_0181.jpg
+```
+
+All markers found.

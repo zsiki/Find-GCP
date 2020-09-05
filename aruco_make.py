@@ -15,7 +15,7 @@ def_end = -1                    # last marker to generate
 # set up command line argument parser
 parser = argparse.ArgumentParser()
 parser.add_argument('-d', '--dict', type=int, default=def_dict,
-    help='marker dictionary id, default= {} (DICT_4X4_100)'.format(def_dict))
+    help='marker dictionary id (use 99 for 3x3 markers), default= {} (DICT_4X4_100)'.format(def_dict))
 parser.add_argument('-s', '--start', type=int, default=def_start,
     help='first marker to generate, default= {}'.format(def_start))
 parser.add_argument('-e', '--end', type=int, default=def_end,
