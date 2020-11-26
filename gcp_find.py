@@ -151,7 +151,7 @@ params.cornerRefinementMinAccuracy = args.minacc
 gcp_found = {}
 # load coordinates from input file
 coords = {}
-if def_input:
+if args.input:
     if args.verbose:
         print("Loading GCP coordinates from {}".format(args.input))
     for line in finput:
@@ -160,7 +160,7 @@ if def_input:
             print("Illegal input: {}".format(line))
             continue
         coords[int(co[0])] = [float(x) for x in co[1:4]]
-    def_input.close()
+    finput.close()
 # process image files from command line
 for fn in args.names:
     # read actual image file
