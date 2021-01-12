@@ -25,7 +25,7 @@ def_dict = aruco.DICT_4X4_100   # default dictionary 4X4
 def_output = sys.stdout         # default output to stdout
 def_input = None                # default no input coordinates
 def_separator = " "             # default separator is space
-def_type = "ODM"                # default output type
+def_type = ""                # default output type
 # set up command line argument parser
 parser = argparse.ArgumentParser()
 parser.add_argument('names', metavar='file_names', type=str, nargs='*',
@@ -46,7 +46,7 @@ parser.add_argument('-v', '--verbose', action="store_true",
 parser.add_argument('-r', '--inverted', action="store_true",
     help='detect inverted markers')
 parser.add_argument('--debug', action="store_true",
-    help='show rejected and detected markers on image')
+    help='show detected markers on image')
 parser.add_argument('--winmin', type=int, default=params.adaptiveThreshWinSizeMin,
     help='adaptive tresholding window min size, default {}'.format(params.adaptiveThreshWinSizeMin))
 parser.add_argument('--winmax', type=int, default=params.adaptiveThreshWinSizeMax,
@@ -99,11 +99,11 @@ if args.list:
             wl.append((aruco.__dict__[name], name))
     for w in sorted(wl):
         print('{} : {}'.format(w[0], w[1]))
-    exit(0)
+    sys.exit(0)
 if not args.names:
     print("no input images given")
     parser.print_help()
-    exit(0)
+    sys.exit(0)
 if args.output == sys.stdout:
     foutput = args.output
 else:
@@ -111,13 +111,13 @@ else:
         foutput = open(args.output, 'w')
     except:
         print('cannot open output file')
-        exit(1)
+        sys.exit(1)
 if args.input:
     try:
         finput = open(args.input, 'r')
     except:
         print('cannot open input file')
-        exit(2)
+        sys.exit(2)
 
 # prepare aruco
 if args.dict == 99:     # use special 3x3 dictionary
@@ -175,16 +175,16 @@ for fn in args.names:
     # find markers
     corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict,
         parameters=params)
-    if args.debug and rejectedImgPoints:
-        print('{} rejected points'.format(len(rejectedImgPoints)))
-        plt.figure()
-        plt.title("rejected")
-        plt.imshow(frame)
-        for i in range(len(rejectedImgPoints)):
-            x = int(round(np.average(rejectedImgPoints[i][:, 0])))
-            y = int(round(np.average(rejectedImgPoints[i][:, 1])))
-            plt.plot(x, y, "o", label="id={}".format(i))
-        plt.show()
+    #if args.debug and rejectedImgPoints:
+    #    print('{} rejected points on {}'.format(len(rejectedImgPoints), fn))
+    #    plt.figure()
+    #    plt.title("rejected")
+    #    plt.imshow(frame)
+    #    for i in range(len(rejectedImgPoints)):
+    #        x = int(round(np.average(rejectedImgPoints[i][:, 0])))
+    #        y = int(round(np.average(rejectedImgPoints[i][:, 1])))
+    #        plt.plot(x, y, "o", label="id={}".format(i))
+    #    plt.show()
     if ids is None:
         print('No markers found on image {}'.format(fn))
         continue
@@ -193,14 +193,14 @@ for fn in args.names:
     if len(ids) - len(set(idsl)):
         print('duplicate markers on image {}'.format(fn))
         print('marker ids: {}'.format(sorted(idsl)))
-        #continue
     # calculate center & output found markers
     if args.verbose:
         print('  {} GCP markers found'.format(ids.size))
     if args.debug:  # show found ids in debug mode
         plt.figure()
-        plt.title("found")
-        plt.imshow(frame)
+        plt.title("{} GCP, {} duplicate found on {}".format(len(ids), len(ids) - len(set(idsl)), fn))
+        aruco.drawDetectedMarkers(frame, corners, ids)
+        plt.imshow(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
     for i in range(ids.size):
         j = ids[i][0]
         if j not in gcp_found:
@@ -209,24 +209,37 @@ for fn in args.names:
         # calculate center of aruco code
         x = int(round(np.average(corners[i][0][:, 0])))
         y = int(round(np.average(corners[i][0][:, 1])))
-        if j in coords:
-            if args.type == 'ODM':
+        if args.type == 'ODM':
+            if j in coords:
                 foutput.write('{:.3f} {:.3f} {:.3f} {} {} {}\n'.format(
                     coords[j][0], coords[j][1], coords[j][2], x, y,
                     os.path.basename(fn)))
-            elif args.type == 'VisualSfM':
+            else:
+                print("No coordinates for {}".format(j))
+        elif args.type == 'VisualSfM':
+            if j in coords:
                 foutput.write('{} {} {} {:.3f} {:.3f} {:.3f}\n'.format(
                     os.path.basename(fn), x, y, coords[j][0], coords[j][1], 
                     coords[j][2]))
+            else:
+                print("No coordinates for {}".format(j))
         else:
-            foutput.write('{} {} {} {}\n'.format(j, x, y,
-                os.path.basename(fn)))
+            if j in coords:
+                foutput.write('{:.3f} {:.3f} {:.3f} {} {} {}\n'.format(
+                    coords[j][0], coords[j][1], coords[j][2], x, y,
+                    os.path.basename(fn)))
+            else:
+                foutput.write('{} {} {} {}\n'.format(j, x, y,
+                    os.path.basename(fn)))
         if args.debug:
-            plt.plot(x, y, "o", label="id={}".format(ids[i]))
+            if j in coords:
+                plt.plot(x, y, "o", label="id={}".format(ids[i]))
+            else:
+                plt.plot(x, y, "x", label="id={}".format(ids[i]))
     if args.debug:
-        plt.legend()
+        #plt.legend()
         plt.show()
-            
+
 if args.verbose:
     for j in gcp_found:
         print('GCP{}: on {} images {}'.format(j, len(gcp_found[j]), gcp_found[j]))
