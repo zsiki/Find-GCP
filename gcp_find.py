@@ -25,7 +25,7 @@ def_dict = aruco.DICT_4X4_100   # default dictionary 4X4
 def_output = sys.stdout         # default output to stdout
 def_input = None                # default no input coordinates
 def_separator = " "             # default separator is space
-def_type = ""                # default output type
+def_type = ""                   # default output type
 # set up command line argument parser
 parser = argparse.ArgumentParser()
 parser.add_argument('names', metavar='file_names', type=str, nargs='*',
@@ -89,6 +89,8 @@ parser.add_argument('--minacc', type=float, default=params.cornerRefinementMinAc
     help='Stop criteria for subpixel process, default {}'.format(params.cornerRefinementMinAccuracy))
 parser.add_argument('-l', '--list', action="store_true",
     help='output dictionary names and ids and exit')
+parser.add_argument('--epsg', type=int, default=None,
+    help='epsg code for gcp coordinates, default None')
 # parse command line arguments
 args = parser.parse_args()
 if args.list:
@@ -161,6 +163,9 @@ if args.input:
             continue
         coords[int(co[0])] = [float(x) for x in co[1:4]]
     finput.close()
+if args.type == 'ODM' and args.epsg is not None:
+    # write epsg code to the beginning of the output
+    foutput.write('EPSG:{}\n'.format(args.epsg))
 # process image files from command line
 for fn in args.names:
     # read actual image file
@@ -175,16 +180,6 @@ for fn in args.names:
     # find markers
     corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict,
         parameters=params)
-    #if args.debug and rejectedImgPoints:
-    #    print('{} rejected points on {}'.format(len(rejectedImgPoints), fn))
-    #    plt.figure()
-    #    plt.title("rejected")
-    #    plt.imshow(frame)
-    #    for i in range(len(rejectedImgPoints)):
-    #        x = int(round(np.average(rejectedImgPoints[i][:, 0])))
-    #        y = int(round(np.average(rejectedImgPoints[i][:, 1])))
-    #        plt.plot(x, y, "o", label="id={}".format(i))
-    #    plt.show()
     if ids is None:
         print('No markers found on image {}'.format(fn))
         continue
@@ -211,9 +206,9 @@ for fn in args.names:
         y = int(round(np.average(corners[i][0][:, 1])))
         if args.type == 'ODM':
             if j in coords:
-                foutput.write('{:.3f} {:.3f} {:.3f} {} {} {}\n'.format(
+                foutput.write('{:.3f} {:.3f} {:.3f} {} {} {} {}\n'.format(
                     coords[j][0], coords[j][1], coords[j][2], x, y,
-                    os.path.basename(fn)))
+                    os.path.basename(fn), j))
             else:
                 print("No coordinates for {}".format(j))
         elif args.type == 'VisualSfM':
