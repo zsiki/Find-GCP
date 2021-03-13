@@ -187,30 +187,30 @@ class GcpFind():
                     print("No coordinates for {}".format(j))
             elif self.args.type == 'VisualSfM':
                 if j in self.coords:
-                    self.foutput.write('{} {} {} {:.3f} {:.3f} {:.3f}\n'.format(
+                    self.foutput.write('{} {} {} {:.3f} {:.3f} {:.3f} {}\n'.format(
                         os.path.basename(image_name), x, y,
-                        self.coords[j][0], self.coords[j][1], self.coords[j][2]))
+                        self.coords[j][0], self.coords[j][1], self.coords[j][2], j))
                 else:
                     print("No coordinates for {}".format(j))
             else:
                 if j in self.coords:
-                    self.foutput.write('{:.3f} {:.3f} {:.3f} {} {} {}\n'.format(
+                    self.foutput.write('{:.3f} {:.3f} {:.3f} {} {} {} {}\n'.format(
                         self.coords[j][0], self.coords[j][1], self.coords[j][2],
-                        x, y, os.path.basename(image_name)))
+                        x, y, os.path.basename(image_name), j))
                 else:
-                    self.foutput.write('{} {} {} {}\n'.format(j, x, y,
-                                                              os.path.basename(image_name)))
+                    self.foutput.write('{} {} {} {}\n'.format(x, y,
+                                                              os.path.basename(image_name), j))
             if self.args.debug:
                 if j in self.coords:
-                    plt.plot(x, y, "ro", markersize=self.args.markersize,
-                             markeredgecolor='y', markeredgewidth=3)
+                    plt.plot(x, y, args.markerstyle, markersize=self.args.markersize,
+                             markeredgecolor=args.edgecolor, markeredgewidth=args.edgewidth)
                 else:
-                    plt.plot(x, y, "r^", markersize=self.args.markersize,
-                             markeredgecolor='y', markeredgewidth=3)
+                    plt.plot(x, y, args.markerstyle1, markersize=self.args.markersize,
+                             markeredgecolor=args.edgecolor, markeredgewidth=args.edgewidth)
                 plt.text(x+self.args.markersize, y, str(ids[i][0]),
-                         color='y', weight='bold', fontsize=args.fontsize)
+                         color=args.fontcolor1, weight=args.fontweight1, fontsize=args.fontsize)
                 plt.text(x+self.args.markersize, y, str(ids[i][0]),
-                         color='r', weight='normal', fontsize=args.fontsize)
+                         color=args.fontcolor, weight=args.fontweight, fontsize=args.fontsize)
         if args.debug:
             #plt.legend()
             plt.show()
@@ -228,10 +228,19 @@ def cmd_params(parser, params):
     def_separator = " "             # default separator is space
     def_type = ""                   # default output type
     def_markersize = 10             # marker size of debug image
+    def_markerstyle = "ro"          # marker style with GCP coords
+    def_markerstyle1 = "r^"          # marker style without GCP coords
+    def_edgecolor = "y"             # edge color for markers
+    def_edgewidth = 3               # edge width for markers
     def_fontsize = 6                # marker size of debug image
+    def_fontcolor = 'r'             # inner color for GP ID annotation
+    def_fontcolor1 = 'y'            # outer color for GP ID annotation
+    def_fontweight = 'normal'       # weight for inner text
+    def_fontweight1 = 'bold'        # weight for outet text
 
     parser.add_argument('names', metavar='file_names', type=str, nargs='*',
                         help='image files to process')
+    # general parameters
     parser.add_argument('-d', '--dict', type=int, default=def_dict,
                         help='marker dictionary id, default={} (DICT_4X4_100)'.format(def_dict))
     parser.add_argument('-o', '--output', type=str, default=def_output,
@@ -241,18 +250,40 @@ def cmd_params(parser, params):
                         help='target program ODM or VisualSfM, default {}'.format(def_type))
     parser.add_argument('-i', '--input', type=str, default=def_input,
                         help='name of input GCP coordinate file, default {}'.format(def_input))
-    parser.add_argument('-s', '--separator', type=str, default=' ',
+    parser.add_argument('-s', '--separator', type=str, default=def_separator,
                         help='input file separator, default {}'.format(def_separator))
     parser.add_argument('-v', '--verbose', action="store_true",
                         help='verbose output to stdout')
-    parser.add_argument('-r', '--inverted', action="store_true",
-                        help='detect inverted markers')
+    parser.add_argument('-l', '--list', action="store_true",
+                        help='output dictionary names and ids and exit')
+    parser.add_argument('--epsg', type=int, default=None,
+                        help='epsg code for gcp coordinates, default None')
     parser.add_argument('--debug', action="store_true",
                         help='show detected markers on image')
+    # parameters for marker display
     parser.add_argument('--markersize', type=int, default=def_markersize,
                         help='marker size on debug image, use together with debug')
+    parser.add_argument('--markerstyle', type=str, default=def_markerstyle,
+                        help='marker style for point with coordinates, use together with debug')
+    parser.add_argument('--markerstyle1', type=str, default=def_markerstyle1,
+                        help='marker style for point without coordinates, use together with debug')
+    parser.add_argument('--edgecolor', type=str, default=def_edgecolor,
+                        help='marker edge color, use together with debug')
+    parser.add_argument('--edgewidth', type=int, default=def_edgewidth,
+                        help='marker edge width, use together with debug')
     parser.add_argument('--fontsize', type=int, default=def_fontsize,
                         help='font size on debug image, use together with debug')
+    parser.add_argument('--fontcolor', type=str, default=def_fontcolor,
+                        help='inner font color on debug image, use together with debug')
+    parser.add_argument('--fontcolor1', type=str, default=def_fontcolor1,
+                        help='outer font color on debug image, use together with debug')
+    parser.add_argument('--fontweight', type=str, default=def_fontweight,
+                        help='inner font weight on debug image, use together with debug')
+    parser.add_argument('--fontweight1', type=str, default=def_fontweight1,
+                        help='outer font weight on debug image, use together with debug')
+    # parameters for ArUco detection
+    parser.add_argument('-r', '--inverted', action="store_true",
+                        help='detect inverted markers')
     parser.add_argument('--winmin', type=int,
                         default=params.adaptiveThreshWinSizeMin,
                         help='adaptive tresholding window min size, default {}'.format(params.adaptiveThreshWinSizeMin))
@@ -312,10 +343,6 @@ def cmd_params(parser, params):
     parser.add_argument('--minacc', type=float,
                         default=params.cornerRefinementMinAccuracy,
                         help='Stop criteria for subpixel process, default {}'.format(params.cornerRefinementMinAccuracy))
-    parser.add_argument('-l', '--list', action="store_true",
-                        help='output dictionary names and ids and exit')
-    parser.add_argument('--epsg', type=int, default=None,
-                        help='epsg code for gcp coordinates, default None')
 
 if __name__ == "__main__":
 
