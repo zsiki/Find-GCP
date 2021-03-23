@@ -129,23 +129,23 @@ def cmd_params(parser):
 
     # parameters for marker display
     parser.add_argument('--markersize', type=int, default=def_markersize,
-                        help='marker size on debug image, use together with debug')
+                        help='marker size on image, default {}'.format(def_markersize))
     parser.add_argument('--markerstyle', type=str, default=def_markerstyle,
-                        help='marker style for point with coordinates, use together with debug')
+                        help='marker style for GCPs, default "{}"'.format(def_markerstyle))
     parser.add_argument('--edgecolor', type=str, default=def_edgecolor,
-                        help='marker edge color, use together with debug')
+                        help='marker edge color, default {}'.format(def_edgecolor))
     parser.add_argument('--edgewidth', type=int, default=def_edgewidth,
-                        help='marker edge width, use together with debug')
+                        help='marker edge width, default {}'.format(def_edgewidth))
     parser.add_argument('--fontsize', type=int, default=def_fontsize,
-                        help='font size on debug image, use together with debug')
+                        help='font size on image, default {}'.format(def_fontsize))
     parser.add_argument('--fontcolor', type=str, default=def_fontcolor,
-                        help='inner font color on debug image, use together with debug')
+                        help='inner font color on image, default {}'.format(def_fontcolor))
     parser.add_argument('--fontcolor1', type=str, default=def_fontcolor1,
-                        help='outer font color on debug image, use together with debug')
+                        help='outer font color on image, default {}'.format(def_fontcolor1))
     parser.add_argument('--fontweight', type=str, default=def_fontweight,
-                        help='inner font weight on debug image, use together with debug')
+                        help='inner font weight on image, default {}'.format(def_fontweight))
     parser.add_argument('--fontweight1', type=str, default=def_fontweight1,
-                        help='outer font weight on debug image, use together with debug')
+                        help='outer font weight on image, default {}'.format(def_fontweight1))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

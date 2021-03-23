@@ -4,13 +4,14 @@ Find ArUco markers in digital photos
 [ArUco markers](http://chev.me/arucogen) are black and white square markers 
 which have unique pattern and ID. [OpenCV](https://opencv.org) library has
 a modul to find ArUco markers in images (you should pip install 
-*opencv-python* and *opencv-contrib-python*).
+*opencv-python*, *opencv-contrib-python*, *PIL*, *numpy* and *matplotlib*).
 
 Before taking the photos the different ArUco markers have to be printed in the
 suitable size and put on the field. The coordinates of markers have to be
 measured by GNSS (GPS), total station or other surveyor's method. We prefer the
 3x3 or 4x4 ArUco library, the larger the squares in the marker, the smaller the 
-the total marker size can be.
+the total marker size can be. You should print markers on gray background to
+avoid burt in on photos.
 
 The 3x3 or 4x4 ArUco markers on the image should be minimum 20 x 20 pixels to be
 detected, the optimal
@@ -205,6 +206,49 @@ optional arguments:
   -v, --view            show marker on monitor
 ```
 
+### gcp\_check.py
+
+It helps the visual check of the found GCPs by gcp\_find.py.
+
+usage: gcp_check.py [-h] [--command COMMAND] [--path PATH] [-s SEPARATOR]
+                    [--markersize MARKERSIZE] [--markerstyle MARKERSTYLE]
+                    [--edgecolor EDGECOLOR] [--edgewidth EDGEWIDTH]
+                    [--fontsize FONTSIZE] [--fontcolor FONTCOLOR]
+                    [--fontcolor1 FONTCOLOR1] [--fontweight FONTWEIGHT]
+                    [--fontweight1 FONTWEIGHT1]
+                    file_name
+
+positional arguments:
+  file_name             GCP file to process
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --command COMMAND     command all/ID show all images/images with GCP ID
+  --path PATH           input path for images
+  -s SEPARATOR, --separator SEPARATOR
+                        input file separator, default
+  --markersize MARKERSIZE
+                        marker size on image, default 10
+  --markerstyle MARKERSTYLE
+                        marker style for GCPs, default "ro"
+  --edgecolor EDGECOLOR
+                        marker edge color, default y
+  --edgewidth EDGEWIDTH
+                        marker edge width, default 3
+  --fontsize FONTSIZE   font size on image, default 16
+  --fontcolor FONTCOLOR
+                        inner font color on image, default r
+  --fontcolor1 FONTCOLOR1
+                        outer font color on image, default y
+  --fontweight FONTWEIGHT
+                        inner font weight on image, default normal
+  --fontweight1 FONTWEIGHT1
+                        outer font weight on image, default bold
+
+![marked_gcps](samples/gcps.png)
+
+Figure 3 Marked GCPs
+
 # Samples
 
 ## Sample 1
@@ -222,47 +266,54 @@ marker centers.
 12 328 142 markers.png
 11 152 142 markers.png
 ```
-![found markers](samples/found_markers.png)
 
 ## Sample 2
 
-Coordinates of GCPs were measured by total station and stored in
-[aruco.txt](samples/aruco.txt) file. These GCPs could be used in ODM or WebODM.
+We have 3 images made by DJI Phantom 4 Pro
+Coordinates of GCPs were measured by GNSS and stored in
+[A3.txt](samples/A3.txt) file. The 3x3 ArUco markers were used
 The next command will generate the necessary text file for ODM.
 
-<img src="samples/20191029_110429.jpg" alt="img1" width="400"/> <img src="samples/20191029_110437.jpg" alt="img2" width="400"/>
-
 ```
-./gcp\_find.py -v -i samples/aruco.txt -o test.txt samples/2019*.jpg
-Loading GCP coordinates from samples/aruco.txt
-processing samples/20191029_110429.jpg
+./gcp\_find.py -v -t ODM -i samples/A3.txt --epsg 23700 -o odm_gcp.txt --minrate 0.01 --ignore 0.33 -d 99 samples/DJI_017[234].JPG
+
+processing samples/DJI_0172.JPG
   5 GCP markers found
-processing samples/20191029_110437.jpg
-  6 GCP markers found
-GCP6: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
-GCP5: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
-GCP4: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
-GCP1: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
-GCP3: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
-GCP2: on 1 images ['samples/20191029_110437.jpg']
+processing samples/DJI_0173.JPG
+  5 GCP markers found
+processing samples/DJI_0174.JPG
+  7 GCP markers found
+GCP9: on 3 images ['samples/DJI_0172.JPG', 'samples/DJI_0173.JPG', 'samples/DJI_0174.JPG']
+GCP8: on 3 images ['samples/DJI_0172.JPG', 'samples/DJI_0173.JPG', 'samples/DJI_0174.JPG']
+GCP3: on 3 images ['samples/DJI_0172.JPG', 'samples/DJI_0173.JPG', 'samples/DJI_0174.JPG']
+GCP4: on 3 images ['samples/DJI_0172.JPG', 'samples/DJI_0173.JPG', 'samples/DJI_0174.JPG']
+GCP2: on 3 images ['samples/DJI_0172.JPG', 'samples/DJI_0173.JPG', 'samples/DJI_0174.JPG']
+GCP1: on 1 images ['samples/DJI_0174.JPG']
+GCP0: on 1 images ['samples/DJI_0174.JPG']
 ```
 
-The test.txt output file
-```
-1.041 3.712 -0.560 204 3051 20191029_110429.jpg
-4.119 3.764 -0.518 3658 2886 20191029_110429.jpg
-2.173 4.202 -0.153 1639 2487 20191029_110429.jpg
-4.482 4.201 0.370 3852 1981 20191029_110429.jpg
-2.822 4.201 0.359 2311 1978 20191029_110429.jpg
-4.482 4.201 0.370 4069 2075 20191029_110437.jpg
-2.822 4.201 0.359 2514 2064 20191029_110437.jpg
-1.041 3.712 -0.560 462 3160 20191029_110437.jpg
-5.758 3.859 -0.557 5302 3001 20191029_110437.jpg
-4.119 3.764 -0.518 3853 3017 20191029_110437.jpg
-2.173 4.202 -0.153 1848 2566 20191029_110437.jpg
-```
+The odm_gcp.txt output file which is ready for use with ODM or WebODM.
 
-Note: You have to add [projection parameters](https://docs.opendronemap.org/tutorials.html#ground-control-points) at the beginning of the file to use it with ODM or WebODM.
+```
+EPSG:2370
+650530.705 237530.488 104.066 3206 2391 DJI_0172.JPG 9
+650538.926 237536.529 104.113 1952 2323 DJI_0172.JPG 8
+650534.729 237526.552 104.267 3124 1703 DJI_0172.JPG 3
+650542.850 237532.382 104.165 1908 1622 DJI_0172.JPG 4
+650546.305 237521.605 104.217 2419 368 DJI_0172.JPG 2
+650530.705 237530.488 104.066 3172 2413 DJI_0173.JPG 9
+650538.926 237536.529 104.113 1921 2343 DJI_0173.JPG 8
+650534.729 237526.552 104.267 3091 1727 DJI_0173.JPG 3
+650542.850 237532.382 104.165 1880 1644 DJI_0173.JPG 4
+650546.305 237521.605 104.217 2393 396 DJI_0173.JPG 2
+650530.705 237530.488 104.066 3535 2892 DJI_0174.JPG 9
+650538.926 237536.529 104.113 2287 2838 DJI_0174.JPG 8
+650534.729 237526.552 104.267 3444 2206 DJI_0174.JPG 3
+650542.850 237532.382 104.165 2236 2136 DJI_0174.JPG 4
+650546.305 237521.605 104.217 2725 879 DJI_0174.JPG 2
+650552.086 237521.011 104.129 2239 403 DJI_0174.JPG 1
+650544.828 237514.298 104.215 3408 322 DJI_0174.JPG 0
+```
 
 ## Sample 3
 
