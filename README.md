@@ -21,19 +21,24 @@ for a DJI Phantom 4P flying 50 m above the ground.
 This small utility can be used together with photogrammetric programs like Open
 Drone Map or WebODM to create the necessary Ground Control Point (GCP) file 
 containing image coordinates and projected coordinates of GCPs. 
-It has command line interface (CLI) only. There ore 
+It has command line interface (CLI) only. There are several parameters:
 
 ```
 usage: gcp_find.py [-h] [-d DICT] [-o OUTPUT] [-t {ODM,VisualSfM}] [-i INPUT]
-                   [-s SEPARATOR] [-v] [-r] [--debug] [--winmin WINMIN]
-                   [--winmax WINMAX] [--winstep WINSTEP] [--thres THRES]
-                   [--minrate MINRATE] [--maxrate MAXRATE] [--poly POLY]
-                   [--corner CORNER] [--markerdist MARKERDIST]
+                   [-s SEPARATOR] [-v] [-l] [--epsg EPSG] [--debug]
+                   [--markersize MARKERSIZE] [--markerstyle MARKERSTYLE]
+                   [--markerstyle1 MARKERSTYLE1] [--edgecolor EDGECOLOR]
+                   [--edgewidth EDGEWIDTH] [--fontsize FONTSIZE]
+                   [--fontcolor FONTCOLOR] [--fontcolor1 FONTCOLOR1]
+                   [--fontweight FONTWEIGHT] [--fontweight1 FONTWEIGHT1] [-r]
+                   [--winmin WINMIN] [--winmax WINMAX] [--winstep WINSTEP]
+                   [--thres THRES] [--minrate MINRATE] [--maxrate MAXRATE]
+                   [--poly POLY] [--corner CORNER] [--markerdist MARKERDIST]
                    [--borderdist BORDERDIST] [--borderbits BORDERBITS]
                    [--otsu OTSU] [--persp PERSP] [--ignore IGNORE]
                    [--error ERROR] [--correct CORRECT]
                    [--refinement REFINEMENT] [--refwin REFWIN]
-                   [--maxiter MAXITER] [--minacc MINACC] [-l]
+                   [--maxiter MAXITER] [--minacc MINACC]
                    [file_names [file_names ...]]
 
 positional arguments:
@@ -45,14 +50,41 @@ optional arguments:
   -o OUTPUT, --output OUTPUT
                         name of output GCP list file, default stdout
   -t {ODM,VisualSfM}, --type {ODM,VisualSfM}
-                        target program ODM or VisualSfM, default ODM
+                        target program ODM or VisualSfM, default
   -i INPUT, --input INPUT
                         name of input GCP coordinate file, default None
   -s SEPARATOR, --separator SEPARATOR
                         input file separator, default
   -v, --verbose         verbose output to stdout
+  -l, --list            output dictionary names and ids and exit
+  --epsg EPSG           epsg code for gcp coordinates, default None
+  --debug               show detected markers on image
+  --markersize MARKERSIZE
+                        marker size on debug image, use together with debug
+  --markerstyle MARKERSTYLE
+                        marker style for point with coordinates, use together
+                        with debug
+  --markerstyle1 MARKERSTYLE1
+                        marker style for point without coordinates, use
+                        together with debug
+  --edgecolor EDGECOLOR
+                        marker edge color, use together with debug
+  --edgewidth EDGEWIDTH
+                        marker edge width, use together with debug
+  --fontsize FONTSIZE   font size on debug image, use together with debug
+  --fontcolor FONTCOLOR
+                        inner font color on debug image, use together with
+                        debug
+  --fontcolor1 FONTCOLOR1
+                        outer font color on debug image, use together with
+                        debug
+  --fontweight FONTWEIGHT
+                        inner font weight on debug image, use together with
+                        debug
+  --fontweight1 FONTWEIGHT1
+                        outer font weight on debug image, use together with
+                        debug
   -r, --inverted        detect inverted markers
-  --debug               show rejected and detected markers on image
   --winmin WINMIN       adaptive tresholding window min size, default 3
   --winmax WINMAX       adaptive thresholding window max size, default 23
   --winstep WINSTEP     adaptive thresholding window size step , default 10
@@ -80,11 +112,11 @@ optional arguments:
   --refwin REFWIN       Window size for subpixel refinement, default 5
   --maxiter MAXITER     Stop criteria for subpixel process, default 30
   --minacc MINACC       Stop criteria for subpixel process, default 0.1
-  -l, --list            output dictionary names and ids and exit
+
 ```
 
-Parameters from *winmin* to *minacc* are customizable parameters for ArUco detection
-and are explaned in the OpenCV 
+Parameters from *winmin* to *minacc* are customizable parameters for ArUco
+detection and are explaned in the OpenCV 
 [Aruco documentation](https://docs.opencv.org/trunk/d5/dae/tutorial_aruco_detection.html).
 The two most important parameters are *minrate* and *ignore*. Usually the 
 default values of these parameters are not perfect.
@@ -117,11 +149,48 @@ Fig.1. Burnt in effect and the --ignore
 
 Fig.2. Burnt in effect reduced by black/grey marker. Original marker left, marker on image right.
 
+## Utilities
+
 There are some small utilities in this repo, too.
 
-* exif\_pos.py list GPS position from exif information of images
-* dict\_gen\_3x3.py generate 32 custom 3x3 ArUco dictionary in dict\_3x3 subdirectory (png files)
-* aruco\_make.py generate aruco markers of different dictionaries
+### exif\_pos.py
+
+This small program lists GPS position from exif information of images to the
+standard output. You can redirect standard output to a file and load it for
+example into QGIS as delimitered text layer to show image positions.
+
+```
+Usage: ./exif_pos.py image_file(s)
+
+```
+ 
+Sample output of the program:
+
+```
+./exif_pos.py *.JPG
+DJI_0021.JPG,19.120939,47.683572,203.86
+DJI_0022.JPG,19.120958,47.683647,203.86
+DJI_0023.JPG,19.120985,47.683718,203.86
+DJI_0024.JPG,19.121020,47.683821,203.76
+DJI_0025.JPG,19.121042,47.683890,203.76
+DJI_0026.JPG,19.121080,47.683997,203.76
+DJI_0038.JPG,19.120905,47.684089,203.76
+DJI_0039.JPG,19.120872,47.683985,203.76
+DJI_0040.JPG,19.120846,47.683917,203.76
+DJI_0041.JPG,19.120786,47.683741,203.86
+DJI_0042.JPG,19.120762,47.683671,203.86
+DJI_0043.JPG,19.120725,47.683566,203.86
+```
+
+### dict\_gen\_3x3.py
+
+It generates 32 custom 3x3 ArUco dictionary markers in dict\_3x3 subdirectory
+(png files). File names are 3x3_id.png, where id is the ordinal number of
+the marker.
+
+### aruco\_make.py
+
+It generatase aruco markers of different standard dictionaries.
 
 ```
 usage: aruco_make.py [-h] [-d DICT] [-s START] [-e END] [-v]
@@ -136,12 +205,15 @@ optional arguments:
   -v, --view            show marker on monitor
 ```
 
+# Samples
+
 ## Sample 1
 
-Find ArUco markers in an image and output marker IDs and image coordinates of marker centers.
+Find ArUco markers in an image and output marker IDs and image coordinates of
+marker centers.
 
 ```
-python3 gcp_find.py samples/markers.png
+./gcp_find.py samples/markers.png
 
 16 502 342 markers.png
 15 328 342 markers.png
@@ -155,13 +227,13 @@ python3 gcp_find.py samples/markers.png
 ## Sample 2
 
 Coordinates of GCPs were measured by total station and stored in
-[aruco.txt](samples/aruco.txt) file. These GCPs should be used in ODM or WebODM.
+[aruco.txt](samples/aruco.txt) file. These GCPs could be used in ODM or WebODM.
 The next command will generate the necessary text file for ODM.
 
 <img src="samples/20191029_110429.jpg" alt="img1" width="400"/> <img src="samples/20191029_110437.jpg" alt="img2" width="400"/>
 
 ```
-python3 gcp\_find.py -v -i samples/aruco.txt -o test.txt samples/2019*.jpg
+./gcp\_find.py -v -i samples/aruco.txt -o test.txt samples/2019*.jpg
 Loading GCP coordinates from samples/aruco.txt
 processing samples/20191029_110429.jpg
   5 GCP markers found
@@ -174,6 +246,7 @@ GCP1: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
 GCP3: on 2 images ['samples/20191029_110429.jpg', 'samples/20191029_110437.jpg']
 GCP2: on 1 images ['samples/20191029_110437.jpg']
 ```
+
 The test.txt output file
 ```
 1.041 3.712 -0.560 204 3051 20191029_110429.jpg
