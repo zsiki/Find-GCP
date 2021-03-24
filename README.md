@@ -150,6 +150,9 @@ Fig.1. Burnt in effect and the --ignore
 
 Fig.2. Burnt in effect reduced by black/grey marker. Original marker left, marker on image right.
 
+See our publication in Baltic Journal of Modern Computing:
+[Automatic Recognition of ArUco Codes in Land Surveying Tasks](https://www.bjmc.lu.lv/fileadmin/user_upload/lu_portal/projekti/bjmc/Contents/9_1_06_Siki.pdf)
+
 ## Utilities
 
 There are some small utilities in this repo, too.
@@ -158,7 +161,7 @@ There are some small utilities in this repo, too.
 
 This small program lists GPS position from exif information of images to the
 standard output. You can redirect standard output to a file and load it for
-example into QGIS as delimitered text layer to show image positions.
+example into QGIS as delimited text layer to show image positions.
 
 ```
 Usage: ./exif_pos.py image_file(s)
@@ -186,12 +189,12 @@ DJI_0043.JPG,19.120725,47.683566,203.86
 ### dict\_gen\_3x3.py
 
 It generates 32 custom 3x3 ArUco dictionary markers in dict\_3x3 subdirectory
-(png files). File names are 3x3_id.png, where id is the ordinal number of
+(png files). File names are 3x3_id.png, where *id* is the ordinal number of
 the marker.
 
 ### aruco\_make.py
 
-It generatase aruco markers of different standard dictionaries.
+It generates aruco marker images of different standard dictionaries for printing.
 
 ```
 usage: aruco_make.py [-h] [-d DICT] [-s START] [-e END] [-v]
@@ -210,6 +213,7 @@ optional arguments:
 
 It helps the visual check of the found GCPs by gcp\_find.py.
 
+```
 usage: gcp_check.py [-h] [--command COMMAND] [--path PATH] [-s SEPARATOR]
                     [--markersize MARKERSIZE] [--markerstyle MARKERSTYLE]
                     [--edgecolor EDGECOLOR] [--edgewidth EDGEWIDTH]
@@ -244,12 +248,16 @@ optional arguments:
                         inner font weight on image, default normal
   --fontweight1 FONTWEIGHT1
                         outer font weight on image, default bold
+```
 
 ![marked_gcps](samples/gcps.png)
 
 Figure 3 Marked GCPs
 
 # Samples
+
+Images used in the samples are available in the *samples* directory.
+Please share with us your samples using *gcp_find*.
 
 ## Sample 1
 
@@ -269,13 +277,13 @@ marker centers.
 
 ## Sample 2
 
-We have 3 images made by DJI Phantom 4 Pro
+We have 3 images made by DJI Phantom 4 Pro.
 Coordinates of GCPs were measured by GNSS and stored in
 [A3.txt](samples/A3.txt) file. The 3x3 ArUco markers were used
 The next command will generate the necessary text file for ODM.
 
 ```
-./gcp\_find.py -v -t ODM -i samples/A3.txt --epsg 23700 -o odm_gcp.txt --minrate 0.01 --ignore 0.33 -d 99 samples/DJI_017[234].JPG
+./gcp\_find.py -v -t ODM -i samples/A3.txt --epsg 23700 -o samples/gcp_list.txt --minrate 0.01 --ignore 0.33 -d 99 samples/DJI_017[234].JPG
 
 processing samples/DJI_0172.JPG
   5 GCP markers found
@@ -292,7 +300,16 @@ GCP1: on 1 images ['samples/DJI_0174.JPG']
 GCP0: on 1 images ['samples/DJI_0174.JPG']
 ```
 
-The odm_gcp.txt output file which is ready for use with ODM or WebODM.
+The gcp_list.txt output file which is ready for use with ODM or WebODM.
+Copy the gcp_list.txt into your images directory using ODM and add the
+
+```
+    --gcp ./images/gcp_list.txt
+```
+
+switch to your ODM command.
+
+The gcp_list.txt file should look like:
 
 ```
 EPSG:2370
@@ -332,7 +349,7 @@ python3 gcp_find.py --minrate 0.01 samples/bme/DJI_008[78].jpg
 6 3094 1299 DJI_0088.jpg
 ```
 
-Marker 4 not detected.
+Marker 4 was not detected.
 
 ## Sample 4
 
