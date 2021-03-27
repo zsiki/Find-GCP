@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Ground Sample Distance calculator</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="gsd_calc.css">
+	<script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+	<script src="gsd_calc.js"></script>
+</head>
+<body>
+    <h2>GSD and ArUco marker size calculator</h2>
+	<form name="gsd">
+        <fieldset>
+            <legend id="sensor_type">Sensor type</legend>
+            <div class="container">
+                <select name="sensors" id="sensors">
+                    <option value="empty">----</option>
+                </select>
+        </fieldset>
+		<fieldset>
+			<legend id="GSD_calculator">Sensor data</legend> 
+			<div class="container">
+				<label id="SWidthLabel">Sensor width</label>
+				<input name="swidth" id="swidth" class="dist number" type="text" placeholder="mm" autofocus>
+			</div>
+			<div class="container">
+				<label id="FocalLabel">Focal length</label>
+				<input name="focal" id="focal" class="dist number" type="text" placeholder="mm">
+			</div>
+			<div class="container">
+				<label id="HeightLabel">Flight height</label>
+				<input name="height" id="height" class="dist number" type="text" placeholder="meters">
+			</div>
+			<div class="container">
+				<label id="IWidthLabel">Image width</label>
+				<input name="iwidth" id="iwidth" class="dist number" type="text" placeholder="pixels">
+			</div>
+			<div class="container">
+				<label id="IHeightLabel">Image height</label>
+				<input name="iheight" id="iheight" class="dist number" type="text" placeholder="pixels">
+			</div>
+			<div class="container">
+				<label id="ArUcoLabel">ArUco size</label>
+				<input name="asize" id="asize" list="sizes">
+                <datalist id="sizes">
+                    <option value="3 x 3">
+                    <option value="4 x 4">
+                    <option value="5 x 5">
+                    <option value="6 x 6">
+                    <option value="7 x 7">
+                </datalist>
+			</div>
+			<div class="container">
+				<input name="calc" id="calc" class="calc" value="Calculate" type="button">
+				<input name="reset" value="Reset" type="reset" id="reset" class="reset">
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend id="results">Results</legend> 
+			<div class="container">
+                <label id="gsdLabel">GSD<br />cm/pixel</label>
+				<input name="gsd" id="gsd" class="dist number" type="text" placeholder="calculated" readonly>
+            </div>
+			<div class="container">
+                <label id="gwidthLabel">Width<br />m</label>
+				<input name="gwidth" id="gwidth" class="dist number" type="text" placeholder="calculated" readonly>
+            </div>
+			<div class="container">
+                <label id="gheightLabel">Height<br />m</label>
+				<input name="gheight" id="gheight" class="dist number" type="text" placeholder="calculated" readonly>
+            </div>
+			<div class="container">
+                <label id="ArucoLabel">ArUco width<br />cm</label>
+				<input name="aruco" id="aruco" class="dist number" type="text" placeholder="calculated" readonly>
+			</div>
+		</fieldset>
+	</form>
+	<p id="Usage">Usage:</p>
+	<p id="UsageText">Fill the fields in the "GSD and ArUco marker size calculator" group and click on the Calculate button. All input fields are mandatory. Selecting a sensor type some input fields are filled from our small database.
+	</p>
+</body>
+</html>

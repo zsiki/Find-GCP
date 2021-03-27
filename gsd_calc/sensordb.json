@@ -1,0 +1,93 @@
+{
+    "Phantom_4_Pro": {
+        "swidth": 13.2, 
+        "focal": 8.8,
+        "iwidth": 5472,
+        "iheight": 3648
+     },
+     "Mavic_2_Pro": {
+        "swidth": 13.2,
+        "iwidth": 5472,
+        "iheight": 3648
+     },
+    "Phantom_4_Advanced": {
+        "swidth": 13.2,
+        "iwidth": 5472,
+        "iheight": 3648
+     },
+    "Phantom_4_Pro_V2.0": {
+        "swidth": 13.2,
+        "iwidth": 5472,
+        "iheight": 3648
+     },
+    "Zenmuse_X4S": {
+        "swidth": 13.2,
+        "iwidth": 5472,
+        "iheight": 3648
+     },
+    "Mavic_Air_2": {
+        "swidth": 6.4,
+        "iwidth": 6000,
+        "iheight": 4000
+     },
+    "Spark": {
+        "swidth": 6.3,
+        "iwidth": 3968,
+        "iheight": 2976
+     },
+    "Phantom_3_SE": {
+        "swidth": 6.3,
+        "iwidth": 4000,
+        "iheight": 3000
+     },
+    "Mavic_Pro": {
+        "swidth": 6.3,
+        "iwidth": 4056,
+        "iheight": 3040
+     },
+    "Mavic_Pro_Platinium": {
+        "swidth": 6.3,
+        "iwidth": 4056,
+        "iheight": 3040
+     },
+    "Mavic_Air": {
+        "swidth": 6.3,
+        "iwidth": 4056,
+        "iheight": 3040
+     },
+    "Mavic_2_Zoom": {
+        "swidth": 6.3,
+        "iwidth": 4000,
+        "iheight": 3000
+     },
+    "Mavic_Mini": {
+        "swidth": 6.3,
+        "iwidth": 4000,
+        "iheight": 3000
+     },
+    "DJI_Mini_2": {
+        "swidth": 6.3,
+        "iwidth": 4000,
+        "iheight": 3000
+     },
+    "DJI_FPV": {
+        "swidth": 6.3,
+        "iwidth": 3840,
+        "iheight": 2160
+     },
+    "Zenmuse_X5S": {
+        "swidth": 17.3,
+        "iwidth": 5280,
+        "iheight": 3956
+     },
+    "Zenmuse_X5R": {
+        "swidth": 17.3,
+        "iwidth": 4608,
+        "iheight": 3456
+     },
+    "Zenmuse_X7": {
+        "swidth": 23.5,
+        "iwidth": 6016,
+        "iheight": 4008
+     }
+}

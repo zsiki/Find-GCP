@@ -1,0 +1,18 @@
+{ "sensor_type": "Szenzor típus",
+  "GSD_calculator": "Terepi pixel méret és ArUco kód méret számítás",
+	"SWidthLabel": "Szenzor szél.",
+	"FocalLabel": "Fókusz táv.",
+	"HeightLabel": "Repülési mag.",
+	"IWidthLabel": "Kép szélesség",
+	"IHeightLabel": "Kép magasság",
+	"ArUcoLabel": "ArUco méret",
+    "btncalc": "Számít",
+    "btnreset": "Töröl",
+  "results": "Eredmények",
+	"gsdLabel": "GSD<br />cm",
+	"gwidthLabel": "Terepi szélesség<br />m",
+	"gheightLabel": "Terepi magasság<br />m",
+	"ArucoLabel": "ArUco méret<br />cm",
+  "Usage": "Használat",
+	"UsageText": "Töltsön ki minden mezőt a 'Terepi pixel méret és ArUco kód méret számítás' csoportban és nyomja meg a Számít gombot. Minden input mezőt kötelező kitölteni. A szenzor típus kiválasztása esetén több input mezőt automatikusan kitöltünk."
+}
