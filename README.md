@@ -1,6 +1,10 @@
 # Find-GCP
 Find ArUco markers in digital photos
 
+A paper is available about this project in the Baltic Journal of Modern 
+Computing Vol 9. (2021) No.1 
+[Automatic Recognition of ArUco Codes in Land Surveying Tasks](https://www.bjmc.lu.lv/fileadmin/user_upload/lu_portal/projekti/bjmc/Contents/9_1_06_Siki.pdf).
+
 [ArUco markers](http://chev.me/arucogen) are black and white square markers 
 which have unique pattern and ID. [OpenCV](https://opencv.org) library has
 a modul to find ArUco markers in images (you should pip install 
@@ -11,7 +15,8 @@ suitable size and put on the field. The coordinates of markers have to be
 measured by GNSS (GPS), total station or other surveyor's method. We prefer the
 3x3 or 4x4 ArUco library, the larger the squares in the marker, the smaller the 
 the total marker size can be. You should print markers on gray background to
-avoid burt in on photos.
+avoid burt in on photos. You can use gsd_calc utitility to extimate
+necessary marker size from the sensor parameters and fligth altitude.
 
 The 3x3 or 4x4 ArUco markers on the image should be minimum 20 x 20 pixels to be
 detected, the optimal
@@ -253,6 +258,14 @@ optional arguments:
 ![marked_gcps](samples/gcps.png)
 
 Figure 3 Marked GCPs
+
+### gsd\_cal
+
+gsd\_calc is a simple web application written in JavaScript using jQuery to
+estimate the Ground Sample Distance (GSD) and the ArUco markes size depending on
+the sensor data and flight altitude.
+
+It is available on line [here](http://www.agt.bme.hu/on_line/gsd_calc/gsd_calc.html).
 
 # Samples
 
