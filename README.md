@@ -15,7 +15,7 @@ suitable size and put on the field. The coordinates of markers have to be
 measured by GNSS (GPS), total station or other surveyor's method. We prefer the
 3x3 or 4x4 ArUco library, the larger the squares in the marker, the smaller the 
 the total marker size can be. You should print markers on gray background to
-avoid burt in on photos. You can use gsd_calc utitility to extimate
+avoid burt in of white on photos. You can use gsd_calc utitility to extimate
 necessary marker size from the sensor parameters and fligth altitude.
 
 The 3x3 or 4x4 ArUco markers on the image should be minimum 20 x 20 pixels to be
@@ -154,6 +154,18 @@ Fig.1. Burnt in effect and the --ignore
 ![gray black marker](samples/grey_black.png)
 
 Fig.2. Burnt in effect reduced by black/grey marker. Original marker left, marker on image right.
+
+Sample imput file for GCP coordinates (pointID easting northing elevation):
+
+```
+0 650544.828 237514.298 104.215
+1 650552.086 237521.011 104.129
+2 650546.305 237521.605 104.217
+3 650534.729 237526.552 104.267
+4 650542.850 237532.382 104.165
+5 650553.513 237514.344 104.169
+6 650552.275 237505.909 104.196
+```
 
 See our publication in Baltic Journal of Modern Computing:
 [Automatic Recognition of ArUco Codes in Land Surveying Tasks](https://www.bjmc.lu.lv/fileadmin/user_upload/lu_portal/projekti/bjmc/Contents/9_1_06_Siki.pdf)
