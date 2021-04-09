@@ -14,7 +14,7 @@
         <fieldset>
             <legend id="sensor_type">Sensor type</legend>
             <div class="container">
-                <select name="sensors" id="sensors">
+                <select name="sensors" id="sensors" class="inp">
                     <option value="empty">----</option>
                 </select>
         </fieldset>
@@ -22,23 +22,23 @@
 			<legend id="GSD_calculator">Sensor data</legend> 
 			<div class="container">
 				<label id="SWidthLabel">Sensor width</label>
-				<input name="swidth" id="swidth" class="dist number" type="text" placeholder="mm" autofocus>
+				<input name="swidth" id="swidth" class="inp" type="text" placeholder="mm" autofocus>
 			</div>
 			<div class="container">
 				<label id="FocalLabel">Focal length</label>
-				<input name="focal" id="focal" class="dist number" type="text" placeholder="mm">
+				<input name="focal" id="focal" class="inp" type="text" placeholder="mm">
 			</div>
 			<div class="container">
 				<label id="IWidthLabel">Image width</label>
-				<input name="iwidth" id="iwidth" class="dist number" type="text" placeholder="pixels">
+				<input name="iwidth" id="iwidth" class="inp" type="text" placeholder="pixels">
 			</div>
 			<div class="container">
 				<label id="IHeightLabel">Image height</label>
-				<input name="iheight" id="iheight" class="dist number" type="text" placeholder="pixels">
+				<input name="iheight" id="iheight" class="inp" type="text" placeholder="pixels">
 			</div>
 			<div class="container">
 				<label id="HeightLabel">Flight height</label>
-				<input name="height" id="height" class="dist number" type="text" placeholder="meters">
+				<input name="height" id="height" class="inp" type="text" placeholder="meters">
 			</div>
 			<div class="container">
 				<label id="ArUcoLabel">ArUco size</label>
@@ -60,19 +60,19 @@
 			<legend id="results">Results</legend> 
 			<div class="container">
                 <label id="gsdLabel">GSD<br />cm/pixel</label>
-				<input name="gsd" id="gsd" class="dist number" type="text" placeholder="calculated" readonly>
+				<input name="gsd" id="gsd" class="calculated" type="text" placeholder="calculated" readonly>
             </div>
 			<div class="container">
                 <label id="gwidthLabel">Width<br />m</label>
-				<input name="gwidth" id="gwidth" class="dist number" type="text" placeholder="calculated" readonly>
+				<input name="gwidth" id="gwidth" class="calculated" type="text" placeholder="calculated" readonly>
             </div>
 			<div class="container">
                 <label id="gheightLabel">Height<br />m</label>
-				<input name="gheight" id="gheight" class="dist number" type="text" placeholder="calculated" readonly>
+				<input name="gheight" id="gheight" class="calculated" type="text" placeholder="calculated" readonly>
             </div>
 			<div class="container">
                 <label id="ArucoLabel">ArUco width<br />cm</label>
-				<input name="aruco" id="aruco" class="dist number" type="text" placeholder="calculated" readonly>
+				<input name="aruco" id="aruco" class="calculated" type="text" placeholder="calculated" readonly>
 			</div>
 		</fieldset>
 	</form>

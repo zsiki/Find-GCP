@@ -34,6 +34,10 @@ $(document).ready(function () {
     }
     // load sensor database
     $.getJSON("sensordb.json", fill);
+    // erase results if editing
+    $(".inp").focus(function(e) {
+        $(".calculated").val("")
+    });
 	// calculate if button clicked
 	$("#calc").click(gsd_calc);
     // fill sensor data
