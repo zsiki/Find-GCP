@@ -44,10 +44,10 @@ def img_pos(name):
         exif_data = {PIL.ExifTags.TAGS[k]: v for k, v in exif.items()
                      if k in PIL.ExifTags.TAGS}
     if 'GPSInfo' not in exif_data:
-        return None
+        return exif_data['DateTime'],
     return (to_degrees(exif_data['GPSInfo'][3], exif_data['GPSInfo'][4]),
             to_degrees(exif_data['GPSInfo'][1], exif_data['GPSInfo'][2]),
-            to_num(exif_data['GPSInfo'][6]))
+            to_num(exif_data['GPSInfo'][6]), exif_data['DateTime'])
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     # process parameters
     for iname in sys.argv[1:]:
         p = img_pos(iname)
-        if p:
-            print("{},{:.6f},{:.6f},{:.2f}".format(iname, p[0], p[1], p[2]))
+        if len(p) > 1:          # position found?
+            print("{},{:.6f},{:.6f},{:.2f},{}".format(iname, p[0], p[1], p[2], p[3]))
         else:
-            print("{}, NULL, NULL, NULL".format(iname))
+            print("{},,,,{}".format(iname, p[0]))
