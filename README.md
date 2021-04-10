@@ -5,6 +5,8 @@ A paper is available about this project in the Baltic Journal of Modern
 Computing Vol 9. (2021) No.1 
 [Automatic Recognition of ArUco Codes in Land Surveying Tasks](https://www.bjmc.lu.lv/fileadmin/user_upload/lu_portal/projekti/bjmc/Contents/9_1_06_Siki.pdf).
 
+[The project page on OpenHub](https://www.openhub.net/p/Find-GCP)
+
 [ArUco markers](http://chev.me/arucogen) are black and white square markers 
 which have unique pattern and ID. [OpenCV](https://opencv.org) library has
 a modul to find ArUco markers in images (you should pip install 
