@@ -17,7 +17,7 @@ suitable size and put on the field. The coordinates of markers have to be
 measured by GNSS (GPS), total station or other surveyor's method. We prefer the
 3x3 or 4x4 ArUco library, the larger the squares in the marker, the smaller the 
 the total marker size can be. You should print markers on gray background to
-avoid burt in of white on photos. You can use gsd_calc utitility to extimate
+avoid burt in of white on photos. You can use gsd_calc utitility to estimate
 necessary marker size from the sensor parameters and fligth altitude.
 
 The 3x3 or 4x4 ArUco markers on the image should be minimum 20 x 20 pixels to be
@@ -278,6 +278,15 @@ Figure 3 Marked GCPs
 gsd\_calc is a simple web application written in JavaScript using jQuery to
 estimate the Ground Sample Distance (GSD) and the ArUco markes size depending on
 the sensor data and flight altitude.
+
+There is a small database (realy a JSON file) with the parameters of some 
+cameras. There are three obligatory and two optional parameters in it.
+
+-**focal** focal length of the camera in mm
+-**iheight** image height in pixels (optional)
+-**iwidth** image width in pixels
+-**sheight** sensor width in mm
+-**swidth** sensor height in mm (optional)
 
 It is available on line [here](http://www.agt.bme.hu/on_line/gsd_calc/gsd_calc.html).
 
