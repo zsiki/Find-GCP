@@ -9,19 +9,19 @@
         "iwidth": 4000,
         "swidth": 6.3
     },
+    "GoPro Hero4 Black - 12MP Wide": {
+        "focal": 2.92,
+        "iheight": 3000,
+        "iwidth": 4000,
+        "sheight": 4.55,
+        "swidth": 6.17
+    },
     "Matrice_200_X4S": {
         "focal": 8.8,
         "iheight": 3078,
         "iwidth": 5472,
         "sheight": 8,
         "swidth": 13.2
-    },
-    "GoPro Hero4 Black - 12MP Wide": {
-        "focal": 2.92,
-        "iheight": 3000,
-        "iwidth": 4000,
-        "sheight": 4.55,
-        "swidth": 6.17,
     },
     "Mavic_2_Pro": {
         "focal": 10.35,
