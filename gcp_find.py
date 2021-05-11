@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 """
     GCP finder in a serie of images using opencv aruco markers
-    (c) Zoltan Siki siki (dot) zoltan (at) epito.bme.hu
+    (c) Zoltan Siki siki (dot) zoltan (at) emk.bme.hu
     This code based on
     https://mecaruco2.readthedocs.io/en/latest/notebooks_rst/Aruco/aruco_basics.html
     for details see:
@@ -13,7 +13,9 @@
 """
 import sys
 import os
+import time
 import argparse
+import concurrent.futures
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
@@ -35,23 +37,6 @@ class GcpFind():
             self.aruco_dict = aruco.Dictionary_create(32, 3)
         else:
             self.aruco_dict = aruco.Dictionary_get(args.dict)
-        self.coords = {}
-        self.gcp_found = {}          # initialize gcp to image dict
-        if args.list:
-            # list available aruco dictionary names & exit
-            for act_dict in self.list_dicts():
-                print('{} : {}'.format(act_dict[0], act_dict[1]))
-            sys.exit(0)
-        if not self.check_params():
-            parser.print_help()
-            sys.exit(1)
-
-        if self.args.input:
-            self.coo_input()
-
-        if args.type == 'ODM' and args.epsg is not None:
-            # write epsg code to the beginning of the output
-            self.foutput.write('EPSG:{}\n'.format(args.epsg))
 
         # set aruco parameters from command line arguments
         self.params = params
@@ -76,6 +61,31 @@ class GcpFind():
         self.params.cornerRefinementWinSize = args.refwin
         self.params.cornerRefinementMaxIterations = args.maxiter
         self.params.cornerRefinementMinAccuracy = args.minacc
+        if args.list:
+            # list available aruco dictionary names & exit
+            for act_dict in self.list_dicts():
+                print('{} : {}'.format(act_dict[0], act_dict[1]))
+            # list all aruco parameters
+            for par in dir(self.params):
+                if not par.startswith('__'):
+                    val = getattr(self.params, par)
+                    if type(val) in (int, float, str, bool):
+                        print('{} : {}'.format(par, val))
+            sys.exit(0)
+
+        self.coords = {}
+        self.gcp_found = {}          # initialize gcp to image dict
+        if not self.check_params():
+            parser.print_help()
+            sys.exit(1)
+
+        if self.args.input:
+            self.coo_input()
+
+        if args.type == 'ODM' and args.epsg is not None:
+            # write epsg code to the beginning of the output
+            self.foutput.write('EPSG:{}\n'.format(args.epsg))
+
 
     @staticmethod
     def list_dicts():
@@ -102,13 +112,13 @@ class GcpFind():
         else:
             try:
                 self.foutput = open(args.output, 'w')
-            except:
+            except Exception:
                 print('cannot open output file')
                 return False
         if self.args.input:
             try:
                 self.finput = open(args.input, 'r')
-            except:
+            except Exception:
                 print('cannot open input file')
                 return False
         return True
@@ -138,6 +148,24 @@ class GcpFind():
             for j in self.gcp_found:
                 print('GCP{}: on {} images {}'.format(j, len(self.gcp_found[j]), self.gcp_found[j]))
         self.foutput.close()
+
+    def multi(self, name):
+        print(f'enter func: {name}')
+        time.sleep(2)
+        print(f'exit: {name}')
+
+    def multi_process_images(self):
+        """ process images in multiprocess environment """
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            #executor.map(self.process_image, self.args.names)
+            executor.map(self.multi, self.args.names)
+
+    def process(self):
+        """ start processing of images """
+        if self.args.multi:
+            self.multi_process_images()
+        else:
+            self.process_images()
 
     def process_image(self, image_name):
         """ proces single image
@@ -218,7 +246,7 @@ class GcpFind():
 
 def cmd_params(parser, params):
     """ set up command line argument parser
-    
+
         :param parser: command line parser object
         :param params: ArUco parameters for defaults
     0"""
@@ -242,24 +270,31 @@ def cmd_params(parser, params):
                         help='image files to process')
     # general parameters
     parser.add_argument('-d', '--dict', type=int, default=def_dict,
-                        help='marker dictionary id, default={} (DICT_4X4_100)'.format(def_dict))
+                        help='marker dictionary id, default={} (DICT_4X4_100)'
+                        .format(def_dict))
     parser.add_argument('-o', '--output', type=str, default=def_output,
                         help='name of output GCP list file, default stdout')
     parser.add_argument('-t', '--type', choices=['ODM', 'VisualSfM'],
                         default=def_type,
-                        help='target program ODM or VisualSfM, default {}'.format(def_type))
+                        help='target program ODM or VisualSfM, default {}'
+                        .format(def_type))
     parser.add_argument('-i', '--input', type=str, default=def_input,
-                        help='name of input GCP coordinate file, default {}'.format(def_input))
+                        help='name of input GCP coordinate file, default {}'
+                        .format(def_input))
     parser.add_argument('-s', '--separator', type=str, default=def_separator,
-                        help='input file separator, default {}'.format(def_separator))
+                        help='input file separator, default {}'
+                        .format(def_separator))
     parser.add_argument('-v', '--verbose', action="store_true",
                         help='verbose output to stdout')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-m', '--multi', action="store_true",
+                        help='paralel process of images')
+    group.add_argument('--debug', action="store_true",
+                        help='show detected markers on image')
     parser.add_argument('-l', '--list', action="store_true",
                         help='output dictionary names and ids and exit')
     parser.add_argument('--epsg', type=int, default=None,
                         help='epsg code for gcp coordinates, default None')
-    parser.add_argument('--debug', action="store_true",
-                        help='show detected markers on image')
     # parameters for marker display
     parser.add_argument('--markersize', type=int, default=def_markersize,
                         help='marker size on debug image, use together with debug')
@@ -286,71 +321,93 @@ def cmd_params(parser, params):
                         help='detect inverted markers')
     parser.add_argument('--winmin', type=int,
                         default=params.adaptiveThreshWinSizeMin,
-                        help='adaptive tresholding window min size, default {}'.format(params.adaptiveThreshWinSizeMin))
+                        help='adaptive tresholding window min size, default {}'
+                        .format(params.adaptiveThreshWinSizeMin))
     parser.add_argument('--winmax', type=int,
                         default=params.adaptiveThreshWinSizeMax,
-                        help='adaptive thresholding window max size, default {}'.format(params.adaptiveThreshWinSizeMax))
+                        help='adaptive thresholding window max size, default {}'
+                        .format(params.adaptiveThreshWinSizeMax))
     parser.add_argument('--winstep', type=int,
                         default=params.adaptiveThreshWinSizeStep,
-                        help='adaptive thresholding window size step , default {}'.format(params.adaptiveThreshWinSizeStep))
+                        help='adaptive thresholding window size step , default {}'
+                        .format(params.adaptiveThreshWinSizeStep))
     parser.add_argument('--thres', type=float,
                         default=params.adaptiveThreshConstant,
-                        help='adaptive threshold constant, default {}'.format(params.adaptiveThreshConstant))
+                        help='adaptive threshold constant, default {}'
+                        .format(params.adaptiveThreshConstant))
     parser.add_argument('--minrate', type=float,
                         default=params.minMarkerPerimeterRate,
-                        help='min marker perimeter rate, default {}'.format(params.minMarkerPerimeterRate))
+                        help='min marker perimeter rate, default {}'
+                        .format(params.minMarkerPerimeterRate))
     parser.add_argument('--maxrate', type=float,
                         default=params.maxMarkerPerimeterRate,
-                        help='max marker perimeter rate, default {}'.format(params.maxMarkerPerimeterRate))
+                        help='max marker perimeter rate, default {}'
+                        .format(params.maxMarkerPerimeterRate))
     parser.add_argument('--poly', type=float,
                         default=params.polygonalApproxAccuracyRate,
-                        help='polygonal approx accuracy rate, default {}'.format(params.polygonalApproxAccuracyRate))
+                        help='polygonal approx accuracy rate, default {}'
+                        .format(params.polygonalApproxAccuracyRate))
     parser.add_argument('--corner', type=float,
                         default=params.minCornerDistanceRate,
-                        help='minimum distance any pair of corners in the same marker, default {}'.format(params.minCornerDistanceRate))
+                        help='minimum distance any pair of corners in the same marker, default {}'
+                        .format(params.minCornerDistanceRate))
     parser.add_argument('--markerdist', type=float,
                         default=params.minMarkerDistanceRate,
-                        help='minimum distance any pair of corners from different markers, default {}'.format(params.minMarkerDistanceRate))
+                        help='minimum distance any pair of corners from different markers, default {}'
+                        .format(params.minMarkerDistanceRate))
     parser.add_argument('--borderdist', type=int,
                         default=params.minDistanceToBorder,
-                        help='minimum distance any marker corner to image border, default {}'.format(params.minDistanceToBorder))
+                        help='minimum distance any marker corner to image border, default {}'
+                        .format(params.minDistanceToBorder))
     parser.add_argument('--borderbits', type=int,
                         default=params.markerBorderBits,
-                        help='width of marker border, default {}'.format(params.markerBorderBits))
+                        help='width of marker border, default {}'
+                        .format(params.markerBorderBits))
     parser.add_argument('--otsu', type=float, default=params.minOtsuStdDev,
-                        help='minimum stddev of pixel values, default {}'.format(params.minOtsuStdDev))
+                        help='minimum stddev of pixel values, default {}'
+                        .format(params.minOtsuStdDev))
     parser.add_argument('--persp', type=int,
                         default=params.perspectiveRemovePixelPerCell,
-                        help='number of pixels per cells, default {}'.format(params.perspectiveRemovePixelPerCell))
+                        help='number of pixels per cells, default {}'
+                        .format(params.perspectiveRemovePixelPerCell))
     parser.add_argument('--ignore', type=float,
                         default=params.perspectiveRemoveIgnoredMarginPerCell,
-                        help='Ignored pixels at cell borders, default {}'.format(params.perspectiveRemoveIgnoredMarginPerCell))
+                        help='Ignored pixels at cell borders, default {}'
+                        .format(params.perspectiveRemoveIgnoredMarginPerCell))
     parser.add_argument('--error', type=float,
                         default=params.maxErroneousBitsInBorderRate,
-                        help='Border bits error rate, default {}'.format(params.maxErroneousBitsInBorderRate))
+                        help='Border bits error rate, default {}'
+                        .format(params.maxErroneousBitsInBorderRate))
     parser.add_argument('--correct', type=float,
                         default=params.errorCorrectionRate,
-                        help='Bit correction rate, default {}'.format(params.errorCorrectionRate))
+                        help='Bit correction rate, default {}'
+                        .format(params.errorCorrectionRate))
     parser.add_argument('--refinement', type=int,
                         default=params.cornerRefinementMethod,
-                        help='Subpixel process method, default {}'.format(params.cornerRefinementMethod))
+                        help='Subpixel process method, default {}'
+                        .format(params.cornerRefinementMethod))
     parser.add_argument('--refwin', type=int,
                         default=params.cornerRefinementWinSize,
-                        help='Window size for subpixel refinement, default {}'.format(params.cornerRefinementWinSize))
+                        help='Window size for subpixel refinement, default {}'
+                        .format(params.cornerRefinementWinSize))
     parser.add_argument('--maxiter', type=int,
                         default=params.cornerRefinementMaxIterations,
-                        help='Stop criteria for subpixel process, default {}'.format(params.cornerRefinementMaxIterations))
+                        help='Stop criteria for subpixel process, default {}'
+                        .format(params.cornerRefinementMaxIterations))
     parser.add_argument('--minacc', type=float,
                         default=params.cornerRefinementMinAccuracy,
-                        help='Stop criteria for subpixel process, default {}'.format(params.cornerRefinementMinAccuracy))
+                        help='Stop criteria for subpixel process, default {}'
+                        .format(params.cornerRefinementMinAccuracy))
 
 if __name__ == "__main__":
-
+    T1 = time.perf_counter()
     # set up command line argument parser
     params = aruco.DetectorParameters_create()
     parser = argparse.ArgumentParser()
     cmd_params(parser, params)
     # parse command line arguments
-    args = parser.parse_args()
+    args= parser.parse_args()
     gcps = GcpFind(args, params, parser)
-    gcps.process_images()
+    gcps.process()
+    T2 = time.perf_counter()
+    print(f'Finished in {T2-T1} seconds')
