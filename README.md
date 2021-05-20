@@ -10,7 +10,7 @@ Computing Vol 9. (2021) No.1
 [ArUco markers](http://chev.me/arucogen) are black and white square markers 
 which have unique pattern and ID. [OpenCV](https://opencv.org) library has
 a modul to find ArUco markers in images (you should pip install 
-*opencv-python*, *opencv-contrib-python*, *PIL*, *numpy* and *matplotlib*).
+*opencv-python*, *opencv-contrib-python*, *PIL*, *pil.imagetk*, *numpy* and *matplotlib*).
 
 Before taking the photos the different ArUco markers have to be printed in the
 suitable size and put on the field. The coordinates of markers have to be
@@ -33,7 +33,7 @@ It has command line interface (CLI) only. There are several parameters:
 
 ```
 usage: gcp_find.py [-h] [-d DICT] [-o OUTPUT] [-t {ODM,VisualSfM}] [-i INPUT]
-                   [-s SEPARATOR] [-v] [-l] [--epsg EPSG] [--debug]
+                   [-s SEPARATOR] [-v] [-m | --debug] [-l] [--epsg EPSG] [-a]
                    [--markersize MARKERSIZE] [--markerstyle MARKERSTYLE]
                    [--markerstyle1 MARKERSTYLE1] [--edgecolor EDGECOLOR]
                    [--edgewidth EDGEWIDTH] [--fontsize FONTSIZE]
@@ -64,9 +64,10 @@ optional arguments:
   -s SEPARATOR, --separator SEPARATOR
                         input file separator, default
   -v, --verbose         verbose output to stdout
+  --debug               show detected markers on image
   -l, --list            output dictionary names and ids and exit
   --epsg EPSG           epsg code for gcp coordinates, default None
-  --debug               show detected markers on image
+  -a, --adjust          adjust colors by built in lookup table
   --markersize MARKERSIZE
                         marker size on debug image, use together with debug
   --markerstyle MARKERSTYLE
@@ -120,7 +121,6 @@ optional arguments:
   --refwin REFWIN       Window size for subpixel refinement, default 5
   --maxiter MAXITER     Stop criteria for subpixel process, default 30
   --minacc MINACC       Stop criteria for subpixel process, default 0.1
-
 ```
 
 Parameters from *winmin* to *minacc* are customizable parameters for ArUco
@@ -148,6 +148,7 @@ There is an other solution to reduce the
 burnt effect, use grey paper to print the aruco codes. The second figure below
 shows the original black/grey marker and the marker on the image. Thanks to the
 adaptive thresholding in the ArUco module, grey and black can be separated.
+*adjust* can also be used to reduce the effect of white burnt in.
 
 ![burnt in effect](samples/burnt.png)
 

@@ -156,13 +156,6 @@ class GcpFind():
         if self.args.output != sys.stdout:
             self.foutput.close()
 
-    def process(self):
-        """ start processing of images """
-        if self.args.multi:
-            self.multi_process_images()
-        else:
-            self.process_images()
-
     def process_image(self, image_name):
         """ proces single image
 
@@ -289,8 +282,6 @@ def cmd_params(parser, params):
     parser.add_argument('-v', '--verbose', action="store_true",
                         help='verbose output to stdout')
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('-m', '--multi', action="store_true",
-                       help='paralel process of images')
     group.add_argument('--debug', action="store_true",
                        help='show detected markers on image')
     parser.add_argument('-l', '--list', action="store_true",
@@ -412,6 +403,6 @@ if __name__ == "__main__":
     # parse command line arguments
     args = parser.parse_args()
     gcps = GcpFind(args, params, parser)
-    gcps.process()
+    gcps.process_images()
     T2 = time.perf_counter()
     print(f'Finished in {T2-T1} seconds')
