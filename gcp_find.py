@@ -15,7 +15,6 @@ import sys
 import os
 import time
 import argparse
-import concurrent.futures
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
@@ -23,6 +22,8 @@ from cv2 import aruco
 
 class GcpFind():
     """ class to collect GCPs on an image """
+    LUT_IN = [0, 158, 216, 255]
+    LUT_OUT = [0, 22, 80, 176]
 
     def __init__(self, args, params, parser):
         """ Initialize GcpFind object
@@ -80,11 +81,15 @@ class GcpFind():
             sys.exit(1)
 
         if self.args.input:
+            # load GCP coords
             self.coo_input()
 
         if args.type == 'ODM' and args.epsg is not None:
             # write epsg code to the beginning of the output
             self.foutput.write('EPSG:{}\n'.format(args.epsg))
+        # lookup table for color correction
+        self.lut = np.interp(np.arange(0, 256), self.LUT_IN,
+                             self.LUT_OUT).astype(np.uint8)
 
 
     @staticmethod
@@ -146,19 +151,10 @@ class GcpFind():
             self.process_image(f_name)
         if self.args.verbose:
             for j in self.gcp_found:
-                print('GCP{}: on {} images {}'.format(j, len(self.gcp_found[j]), self.gcp_found[j]))
-        self.foutput.close()
-
-    def multi(self, name):
-        print(f'enter func: {name}')
-        time.sleep(2)
-        print(f'exit: {name}')
-
-    def multi_process_images(self):
-        """ process images in multiprocess environment """
-        with concurrent.futures.ProcessPoolExecutor() as executor:
-            #executor.map(self.process_image, self.args.names)
-            executor.map(self.multi, self.args.names)
+                print('GCP{}: on {} images {}'.format(j, len(self.gcp_found[j]),
+                                                      self.gcp_found[j]))
+        if self.args.output != sys.stdout:
+            self.foutput.close()
 
     def process(self):
         """ start processing of images """
@@ -177,7 +173,12 @@ class GcpFind():
             print('error reading image: {}'.format(image_name))
             return
         # convert image to gray
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        if self.args.adjust:
+            # adjust colors for better recognition
+            tmp = cv2.LUT(frame, self.lut)
+            gray = cv2.cvtColor(tmp, cv2.COLOR_BGR2GRAY)
+        else:
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # find markers
         corners, ids, _ = aruco.detectMarkers(gray,
                                               self.aruco_dict,
@@ -196,7 +197,8 @@ class GcpFind():
         if self.args.debug:  # show found ids in debug mode
             plt.figure()
             plt.title("{} GCP, {} duplicate found on {}".format(len(ids), len(ids) - len(set(idsl)), image_name))
-            aruco.drawDetectedMarkers(frame, corners, ids)
+            # show markers on original image
+            aruco.drawDetectedMarkers(gray, corners, ids)
             plt.imshow(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         for i in range(ids.size):
             j = ids[i][0]
@@ -288,13 +290,15 @@ def cmd_params(parser, params):
                         help='verbose output to stdout')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-m', '--multi', action="store_true",
-                        help='paralel process of images')
+                       help='paralel process of images')
     group.add_argument('--debug', action="store_true",
-                        help='show detected markers on image')
+                       help='show detected markers on image')
     parser.add_argument('-l', '--list', action="store_true",
                         help='output dictionary names and ids and exit')
     parser.add_argument('--epsg', type=int, default=None,
                         help='epsg code for gcp coordinates, default None')
+    parser.add_argument('-a', '--adjust', action="store_true",
+                        help='adjust colors by built in lookup table')
     # parameters for marker display
     parser.add_argument('--markersize', type=int, default=def_markersize,
                         help='marker size on debug image, use together with debug')
@@ -406,7 +410,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     cmd_params(parser, params)
     # parse command line arguments
-    args= parser.parse_args()
+    args = parser.parse_args()
     gcps = GcpFind(args, params, parser)
     gcps.process()
     T2 = time.perf_counter()
