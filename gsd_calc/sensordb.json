@@ -1,4 +1,11 @@
 {
+    "Birdie_Sony_A6000": {
+        "focal": 21,
+        "iheight": 4000,
+        "iwidth": 6000,
+        "sheight": 15.6,
+        "swidth": 23.5
+    },
     "DJI_FPV": {
         "iheight": 2160,
         "iwidth": 3840,
