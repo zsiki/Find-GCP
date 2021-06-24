@@ -17,7 +17,8 @@ suitable size and put on the field. The coordinates of markers have to be
 measured by GNSS (GPS), total station or other surveyor's method. We prefer the
 3x3 or 4x4 ArUco library, the larger the squares in the marker, the smaller the 
 the total marker size can be. You should print markers on gray background to
-avoid burt in of white on photos. You can use gsd_calc utitility to estimate
+avoid burt in of white on photos. You can use [gsd_calc](http://www.agt.bme.hu/on_line/gsd_calc/gsd_calc.html)
+utitility to estimate
 necessary marker size from the sensor parameters and fligth altitude.
 
 The 3x3 or 4x4 ArUco markers on the image should be minimum 20 x 20 pixels to be
