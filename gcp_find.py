@@ -402,6 +402,12 @@ if __name__ == "__main__":
     cmd_params(parser, params)
     # parse command line arguments
     args = parser.parse_args()
+    if os.name == "nt":
+        # extend wildcards on indows 
+        names = []
+        for name in args.names:
+            names += glob.glob(name)
+        args.names = names
     gcps = GcpFind(args, params, parser)
     gcps.process_images()
     T2 = time.perf_counter()
