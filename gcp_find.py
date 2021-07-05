@@ -14,6 +14,7 @@
 import sys
 import os
 import time
+import glob
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
@@ -403,7 +404,7 @@ if __name__ == "__main__":
     # parse command line arguments
     args = parser.parse_args()
     if os.name == "nt":
-        # extend wildcards on indows 
+        # extend wildcards on indows
         names = []
         for name in args.names:
             names += glob.glob(name)
