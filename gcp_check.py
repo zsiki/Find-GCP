@@ -44,9 +44,12 @@ class GcpCheck():
             for line in fp:
                 fields = line.strip("\n\r").split(self.separator)
                 if len(fields) > 3:
-                    self.gcps.append([int(fields[-4]), int(fields[-3]),
-                                     fields[-2], int(fields[-1])])
-                    imgs.add(fields[-2])
+                    try:
+                        self.gcps.append([int(fields[-4]), int(fields[-3]),
+                                         fields[-2], int(fields[-1])])
+                        imgs.add(fields[-2])
+                    except:
+                        pass
         self.imgs = sorted(list(imgs))
 
     def ShowImage(self, img_name, gcp_id=None):
