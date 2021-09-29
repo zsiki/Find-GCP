@@ -5,6 +5,7 @@
     Generate coordinate list from exif info of images
     (C) Zoltan Siki
 """
+# TODO use exiftool instead of PIL to get yaw, pitch, roll and other metadata
 
 import sys
 import PIL.Image
