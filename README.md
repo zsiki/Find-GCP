@@ -12,6 +12,8 @@ which have unique pattern and ID. [OpenCV](https://opencv.org) library has
 a modul to find ArUco markers in images (you should pip install 
 *opencv-python*, *opencv-contrib-python*, *PIL*, *pil.imagetk*, *numpy* and *matplotlib*).
 
+```pip install opencv-python opencv-contrib-python PIL pil.imagetk numpy matplotlib```
+
 Before taking the photos the different ArUco markers have to be printed in the
 suitable size and put on the field. The coordinates of markers have to be
 measured by GNSS (GPS), total station or other surveyor's method. We prefer the
