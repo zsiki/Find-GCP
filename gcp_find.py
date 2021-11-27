@@ -30,7 +30,7 @@ class GcpFind():
         """ Initialize GcpFind object
 
             :param args: processed command line parameters
-            :param params: aruco find param
+            :param params: aruco find params
             :param parser: parser object to print help
         """
         self.args = args
@@ -204,26 +204,42 @@ class GcpFind():
             y = int(round(np.average(corners[i][0][:, 1])))
             if self.args.type == 'ODM':
                 if j in self.coords:
-                    self.foutput.write('{:.3f} {:.3f} {:.3f} {} {} {} {}\n'.format(
-                        self.coords[j][0], self.coords[j][1], self.coords[j][2],
-                        x, y, os.path.basename(image_name), j))
+                    if len(self.gcp_found[j]) <= self.args.limit:
+                        self.foutput.write('{:.3f} {:.3f} {:.3f} {} {} {} {}\n'.format(
+                            self.coords[j][0], self.coords[j][1], self.coords[j][2],
+                            x, y, os.path.basename(image_name), j))
+                    else:
+                        print("GCP {} over limit it is dropped on image {}".format(
+                            j, os.path.basename(image_name)))
                 else:
                     print("No coordinates for {}".format(j))
             elif self.args.type == 'VisualSfM':
                 if j in self.coords:
-                    self.foutput.write('{} {} {} {:.3f} {:.3f} {:.3f} {}\n'.format(
-                        os.path.basename(image_name), x, y,
-                        self.coords[j][0], self.coords[j][1], self.coords[j][2], j))
+                    if len(self.gcp_found[j]) <= self.args.limit:
+                        self.foutput.write('{} {} {} {:.3f} {:.3f} {:.3f} {}\n'.format(
+                            os.path.basename(image_name), x, y,
+                            self.coords[j][0], self.coords[j][1], self.coords[j][2], j))
+                    else:
+                        print("GCP {} over limit it is dropped on image {}".format(
+                            j, os.path.basename(image_name)))
                 else:
                     print("No coordinates for {}".format(j))
             else:
                 if j in self.coords:
-                    self.foutput.write('{:.3f} {:.3f} {:.3f} {} {} {} {}\n'.format(
-                        self.coords[j][0], self.coords[j][1], self.coords[j][2],
-                        x, y, os.path.basename(image_name), j))
+                    if len(self.gcp_found[j]) <= self.args.limit:
+                        self.foutput.write('{:.3f} {:.3f} {:.3f} {} {} {} {}\n'.format(
+                            self.coords[j][0], self.coords[j][1], self.coords[j][2],
+                            x, y, os.path.basename(image_name), j))
+                    else:
+                        print("GCP {} over limit it is dropped on image {}".format(
+                            j, os.path.basename(image_name)))
                 else:
-                    self.foutput.write('{} {} {} {}\n'.format(x, y,
-                                                              os.path.basename(image_name), j))
+                    if len(self.gcp_found[j]) <= self.args.limit:
+                        self.foutput.write('{} {} {} {}\n'.format(x, y,
+                                                                  os.path.basename(image_name), j))
+                    else:
+                        print("GCP {} over limit it is dropped on image {}".format(
+                            j, os.path.basename(image_name)))
             if self.args.debug:
                 if j in self.coords:
                     plt.plot(x, y, args.markerstyle, markersize=self.args.markersize,
@@ -261,6 +277,7 @@ def cmd_params(parser, params):
     def_fontcolor1 = 'y'            # outer color for GP ID annotation
     def_fontweight = 'normal'       # weight for inner text
     def_fontweight1 = 'bold'        # weight for outet text
+    def_limit = 999                 # limit for individual id records in output
 
     parser.add_argument('names', metavar='file_names', type=str, nargs='*',
                         help='image files to process')
@@ -312,6 +329,8 @@ def cmd_params(parser, params):
                         help='inner font weight on debug image, use together with debug')
     parser.add_argument('--fontweight1', type=str, default=def_fontweight1,
                         help='outer font weight on debug image, use together with debug')
+    parser.add_argument('--limit', type=int, default=def_limit,
+                        help='limit the number of records in the output for a unique id')
     # parameters for ArUco detection
     parser.add_argument('-r', '--inverted', action="store_true",
                         help='detect inverted markers')
