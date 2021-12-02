@@ -16,6 +16,7 @@ import os
 import time
 import glob
 import argparse
+from multiprocessing import Pool
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
@@ -26,12 +27,11 @@ class GcpFind():
     LUT_IN = [0, 158, 216, 255]
     LUT_OUT = [0, 22, 80, 176]
 
-    def __init__(self, args, params, parser):
+    def __init__(self, args, params):
         """ Initialize GcpFind object
 
             :param args: processed command line parameters
             :param params: aruco find params
-            :param parser: parser object to print help
         """
         self.args = args
         # prepare aruco
@@ -66,32 +66,28 @@ class GcpFind():
         if args.list:
             # list available aruco dictionary names & exit
             for act_dict in self.list_dicts():
-                print('{} : {}'.format(act_dict[0], act_dict[1]))
+                print('{} : {}'.format(act_dict[0], act_dict[1]), file=sys.stderr)
             # list all aruco parameters
             for par in dir(self.params):
                 if not par.startswith('__'):
                     val = getattr(self.params, par)
                     if type(val) in (int, float, str, bool):
-                        print('{} : {}'.format(par, val))
+                        print('{} : {}'.format(par, val), file=sys.stderr)
             sys.exit(0)
 
         self.coords = {}
         self.gcp_found = {}          # initialize gcp to image dict
         if not self.check_params():
-            parser.print_help()
             sys.exit(1)
 
         if self.args.input:
             # load GCP coords
             self.coo_input()
 
-        if args.type == 'ODM' and args.epsg is not None:
-            # write epsg code to the beginning of the output
-            self.foutput.write('EPSG:{}\n'.format(args.epsg))
         # lookup table for color correction
         self.lut = np.interp(np.arange(0, 256), self.LUT_IN,
                              self.LUT_OUT).astype(np.uint8)
-
+        self.gcps = []  # list for found gcps
 
     @staticmethod
     def list_dicts():
@@ -111,21 +107,12 @@ class GcpFind():
             :return: False in case of parameter error
         """
         if not self.args.names:
-            print("no input images given")
+            print("no input images given", file=sys.stderr)
             return False
-        if self.args.output == sys.stdout:
-            self.foutput = args.output
-        else:
-            try:
-                self.foutput = open(args.output, 'w')
-            except Exception:
-                print('cannot open output file')
-                return False
         if self.args.input:
-            try:
-                self.finput = open(args.input, 'r')
-            except Exception:
-                print('cannot open input file')
+            if not os.path.isfile(self.args.input) or \
+               not os.access(self.args.input, os.R_OK):
+                print('cannot open input file {}'.format(self.args.input), file=sys.stderr)
                 return False
         return True
 
@@ -134,13 +121,13 @@ class GcpFind():
             input file format: point_id easting northing elevation
             coordinates are stored in coords dict
         """
-        for line in self.finput:
-            co_list = line.strip().split(args.separator)
-            if len(co_list) < 4:
-                print("Illegal input: {}".format(line))
-                continue
-            self.coords[int(co_list[0])] = [float(x) for x in co_list[1:4]]
-        self.finput.close()
+        with open(self.args.input, 'r') as finput:
+            for line in finput:
+                co_list = line.strip().split(args.separator)
+                if len(co_list) < 4:
+                    print("Illegal input: {}".format(line), file=sys.stderr)
+                    continue
+                self.coords[int(co_list[0])] = [float(x) for x in co_list[1:4]]
 
     def process_images(self):
         """ process all images """
@@ -148,14 +135,12 @@ class GcpFind():
         for f_name in self.args.names:
             # read actual image file
             if self.args.verbose:
-                print("processing {}".format(f_name))
+                print("processing {}".format(f_name), file=sys.stderr)
             self.process_image(f_name)
         if self.args.verbose:
             for j in self.gcp_found:
                 print('GCP{}: on {} images {}'.format(j, len(self.gcp_found[j]),
-                                                      self.gcp_found[j]))
-        if self.args.output != sys.stdout:
-            self.foutput.close()
+                                                      self.gcp_found[j]), file=sys.stderr)
 
     def process_image(self, image_name):
         """ proces single image
@@ -164,7 +149,7 @@ class GcpFind():
         """
         frame = cv2.imread(image_name)
         if frame is None:
-            print('error reading image: {}'.format(image_name))
+            print('error reading image: {}'.format(image_name), file=sys.stderr)
             return
         # convert image to gray
         if self.args.adjust:
@@ -178,16 +163,15 @@ class GcpFind():
                                               self.aruco_dict,
                                               parameters=self.params)
         if ids is None:
-            print('No markers found on image {}'.format(image_name))
+            print('No markers found on image {}'.format(image_name), file=sys.stderr)
             return
         # check duplicate ids
         idsl = [pid[0] for pid in ids]
         if len(ids) - len(set(idsl)):
-            print('duplicate markers on image {}'.format(image_name))
-            print('marker ids: {}'.format(sorted(idsl)))
+            print('duplicate markers on image {}\nmarker ids: {}'.format(image_name, sorted(idsl)), file=sys.stderr)
         # calculate center & output found markers
         if self.args.verbose:
-            print('  {} GCP markers found'.format(ids.size))
+            print('  {} GCP markers found'.format(ids.size), file=sys.stderr)
         if self.args.debug:  # show found ids in debug mode
             plt.figure()
             plt.title("{} GCP, {} duplicate found on {}".format(len(ids), len(ids) - len(set(idsl)), image_name))
@@ -202,44 +186,7 @@ class GcpFind():
             # calculate center of aruco code
             x = int(round(np.average(corners[i][0][:, 0])))
             y = int(round(np.average(corners[i][0][:, 1])))
-            if self.args.type == 'ODM':
-                if j in self.coords:
-                    if len(self.gcp_found[j]) <= self.args.limit:
-                        self.foutput.write('{:.3f} {:.3f} {:.3f} {} {} {} {}\n'.format(
-                            self.coords[j][0], self.coords[j][1], self.coords[j][2],
-                            x, y, os.path.basename(image_name), j))
-                    else:
-                        print("GCP {} over limit it is dropped on image {}".format(
-                            j, os.path.basename(image_name)))
-                else:
-                    print("No coordinates for {}".format(j))
-            elif self.args.type == 'VisualSfM':
-                if j in self.coords:
-                    if len(self.gcp_found[j]) <= self.args.limit:
-                        self.foutput.write('{} {} {} {:.3f} {:.3f} {:.3f} {}\n'.format(
-                            os.path.basename(image_name), x, y,
-                            self.coords[j][0], self.coords[j][1], self.coords[j][2], j))
-                    else:
-                        print("GCP {} over limit it is dropped on image {}".format(
-                            j, os.path.basename(image_name)))
-                else:
-                    print("No coordinates for {}".format(j))
-            else:
-                if j in self.coords:
-                    if len(self.gcp_found[j]) <= self.args.limit:
-                        self.foutput.write('{:.3f} {:.3f} {:.3f} {} {} {} {}\n'.format(
-                            self.coords[j][0], self.coords[j][1], self.coords[j][2],
-                            x, y, os.path.basename(image_name), j))
-                    else:
-                        print("GCP {} over limit it is dropped on image {}".format(
-                            j, os.path.basename(image_name)))
-                else:
-                    if len(self.gcp_found[j]) <= self.args.limit:
-                        self.foutput.write('{} {} {} {}\n'.format(x, y,
-                                                                  os.path.basename(image_name), j))
-                    else:
-                        print("GCP {} over limit it is dropped on image {}".format(
-                            j, os.path.basename(image_name)))
+            self.gcps.append((x, y, os.path.basename(image_name), j))
             if self.args.debug:
                 if j in self.coords:
                     plt.plot(x, y, args.markerstyle, markersize=self.args.markersize,
@@ -255,6 +202,62 @@ class GcpFind():
             #plt.legend()
             plt.show()
 
+    def gcp_output(self):
+        """ output GPCs to output file """
+        if self.args.output == sys.stdout:
+            foutput = self.args.output
+        else:
+            try:
+                foutput = open(self.args.output, 'w')
+            except Exception:
+                print('cannot open output file', file=sys.stderr)
+                return
+        if self.args.type == 'ODM' and self.args.epsg is not None:
+            # write epsg code to the beginning of the output
+            foutput.write('EPSG:{}\n'.format(self.args.epsg))
+
+        for gcp in self.gcps:
+            j = gcp[3]
+            if self.args.type == 'ODM':
+                if j in self.coords:
+                    if len(self.gcp_found[j]) <= self.args.limit:
+                        foutput.write('{:.3f} {:.3f} {:.3f} {} {} {} {}\n'.format(
+                            self.coords[j][0], self.coords[j][1], self.coords[j][2],
+                            gcp[0], gcp[1], gcp[2], j))
+                    else:
+                        print("GCP {} over limit it is dropped on image {}".format(
+                            j, gcp[2]), file=sys.stderr)
+                else:
+                    print("No coordinates for {}".format(j), file=sys.stderr)
+            elif self.args.type == 'VisualSfM':
+                if j in self.coords:
+                    if len(self.gcp_found[j]) <= self.args.limit:
+                        foutput.write('{} {} {} {:.3f} {:.3f} {:.3f} {}\n'.format(
+                            gcp[2], gcp[0], gcp[1],
+                            self.coords[j][0], self.coords[j][1], self.coords[j][2], j))
+                    else:
+                        print("GCP {} over limit it is dropped on image {}".format(
+                            j, gcp[2]), file=sys.stderr)
+                else:
+                    print("No coordinates for {}".format(j), file=sys.stderr)
+            else:
+                if j in self.coords:
+                    if len(self.gcp_found[j]) <= self.args.limit:
+                        foutput.write('{:.3f} {:.3f} {:.3f} {} {} {} {}\n'.format(
+                            self.coords[j][0], self.coords[j][1], self.coords[j][2],
+                            gcp[0], gcp[1], gcp[2], j))
+                    else:
+                        print("GCP {} over limit it is dropped on image {}".format(
+                            j, gcp[2]), file=sys.stderr)
+                else:
+                    if len(self.gcp_found[j]) <= self.args.limit:
+                        foutput.write('{} {} {} {}\n'.format(
+                            gcp[0], gcp[1], gcp[2], j))
+                    else:
+                        print("GCP {} over limit it is dropped on image {}".format(
+                            j, gcp[2]), file=sys.stderr)
+        if self.args.output != sys.stdout:
+            foutput.close()
 
 def cmd_params(parser, params):
     """ set up command line argument parser
@@ -428,7 +431,7 @@ if __name__ == "__main__":
         for name in args.names:
             names += glob.glob(name)
         args.names = names
-    gcps = GcpFind(args, params, parser)
+    gcps = GcpFind(args, params)
     gcps.process_images()
     T2 = time.perf_counter()
-    print(f'Finished in {T2-T1} seconds')
+    print(f'Finished in {T2-T1} seconds', file=sys.stderr)
