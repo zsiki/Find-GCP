@@ -323,7 +323,7 @@ Coordinates of GCPs were measured by GNSS and stored in
 The next command will generate the necessary text file for ODM.
 
 ```
-./gcp\_find.py -v -t ODM -i samples/A3.txt --epsg 23700 -o samples/gcp_list.txt --minrate 0.01 --ignore 0.33 -d 99 samples/DJI_017[234].JPG
+./gcp_find.py -v -t ODM -i samples/A3.txt --epsg 23700 -o samples/gcp_list.txt --minrate 0.01 --ignore 0.33 -d 99 samples/DJI_017[234].JPG
 
 processing samples/DJI_0172.JPG
   5 GCP markers found
