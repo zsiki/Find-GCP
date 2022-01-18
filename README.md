@@ -10,7 +10,7 @@ Computing Vol 9. (2021) No.1
 [ArUco markers](http://chev.me/arucogen) are black and white square markers 
 which have unique pattern and ID. [OpenCV](https://opencv.org) library has
 a modul to find ArUco markers in images (you should pip install 
-*opencv-python*, *opencv-contrib-python*, *PIL*, *pil.imagetk*, *numpy* and *matplotlib*).
+*opencv-python*, *opencv-contrib-python*, *Pillow (PIL)*, *pil.imagetk*, *numpy* and *matplotlib*).
 
 ```pip install opencv-python opencv-contrib-python PIL pil.imagetk numpy matplotlib```
 
