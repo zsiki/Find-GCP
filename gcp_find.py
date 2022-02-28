@@ -134,9 +134,9 @@ class GcpFind():
         # process image files from command line
         if self.args.multi:
             pool = Pool(processes=cpu_count())
-            self.gcps = list(pool.map(self.process_image, self.args.names))
+            self.gcps = filter(None, list(pool.map(self.process_image, self.args.names)))
         else:
-            self.gcps = list(map(self.process_image, self.args.names))
+            self.gcps = filter(None, list(map(self.process_image, self.args.names)))
         #for f_name in self.args.names:
             # read actual image file
         #    if self.args.verbose:
@@ -158,7 +158,7 @@ class GcpFind():
         frame = cv2.imread(image_name)
         if frame is None:
             print('error reading image: {}'.format(image_name), file=sys.stderr)
-            return
+            return None
         # convert image to gray
         if self.args.adjust:
             # adjust colors for better recognition
@@ -172,7 +172,7 @@ class GcpFind():
                                               parameters=self.params)
         if ids is None:
             print('No markers found on image {}'.format(image_name), file=sys.stderr)
-            return
+            return None
         # check duplicate ids
         idsl = [pid[0] for pid in ids]
         if len(ids) - len(set(idsl)):
@@ -225,7 +225,7 @@ class GcpFind():
             # write epsg code to the beginning of the output
             foutput.write('EPSG:{}\n'.format(self.args.epsg))
 
-        for gcp_list in filter(None, self.gcps):
+        for gcp_list in self.gcps:
             for gcp in gcp_list:
                 j = gcp[3]
                 if self.args.type == 'ODM':
