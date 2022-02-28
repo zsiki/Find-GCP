@@ -225,7 +225,7 @@ class GcpFind():
             # write epsg code to the beginning of the output
             foutput.write('EPSG:{}\n'.format(self.args.epsg))
 
-        for gcp_list in self.gcps:
+        for gcp_list in filter(None, self.gcps):
             for gcp in gcp_list:
                 j = gcp[3]
                 if self.args.type == 'ODM':
