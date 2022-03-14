@@ -230,6 +230,7 @@ optional arguments:
                         first marker to generate, default= 0
   -e END, --end END     last marker to generate default= -1
   -v, --view            show marker on monitor
+  -g, --grey            generate black/grey marker
 ```
 
 ### gcp\_check.py
