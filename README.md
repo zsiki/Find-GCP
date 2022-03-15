@@ -228,9 +228,11 @@ optional arguments:
                         default= 1 (DICT_4X4_100)
   -s START, --start START
                         first marker to generate, default= 0
-  -e END, --end END     last marker to generate default= -1
+  -e END, --end END     last marker to generate, default= -1
   -v, --view            show marker on monitor
-  -g, --grey            generate black/grey marker
+  -g, --gray            generate black/gray marker
+  --value VALUE         shade of background use with --gray, default=95
+  -p PAD, --pad PAD     border width around marker in inches, default= 0.5
 ```
 
 ### gcp\_check.py
