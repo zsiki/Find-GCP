@@ -76,6 +76,13 @@ class GcpFind():
             sys.exit(0)
 
         self.coords = {}
+        if self.args.nez:
+            self.east = 0   # position of east coordinate in input
+            self.north = 1  # position of north coordinate in input
+        else:
+            self.east = 0   # position of east coordinate in input
+            self.north = 1  # position of north coordinate in input
+        self.elev = 2   # position of elevation in input
         self.gcp_found = {}          # initialize gcp to image dict
         if not self.check_params():
             sys.exit(1)
@@ -233,7 +240,9 @@ class GcpFind():
                     if j in self.coords:
                         if len(self.gcp_found[j]) <= self.args.limit:
                             foutput.write('{} {} {} {} {} {} {}\n'.format(
-                                self.coords[j][0], self.coords[j][1], self.coords[j][2],
+                                self.coords[j][self.east],
+                                self.coords[j][self.north],
+                                self.coords[j][self.elev],
                                 gcp[0], gcp[1], gcp[2], j))
                         else:
                             print("GCP {} over limit it is dropped on image {}".format(
@@ -245,7 +254,8 @@ class GcpFind():
                         if len(self.gcp_found[j]) <= self.args.limit:
                             foutput.write('{} {} {} {} {} {} {}\n'.format(
                                 gcp[2], gcp[0], gcp[1],
-                                self.coords[j][0], self.coords[j][1], self.coords[j][2], j))
+                                self.coords[j][self.east], self.coords[j][self.north],
+                                self.coords[j][self.elev], j))
                         else:
                             print("GCP {} over limit it is dropped on image {}".format(
                                 j, gcp[2]), file=sys.stderr)
@@ -255,8 +265,8 @@ class GcpFind():
                     if j in self.coords:
                         if len(self.gcp_found[j]) <= self.args.limit:
                             foutput.write('{} {} {} {} {} {} {}\n'.format(
-                                self.coords[j][0], self.coords[j][1], self.coords[j][2],
-                                gcp[0], gcp[1], gcp[2], j))
+                                self.coords[j][self.east], self.coords[j][self.north],
+                                self.coords[j][self.elev], gcp[0], gcp[1], gcp[2], j))
                         else:
                             print("GCP {} over limit it is dropped on image {}".format(
                                 j, gcp[2]), file=sys.stderr)
@@ -347,6 +357,8 @@ def cmd_params(parser, params):
                         help='outer font weight on debug image, use together with debug')
     parser.add_argument('--limit', type=int, default=def_limit,
                         help='limit the number of records in the output for a unique id')
+    parser.add_argument('--nez', action="store_true",
+                        help='set the coordinate order in GCP input to North,East,Elevation (compatible with GCPEditorPro)')
     # parameters for ArUco detection
     parser.add_argument('-r', '--inverted', action="store_true",
                         help='detect inverted markers')
@@ -446,7 +458,7 @@ if __name__ == "__main__":
         args.names = names
     if args.multi:
         args.multi = False
-        print("Multi processing is not available yet")
+        print("WAENING -- Multi processing is not available yet")
     gcps = GcpFind(args, params)
     gcps.process_images()
     gcps.gcp_output()
