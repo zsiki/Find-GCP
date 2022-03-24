@@ -36,15 +36,16 @@ It has command line interface (CLI) only. There are several parameters:
 
 ```
 usage: gcp_find.py [-h] [-d DICT] [-o OUTPUT] [-t {ODM,VisualSfM}] [-i INPUT]
-                   [-s SEPARATOR] [-v] [-m | --debug] [-l] [--epsg EPSG] [-a]
-                   [--markersize MARKERSIZE] [--markerstyle MARKERSTYLE]
+                   [-s SEPARATOR] [-v] [--debug | --multi] [-l] [--epsg EPSG]
+                   [-a] [--markersize MARKERSIZE] [--markerstyle MARKERSTYLE]
                    [--markerstyle1 MARKERSTYLE1] [--edgecolor EDGECOLOR]
                    [--edgewidth EDGEWIDTH] [--fontsize FONTSIZE]
                    [--fontcolor FONTCOLOR] [--fontcolor1 FONTCOLOR1]
-                   [--fontweight FONTWEIGHT] [--fontweight1 FONTWEIGHT1] [-r]
-                   [--winmin WINMIN] [--winmax WINMAX] [--winstep WINSTEP]
-                   [--thres THRES] [--minrate MINRATE] [--maxrate MAXRATE]
-                   [--poly POLY] [--corner CORNER] [--markerdist MARKERDIST]
+                   [--fontweight FONTWEIGHT] [--fontweight1 FONTWEIGHT1]
+                   [--limit LIMIT] [--nez] [-r] [--winmin WINMIN]
+                   [--winmax WINMAX] [--winstep WINSTEP] [--thres THRES]
+                   [--minrate MINRATE] [--maxrate MAXRATE] [--poly POLY]
+                   [--corner CORNER] [--markerdist MARKERDIST]
                    [--borderdist BORDERDIST] [--borderbits BORDERBITS]
                    [--otsu OTSU] [--persp PERSP] [--ignore IGNORE]
                    [--error ERROR] [--correct CORRECT]
@@ -68,6 +69,7 @@ optional arguments:
                         input file separator, default
   -v, --verbose         verbose output to stdout
   --debug               show detected markers on image
+  --multi               process images paralel
   -l, --list            output dictionary names and ids and exit
   --epsg EPSG           epsg code for gcp coordinates, default None
   -a, --adjust          adjust colors by built in lookup table
@@ -96,6 +98,10 @@ optional arguments:
   --fontweight1 FONTWEIGHT1
                         outer font weight on debug image, use together with
                         debug
+  --limit LIMIT         limit the number of records in the output for a unique
+                        id
+  --nez                 set the coordinate order in GCP input to
+                        North,East,Elevation (compatible with GCPEditorPro)
   -r, --inverted        detect inverted markers
   --winmin WINMIN       adaptive tresholding window min size, default 3
   --winmax WINMAX       adaptive thresholding window max size, default 23
@@ -124,6 +130,38 @@ optional arguments:
   --refwin REFWIN       Window size for subpixel refinement, default 5
   --maxiter MAXITER     Stop criteria for subpixel process, default 30
   --minacc MINACC       Stop criteria for subpixel process, default 0.1
+
+```
+
+List of the available dictionary codes (see --list):
+
+```
+0 : DICT_4X4_50
+1 : DICT_4X4_100
+2 : DICT_4X4_250
+3 : DICT_4X4_1000
+4 : DICT_5X5_50
+5 : DICT_5X5_100
+6 : DICT_5X5_250
+7 : DICT_5X5_1000
+8 : DICT_6X6_50
+9 : DICT_6X6_100
+10 : DICT_6X6_250
+11 : DICT_6X6_1000
+12 : DICT_7X7_50
+13 : DICT_7X7_100
+14 : DICT_7X7_250
+15 : DICT_7X7_1000
+16 : DICT_ARUCO_ORIGINAL
+17 : DICT_APRILTAG_16H5
+17 : DICT_APRILTAG_16h5
+18 : DICT_APRILTAG_25H9
+18 : DICT_APRILTAG_25h9
+19 : DICT_APRILTAG_36H10
+19 : DICT_APRILTAG_36h10
+20 : DICT_APRILTAG_36H11
+20 : DICT_APRILTAG_36h11
+99 : DICT_3X3_32 custom
 ```
 
 Parameters from *winmin* to *minacc* are customizable parameters for ArUco
