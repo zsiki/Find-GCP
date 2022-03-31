@@ -191,11 +191,11 @@ shows the original black/grey marker and the marker on the image. Thanks to the
 adaptive thresholding in the ArUco module, grey and black can be separated.
 *adjust* can also be used to reduce the effect of white burnt in.
 
-![burnt in effect](samples/burnt.png)
+![burnt in effect](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/burnt.png)
 
 Fig.1. Burnt in effect and the --ignore
 
-![gray black marker](samples/grey_black.png)
+![gray black marker](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/grey_black.png)
 
 Fig.2. Burnt in effect reduced by black/grey marker. Original marker left, marker on image right.
 
@@ -314,7 +314,7 @@ optional arguments:
                         outer font weight on image, default bold
 ```
 
-![marked_gcps](samples/gcps.png)
+![marked_gcps](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/gcps.png)
 
 Figure 3 Marked GCPs
 
