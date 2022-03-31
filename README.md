@@ -3,6 +3,9 @@ Find ArUco markers in digital photos
 
 ![](https://raw.githubusercontent.com/zsiki/Find-GCP/master/fgcp_logo.png)
 
+This project is maintained by the [GeoForAll Lab](http://www.agt.bme.hu/osgeolab/index.php?page=start&lang=en) at the 
+[Department of Geodesy and Surveying](http://geod.bme.hu/geod/hirek?language=en) of the Budapest University of Technology and Economics.
+
 A paper is available about this project in the Baltic Journal of Modern 
 Computing Vol 9. (2021) No.1 
 [Automatic Recognition of ArUco Codes in Land Surveying Tasks](https://www.bjmc.lu.lv/fileadmin/user_upload/lu_portal/projekti/bjmc/Contents/9_1_06_Siki.pdf).
