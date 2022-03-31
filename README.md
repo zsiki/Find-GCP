@@ -278,6 +278,8 @@ optional arguments:
   -p PAD, --pad PAD     border width around marker in inches, default= 0.5
 ```
 
+You can also use Romain Basile's [GCP Aruco Marker Generator](https://github.com/gromain/gcp_aruco_generator) to get SVG markers.
+
 ### gcp\_check.py
 
 It helps the visual check of the found GCPs by gcp\_find.py.
