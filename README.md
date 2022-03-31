@@ -314,7 +314,7 @@ optional arguments:
                         outer font weight on image, default bold
 ```
 
-![marked_gcps](samples/gcps.png)
+![marked_gcps](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/gcps.png)
 
 Figure 3 Marked GCPs
 
