@@ -12,7 +12,7 @@ Computing Vol 9. (2021) No.1
 
 [The project page on OpenHub](https://www.openhub.net/p/Find-GCP)
 
-##Installation
+## Installation
 
 [ArUco markers](http://chev.me/arucogen) are black and white square markers 
 which have unique pattern and ID. [OpenCV](https://opencv.org) library has
@@ -59,6 +59,8 @@ two stones at the upper left and right corners. On the right side image the
 gray spots were removed and recognized.
 
 ![Clear border](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/fixing.png)
+
+Figure 1 Non-clear and clear border
 
 ## Usage
 
@@ -219,7 +221,7 @@ the pixel size in centimetres, in case of 30-50 metres flight altitude, it is
 *ignore* is also a relative value. It defines the percent of pixels to ignore 
 at the border of the elemens of the marker matrix. In strong sunshine the white
 areas are burnt on the image. A 0.33 value (33%) is good for burnt images, the
-green squares on Fig.1. below will be used to detect black/white elements.
+green squares on figure below will be used to detect black/white elements.
 There is an other solution to reduce the
 burnt effect, use grey paper to print the aruco codes. The second figure below
 shows the original black/grey marker and the marker on the image. Thanks to the
@@ -228,11 +230,11 @@ adaptive thresholding in the ArUco module, grey and black can be separated.
 
 ![burnt in effect](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/burnt.png)
 
-Fig.1. Burnt in effect and the --ignore
+Figure 2 Burnt in effect and the --ignore
 
 ![gray black marker](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/grey_black.png)
 
-Fig.2. Burnt in effect reduced by black/grey marker. Original marker left, marker on image right.
+Figure 3 Burnt in effect reduced by black/grey marker. Original marker left, marker on image right.
 
 Sample imput file for GCP coordinates (pointID easting northing elevation):
 
@@ -288,7 +290,7 @@ It generates 32 custom 3x3 ArUco dictionary markers in dict\_3x3 subdirectory
 (png files). File names are 3x3_id.png, where *id* is the ordinal number of
 the marker.
 
-### aruco\_make.py
+#### aruco\_make.py
 
 It generates aruco marker images of different standard dictionaries for printing.
 
@@ -353,7 +355,7 @@ optional arguments:
 
 ![marked_gcps](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/gcps.png)
 
-Figure 3 Marked GCPs
+Figure 4 Marked GCPs
 
 #### gsd\_cal
 
