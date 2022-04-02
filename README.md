@@ -1,7 +1,7 @@
 # Find-GCP
 Find ArUco markers in digital photos
 
-![](https://raw.githubusercontent.com/zsiki/Find-GCP/master/fgcp_logo.png)
+![](https://raw.githubusercontent.com/zsiki/Find-GCP/master/fgcp_logo.png#50x50)
 
 This project is maintained by the [GeoForAll Lab](http://www.agt.bme.hu/osgeolab/index.php?page=start&lang=en) at the 
 [Department of Geodesy and Surveying](http://geod.bme.hu/geod/hirek?language=en) of the Budapest University of Technology and Economics.
@@ -12,12 +12,30 @@ Computing Vol 9. (2021) No.1
 
 [The project page on OpenHub](https://www.openhub.net/p/Find-GCP)
 
+##Installation
+
 [ArUco markers](http://chev.me/arucogen) are black and white square markers 
 which have unique pattern and ID. [OpenCV](https://opencv.org) library has
 a modul to find ArUco markers in images (you should pip install 
 *opencv-python*, *opencv-contrib-python*, *Pillow (PIL)*, *pil.imagetk*, *numpy* and *matplotlib*).
 
 ```pip install opencv-python opencv-contrib-python PIL pil.imagetk numpy matplotlib```
+
+Clone the Find-GCP GitHub repo or download the zip file
+
+```git clone https://github.com/zsiki/Find-GCP.git```
+
+or 
+
+```
+wget https://github.com/zsiki/Find-GCP/archive/refs/heads/master.zip
+unzip master.zip
+```
+
+You can also download zip using the **Code** button on the GitHub page of the
+project.
+
+## Preparing ArUco markers
 
 Before taking the photos the different ArUco markers have to be printed in the
 suitable size and put on the field. The coordinates of markers have to be
@@ -33,6 +51,18 @@ detected, the optimal
 marker size is 30 x 30 pixels. You should plan the marker size depending on the 
 flight altitude and camera parameters. For example 30 x 30 cm markers are enough
 for a DJI Phantom 4P flying 50 m above the ground.
+
+When you fix your markers on the field please let enough space around the outer 
+black border. For example do not put stones near to the black border of the marker. The software cannot separate them and the marker won't be recognised. The
+left side marker was not recognised on the following image, because of the
+two stones at the upper left and right corners. On the right side image the 
+gray spots were removed and recognized.
+
+![Clear border](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/fixing.png)
+
+## Usage
+
+### gcp_find.py
 
 This small utility can be used together with photogrammetric programs like Open
 Drone Map or WebODM to create the necessary Ground Control Point (GCP) file 
@@ -219,11 +249,11 @@ Sample imput file for GCP coordinates (pointID easting northing elevation):
 See our publication in Baltic Journal of Modern Computing:
 [Automatic Recognition of ArUco Codes in Land Surveying Tasks](https://www.bjmc.lu.lv/fileadmin/user_upload/lu_portal/projekti/bjmc/Contents/9_1_06_Siki.pdf)
 
-## Utilities
+### Utilities
 
 There are some small utilities in this repo, too.
 
-### exif\_pos.py
+#### exif\_pos.py
 
 This small program lists GPS position from exif information of images to the
 standard output. You can redirect standard output to a file and load it for
@@ -252,7 +282,7 @@ DJI_0042.JPG,19.120762,47.683671,203.86
 DJI_0043.JPG,19.120725,47.683566,203.86
 ```
 
-### dict\_gen\_3x3.py
+#### dict\_gen\_3x3.py
 
 It generates 32 custom 3x3 ArUco dictionary markers in dict\_3x3 subdirectory
 (png files). File names are 3x3_id.png, where *id* is the ordinal number of
@@ -280,7 +310,7 @@ optional arguments:
 
 You can also use Romain Basile's [GCP Aruco Marker Generator](https://github.com/gromain/gcp_aruco_generator) to get SVG markers.
 
-### gcp\_check.py
+#### gcp\_check.py
 
 It helps the visual check of the found GCPs by gcp\_find.py.
 
@@ -325,7 +355,7 @@ optional arguments:
 
 Figure 3 Marked GCPs
 
-### gsd\_cal
+#### gsd\_cal
 
 gsd\_calc is a simple web application written in JavaScript using jQuery to
 estimate the Ground Sample Distance (GSD) and the ArUco markes size depending on
@@ -342,12 +372,12 @@ cameras. There are three obligatory and two optional parameters in it.
 
 It is available on line [here](http://www.agt.bme.hu/on_line/gsd_calc/gsd_calc.html).
 
-# Samples
+## Samples
 
 Images used in the samples are available in the *samples* directory.
 Please share with us your samples using *gcp_find*.
 
-## Sample 1
+### Sample 1
 
 Find ArUco markers in an image and output marker IDs and image coordinates of
 marker centers.
@@ -363,7 +393,7 @@ marker centers.
 11 152 142 markers.png
 ```
 
-## Sample 2
+### Sample 2
 
 We have 3 images made by DJI Phantom 4 Pro.
 Coordinates of GCPs were measured by GNSS and stored in
@@ -420,7 +450,7 @@ EPSG:2370
 650544.828 237514.298 104.215 3408 322 DJI_0174.JPG 0
 ```
 
-## Sample 3
+### Sample 3
 
 Photos (DJI0087.jpg and DJI0088.jpg) made by a DJI Phantom 4 Pro.
 There are three 4x4 GCPs (id=3, id=4, id=5) on image DJI\_0087.jpg and five
@@ -439,7 +469,7 @@ python3 gcp_find.py --minrate 0.01 samples/bme/DJI_008[78].jpg
 
 Marker 4 was not detected.
 
-## Sample 4
+### Sample 4
 
 Photos (DJI\_0180.jpg and DJI\_0181.jpg) made by DJI Phantom 4 Pro, flying
 alttitude 50 m.
