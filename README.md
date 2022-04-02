@@ -3,27 +3,25 @@ Find ArUco markers in digital photos
 
 ![](https://raw.githubusercontent.com/zsiki/Find-GCP/master/fgcp_logo.png#50x50)
 
-This project is maintained by the [GeoForAll Lab](http://www.agt.bme.hu/osgeolab/index.php?page=start&lang=en) at the 
-[Department of Geodesy and Surveying](http://geod.bme.hu/geod/hirek?language=en) of the Budapest University of Technology and Economics.
+This project is maintained by the [GeoForAll Lab](http://www.agt.bme.hu/osgeolab/index.php?page=start&lang=en) at the [Department of Geodesy and Surveying](http://geod.bme.hu/geod/hirek?language=en) of the Budapest University of Technology and Economics.
 
-A paper is available about this project in the Baltic Journal of Modern 
-Computing Vol 9. (2021) No.1 
-[Automatic Recognition of ArUco Codes in Land Surveying Tasks](https://www.bjmc.lu.lv/fileadmin/user_upload/lu_portal/projekti/bjmc/Contents/9_1_06_Siki.pdf).
+A paper is available about this project in the Baltic Journal of Modern Computing Vol 9. (2021) No.1 [Automatic Recognition of ArUco Codes in Land Surveying Tasks](https://www.bjmc.lu.lv/fileadmin/user_upload/lu_portal/projekti/bjmc/Contents/9_1_06_Siki.pdf).
 
 [The project page on OpenHub](https://www.openhub.net/p/Find-GCP)
 
 ## Installation
 
-[ArUco markers](http://chev.me/arucogen) are black and white square markers 
-which have unique pattern and ID. [OpenCV](https://opencv.org) library has
-a modul to find ArUco markers in images (you should pip install 
-*opencv-python*, *opencv-contrib-python*, *Pillow (PIL)*, *pil.imagetk*, *numpy* and *matplotlib*).
+[ArUco markers](http://chev.me/arucogen) are black and white square markers which have unique pattern and ID. [OpenCV](https://opencv.org) library has a modul to find ArUco markers in images (you should pip install).
 
-```pip install opencv-python opencv-contrib-python PIL pil.imagetk numpy matplotlib```
+```
+pip install opencv-python opencv-contrib-python PIL pil.imagetk numpy matplotlib
+```
 
 Clone the Find-GCP GitHub repo or download the zip file
 
-```git clone https://github.com/zsiki/Find-GCP.git```
+```
+git clone https://github.com/zsiki/Find-GCP.git
+```
 
 or 
 
@@ -32,31 +30,15 @@ wget https://github.com/zsiki/Find-GCP/archive/refs/heads/master.zip
 unzip master.zip
 ```
 
-You can also download zip using the **Code** button on the GitHub page of the
-project.
+You can also download zip using the **Code** button on the GitHub page of the project.
 
 ## Preparing ArUco markers
 
-Before taking the photos the different ArUco markers have to be printed in the
-suitable size and put on the field. The coordinates of markers have to be
-measured by GNSS (GPS), total station or other surveyor's method. We prefer the
-3x3 or 4x4 ArUco library, the larger the squares in the marker, the smaller the 
-the total marker size can be. You should print markers on gray background to
-avoid burt in of white on photos. You can use [gsd_calc](http://www.agt.bme.hu/on_line/gsd_calc/gsd_calc.html)
-utitility to estimate
-necessary marker size from the sensor parameters and fligth altitude.
+Before taking the photos the different ArUco markers have to be printed in the suitable size and put on the field. The coordinates of markers have to be measured by GNSS (GPS), total station or other surveyor's method. We prefer the 3x3 or 4x4 ArUco library, the larger the squares in the marker, the smaller the the total marker size can be. You should print markers on gray background to avoid burt in of white on photos. You can use [gsd_calc](http://www.agt.bme.hu/on_line/gsd_calc/gsd_calc.html) utitility to estimate necessary marker size from the sensor parameters and fligth altitude.
 
-The 3x3 or 4x4 ArUco markers on the image should be minimum 20 x 20 pixels to be
-detected, the optimal
-marker size is 30 x 30 pixels. You should plan the marker size depending on the 
-flight altitude and camera parameters. For example 30 x 30 cm markers are enough
-for a DJI Phantom 4P flying 50 m above the ground.
+The 3x3 or 4x4 ArUco markers on the image should be minimum 20 x 20 pixels to be detected, the optimal marker size is 30 x 30 pixels. You should plan the marker size depending on the flight altitude and camera parameters. For example 30 x 30 cm markers are enough for a DJI Phantom 4P flying 50 m above the ground.
 
-When you fix your markers on the field please let enough space around the outer 
-black border. For example do not put stones near to the black border of the marker. The software cannot separate them and the marker won't be recognised. The
-left side marker was not recognised on the following image, because of the
-two stones at the upper left and right corners. On the right side image the 
-gray spots were removed and recognized.
+When you fix your markers on the field please let enough space around the outer black border. For example do not put stones near to the black border of the marker. The software cannot separate them and the marker won't be recognised. The left side marker was not recognised on the following image, because of the two stones at the upper left and right corners. On the right side image the gray spots were removed and recognized.
 
 ![Clear border](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/fixing.png)
 
@@ -66,10 +48,7 @@ Figure 1 Non-clear and clear border
 
 ### gcp_find.py
 
-This small utility can be used together with photogrammetric programs like Open
-Drone Map or WebODM to create the necessary Ground Control Point (GCP) file 
-containing image coordinates and projected coordinates of GCPs. 
-It has command line interface (CLI) only. There are several parameters:
+This small utility can be used together with photogrammetric programs like Open Drone Map or WebODM to create the necessary Ground Control Point (GCP) file containing image coordinates and projected coordinates of GCPs. It has command line interface (CLI) only. There are several parameters:
 
 ```
 usage: gcp_find.py [-h] [-d DICT] [-o OUTPUT] [-t {ODM,VisualSfM}] [-i INPUT]
@@ -201,32 +180,11 @@ List of the available dictionary codes (see --list):
 99 : DICT_3X3_32 custom
 ```
 
-Parameters from *winmin* to *minacc* are customizable parameters for ArUco
-detection and are explaned in the OpenCV 
-[Aruco documentation](https://docs.opencv.org/trunk/d5/dae/tutorial_aruco_detection.html).
-The two most important parameters are *minrate* and *ignore*. Usually the 
-default values of these parameters are not perfect.
+Parameters from *winmin* to *minacc* are customizable parameters for ArUco detection and are explaned in the OpenCV [Aruco documentation](https://docs.opencv.org/trunk/d5/dae/tutorial_aruco_detection.html). The two most important parameters are *minrate* and *ignore*. Usually the default values of these parameters are not perfect.
 
-*minrate* defines the minimal size of a marker in a relative way. For example if
-the larger image size is 5472 pixels and the *minrate* parameter is 0.01, then the
-minimal perimeter of an ArUco marker should be 0.01 \* 5472 = 54 pixels, and the
-minimal size of the marker side is 54 / 4 = 13 pixels. Smaller marker candidates 
-are dropped. Our exprerience is the minimal marker side should be 20-30 pixels
-to detect 4x4 markers. Using the special 3x3 markers (see: dict\_gen\_3x3.py)
-the size of the marker can be reduced.
-So you can calculate marker size in centimetres if you know
-the pixel size in centimetres, in case of 30-50 metres flight altitude, it is
-1-2 cm (DJI Phantom Pro). You should use 20-40 cm large markers.
+*minrate* defines the minimal size of a marker in a relative way. For example if the larger image size is 5472 pixels and the *minrate* parameter is 0.01, then the minimal perimeter of an ArUco marker should be 0.01 \* 5472 = 54 pixels, and the minimal size of the marker side is 54 / 4 = 13 pixels. Smaller marker candidates are dropped. Our exprerience is the minimal marker side should be 20-30 pixels to detect 4x4 markers. Using the special 3x3 markers (see: dict\_gen\_3x3.py) the size of the marker can be reduced. So you can calculate marker size in centimetres if you know the pixel size in centimetres, in case of 30-50 metres flight altitude, it is 1-2 cm (DJI Phantom Pro). You should use 20-40 cm large markers.
 
-*ignore* is also a relative value. It defines the percent of pixels to ignore 
-at the border of the elemens of the marker matrix. In strong sunshine the white
-areas are burnt on the image. A 0.33 value (33%) is good for burnt images, the
-green squares on figure below will be used to detect black/white elements.
-There is an other solution to reduce the
-burnt effect, use grey paper to print the aruco codes. The second figure below
-shows the original black/grey marker and the marker on the image. Thanks to the
-adaptive thresholding in the ArUco module, grey and black can be separated.
-*adjust* can also be used to reduce the effect of white burnt in.
+*ignore* is also a relative value. It defines the percent of pixels to ignore at the border of the elemens of the marker matrix. In strong sunshine the white areas are burnt on the image. A 0.33 value (33%) is good for burnt images, the green squares on figure below will be used to detect black/white elements. There is an other solution to reduce the burnt effect, use grey paper to print the aruco codes. The second figure below shows the original black/grey marker and the marker on the image. Thanks to the adaptive thresholding in the ArUco module, grey and black can be separated. *adjust* can also be used to reduce the effect of white burnt in.
 
 ![burnt in effect](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/burnt.png)
 
@@ -257,9 +215,7 @@ There are some small utilities in this repo, too.
 
 #### exif\_pos.py
 
-This small program lists GPS position from exif information of images to the
-standard output. You can redirect standard output to a file and load it for
-example into QGIS as delimited text layer to show image positions.
+This small program lists GPS position from exif information of images to the standard output. You can redirect standard output to a file and load it for example into QGIS as delimited text layer to show image positions.
 
 ```
 Usage: ./exif_pos.py image_file(s)
@@ -286,9 +242,7 @@ DJI_0043.JPG,19.120725,47.683566,203.86
 
 #### dict\_gen\_3x3.py
 
-It generates 32 custom 3x3 ArUco dictionary markers in dict\_3x3 subdirectory
-(png files). File names are 3x3_id.png, where *id* is the ordinal number of
-the marker.
+It generates 32 custom 3x3 ArUco dictionary markers in dict\_3x3 subdirectory (png files). File names are 3x3_id.png, where *id* is the ordinal number of the marker.
 
 #### aruco\_make.py
 
@@ -359,12 +313,10 @@ Figure 4 Marked GCPs
 
 #### gsd\_cal
 
-gsd\_calc is a simple web application written in JavaScript using jQuery to
-estimate the Ground Sample Distance (GSD) and the ArUco markes size depending on
+gsd\_calc is a simple web application written in JavaScript using jQuery to estimate the Ground Sample Distance (GSD) and the ArUco markes size depending on
 the sensor data and flight altitude.
 
-There is a small database (realy a JSON file) with the parameters of some 
-cameras. There are three obligatory and two optional parameters in it.
+There is a small database (realy a JSON file) with the parameters of some cameras. There are three obligatory and two optional parameters in it.
 
 -**focal** focal length of the camera in mm
 -**iheight** image height in pixels (optional)
@@ -376,13 +328,11 @@ It is available on line [here](http://www.agt.bme.hu/on_line/gsd_calc/gsd_calc.h
 
 ## Samples
 
-Images used in the samples are available in the *samples* directory.
-Please share with us your samples using *gcp_find*.
+Images used in the samples are available in the *samples* directory. Please share with us your samples using *gcp_find*.
 
 ### Sample 1
 
-Find ArUco markers in an image and output marker IDs and image coordinates of
-marker centers.
+Find ArUco markers in an image and output marker IDs and image coordinates of marker centers.
 
 ```
 ./gcp_find.py samples/markers.png
@@ -397,9 +347,7 @@ marker centers.
 
 ### Sample 2
 
-We have 3 images made by DJI Phantom 4 Pro.
-Coordinates of GCPs were measured by GNSS and stored in
-[A3.txt](samples/A3.txt) file. The 3x3 ArUco markers were used
+We have 3 images made by DJI Phantom 4 Pro. Coordinates of GCPs were measured by GNSS and stored in [A3.txt](samples/A3.txt) file. The 3x3 ArUco markers were used
 The next command will generate the necessary text file for ODM.
 
 ```
@@ -420,8 +368,7 @@ GCP1: on 1 images ['samples/DJI_0174.JPG']
 GCP0: on 1 images ['samples/DJI_0174.JPG']
 ```
 
-The gcp_list.txt output file which is ready for use with ODM or WebODM.
-Copy the gcp_list.txt into your images directory using ODM and add the
+The gcp_list.txt output file which is ready for use with ODM or WebODM. Copy the gcp_list.txt into your images directory using ODM and add the
 
 ```
     --gcp ./images/gcp_list.txt
@@ -454,9 +401,7 @@ EPSG:2370
 
 ### Sample 3
 
-Photos (DJI0087.jpg and DJI0088.jpg) made by a DJI Phantom 4 Pro.
-There are three 4x4 GCPs (id=3, id=4, id=5) on image DJI\_0087.jpg and five
-(id=0, id=3, id=4, id=5, id=6) on image DJI\_0088.jpg.
+Photos (DJI0087.jpg and DJI0088.jpg) made by a DJI Phantom 4 Pro. There are three 4x4 GCPs (id=3, id=4, id=5) on image DJI\_0087.jpg and five (id=0, id=3, id=4, id=5, id=6) on image DJI\_0088.jpg.
 
 ```
 python3 gcp_find.py --minrate 0.01 samples/bme/DJI_008[78].jpg
@@ -473,9 +418,7 @@ Marker 4 was not detected.
 
 ### Sample 4
 
-Photos (DJI\_0180.jpg and DJI\_0181.jpg) made by DJI Phantom 4 Pro, flying
-alttitude 50 m.
-There are eight 3x3 black/grey GCPs on image DJI\_0180.png and ten on 
+Photos (DJI\_0180.jpg and DJI\_0181.jpg) made by DJI Phantom 4 Pro, flying alttitude 50 m. There are eight 3x3 black/grey GCPs on image DJI\_0180.png and ten on 
 DJI\_0181.png.
 
 ```
