@@ -307,9 +307,11 @@ optional arguments:
                         outer font weight on image, default bold
 ```
 
+![original_image](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/orig.png)
+
 ![marked_gcps](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/gcps.png)
 
-Figure 4 Marked GCPs
+Figure 4 Original image and found GCPs marked
 
 #### gsd\_cal
 
