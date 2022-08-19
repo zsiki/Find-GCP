@@ -268,16 +268,17 @@ You can also use Romain Basile's [GCP Aruco Marker Generator](https://github.com
 
 #### gcp\_check.py
 
-It helps the visual check of the found GCPs by gcp\_find.py.
+gcp\_check.py is a GUI application which helps the visual check of the found GCPs by gcp\_find.py.
+It has several command line parameters and a simple menu. The output file of the gcp\_find.py is the input
+file of this program. There are forward and backward buttons to step between images. Mouse wheel can be
+used to zoom in/out and left button to pan.
 
 ```
 usage: gcp_check.py [-h] [--command COMMAND] [--path PATH] [-s SEPARATOR]
-                    [--markersize MARKERSIZE] [--markerstyle MARKERSTYLE]
-                    [--edgecolor EDGECOLOR] [--edgewidth EDGEWIDTH]
-                    [--fontsize FONTSIZE] [--fontcolor FONTCOLOR]
-                    [--fontcolor1 FONTCOLOR1] [--fontweight FONTWEIGHT]
-                    [--fontweight1 FONTWEIGHT1]
-                    file_name
+                    [--markersize MARKERSIZE] [--edgecolor EDGECOLOR]
+                    [--edgewidth EDGEWIDTH] [--fontsize FONTSIZE]
+                    [--fontcolor FONTCOLOR]
+                    [file_name]
 
 positional arguments:
   file_name             GCP file to process
@@ -289,22 +290,14 @@ optional arguments:
   -s SEPARATOR, --separator SEPARATOR
                         input file separator, default
   --markersize MARKERSIZE
-                        marker size on image, default 10
-  --markerstyle MARKERSTYLE
-                        marker style for GCPs, default "ro"
+                        marker size on image, default 200
   --edgecolor EDGECOLOR
-                        marker edge color, default y
+                        marker edge color, default red
   --edgewidth EDGEWIDTH
-                        marker edge width, default 3
-  --fontsize FONTSIZE   font size on image, default 16
+                        marker edge width, default 20
+  --fontsize FONTSIZE   font size on image, default 200
   --fontcolor FONTCOLOR
-                        inner font color on image, default r
-  --fontcolor1 FONTCOLOR1
-                        outer font color on image, default y
-  --fontweight FONTWEIGHT
-                        inner font weight on image, default normal
-  --fontweight1 FONTWEIGHT1
-                        outer font weight on image, default bold
+                        font color on image, default red
 ```
 
 ![original_image](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/orig.png)
