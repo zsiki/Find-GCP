@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+
+""" GUI for gcp_find and other utilities
+"""
 import os
 import sys
 import cv2
@@ -10,13 +14,15 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QPixmap
 
 
-class Ui_MainWindow(object):
+class Ui_MainWindow():
+    """ Class for main window
+    """
     def setupUi(self, MainWindow, path_):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1040, 583)
         MainWindow.setLayoutDirection(QtCore.Qt.LeftToRight)
         MainWindow.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
-        MainWindow.setWindowIcon(QtGui.QIcon('fgcp_logo.png'))        
+        MainWindow.setWindowIcon(QtGui.QIcon('fgcp_logo.png'))
         MainWindow.setAnimated(True)
         MainWindow.setDocumentMode(True)
         MainWindow.setTabShape(QtWidgets.QTabWidget.Rounded)
@@ -67,7 +73,7 @@ class Ui_MainWindow(object):
         font.setItalic(False)
         font.setWeight(75)
         self.GMcomboBox.setFont(font)
-    
+
         self.GMcomboBox.setObjectName("GMcomboBox")
         self.GMpushButton = QtWidgets.QPushButton(self.tab, clicked=lambda:self.generate())
         self.GMpushButton.setGeometry(QtCore.QRect(310, 70, 131, 31))
@@ -78,7 +84,7 @@ class Ui_MainWindow(object):
         font.setItalic(False)
         font.setWeight(75)
         self.GMpushButton.setFont(font)
-        
+
         self.GMpushButton.setObjectName("GMpushButton")
         self.GMpushButton.setStyleSheet("color:white;\n"
                                     "background-color: rgb(0, 120, 255);\n"
@@ -106,7 +112,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setItalic(False)
         font.setWeight(75)
-        self.EDpathButton_3.setFont(font)    
+        self.EDpathButton_3.setFont(font)
         self.EDpathButton_3.setObjectName("EDpathButton_3")
         self.EDpathButton_3.setStyleSheet("color:white;\n"
                                     "background-color: rgb(0, 120, 255);\n"
@@ -116,7 +122,7 @@ class Ui_MainWindow(object):
                                     "border-color:black;\n"
                                     "padding:4px;\n"
                                     "min-width:10px;")
-        
+
         self.EDlabel_2 = QtWidgets.QLabel(self.tab_2)
         self.EDlabel_2.setGeometry(QtCore.QRect(10, 10, 581, 401))
         self.EDlabel_2.setTextFormat(QtCore.Qt.RichText)
@@ -143,7 +149,7 @@ class Ui_MainWindow(object):
                                     "border-color:black;\n"
                                     "padding:4px;\n"
                                     "min-width:10px;")
-        
+
         self.listWidget = QtWidgets.QListWidget(self.tab_2)
         self.listWidget.setGeometry(QtCore.QRect(600, 30, 421, 481))
         self.listWidget.setObjectName("listWidget")
@@ -205,7 +211,8 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "Find-GCP"))
         self.label.setText(_translate("MainWindow", "Select Marker Type"))
         self.GMpushButton.setText(_translate("MainWindow", "Generate"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Generate Marker"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab),
+                                  _translate("MainWindow", "Generate Marker"))
         self.ED1radioButton.setText(_translate("MainWindow", "Select Image"))
         self.EDradioButton_2.setText(_translate("MainWindow", "Select Directory"))
         self.EDpathButton_3.setText(_translate("MainWindow", "Path"))
@@ -213,13 +220,15 @@ class Ui_MainWindow(object):
         self.EDsubmitButton_2.setText(_translate("MainWindow", "Submit"))
         self.EDlabel_3.setText(_translate("MainWindow", "Results"))
         self.EDClrBtn.setText(_translate("MainWindow", "Clear Results"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Exif Data"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "Find GCP"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2),
+                                  _translate("MainWindow", "Exif Data"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3),
+                                  _translate("MainWindow", "Find GCP"))
 
     def generate(self):
         if self.GMcomboBox.currentText() == 'Select Type':
             self.label.setText('Select a valid type')
-        
+
         if os.path.exists(f'{self.GMcomboBox.currentText()}'):
             if not os.path.isdir(f'{self.GMcomboBox.currentText()}'):
                 self.label.setText(f'{self.GMcomboBox.currentText()} is not a folder')
@@ -231,18 +240,18 @@ class Ui_MainWindow(object):
             except:
                 print('[INFO] Cannot Create')
                 exit(2)
-        
+
         if f"{self.GMcomboBox.currentText()}" != 'Select Type':
             if f"{self.GMcomboBox.currentText()}" == 'DICT_3X3':
                 arucoDict = ARUCO_TYPE.get(self.GMcomboBox.currentText())
                 for i in range(32):
                     tag = np.zeros((300, 300, 1), dtype="uint8")
-                    marker = cv2.aruco.drawMarker(arucoDict, i, 300, tag, 1) 
+                    marker = cv2.aruco.drawMarker(arucoDict, i, 300, tag, 1)
                     cv2.imwrite('{}/{}_{}.png'.format(self.GMcomboBox.currentText(),self.GMcomboBox.currentText(),i), marker)
                 self.label.setText(f'Successfully Generated {self.GMcomboBox.currentText()}')
             else:
                 arucoDict = cv2.aruco.Dictionary_get(ARUCO_TYPE.get(self.GMcomboBox.currentText()))
-                for i in range(32):    
+                for i in range(32):
                     tag = np.zeros((300, 300, 1), dtype="uint8")
                     marker = cv2.aruco.drawMarker(arucoDict, i, 300, tag, 1)
                     cv2.imwrite('{}/{}_{}.png'.format(self.GMcomboBox.currentText(),
@@ -252,15 +261,16 @@ class Ui_MainWindow(object):
     def path(self):
         if self.ED1radioButton.isChecked():
             self.path_, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Open Image",os.getcwd(),
-            "JPG File (*.jpg);; PNG File (*.png);;")
+            "JPG Files (*.jpg *.JPG);; PNG Files (*.png *.PNG);; JPG & PNG Files (*.jpg *.JPG *.png *.PNG);;")
             self.pixmap = QPixmap(self.path_)
             self.EDlabel_2.setPixmap(self.pixmap)
         elif self.EDradioButton_2.isChecked():
             self.path_ = QtWidgets.QFileDialog.getExistingDirectory(None, "Select Directory", os.getcwd())
-            self.path_ = self.path_ +'/*JPG'
-         
+            self.path_ = self.path_ +'/*.[jJ][pP][gG]'
+        self.clear()
+
     def exif(self):
-        if self.path_ == '': 
+        if self.path_ == '':
             self.EDlabel_2.setText('No Image or Directory')
         else:
             pass
@@ -301,7 +311,7 @@ class Ui_MainWindow(object):
             ret = []
             if exif is not None:
                 exif_data = {TAGS[k]: v for k, v in exif.items() if k in TAGS}
-                # print(exif_data)             
+                # print(exif_data)
                 if 'GPSInfo' in exif_data and len(exif_data['GPSInfo']) > 6:
                     ret = [to_degrees(exif_data['GPSInfo'][3], exif_data['GPSInfo'][4]),
                         to_degrees(exif_data['GPSInfo'][1], exif_data['GPSInfo'][2]),
@@ -317,7 +327,7 @@ class Ui_MainWindow(object):
                 self.listWidget.addItem(item)
             elif len(ret) == 1:
                 item = "{},,,,{}".format(img_name, ret[0])
-                self.listWidget.addItem(item)       
+                self.listWidget.addItem(item)
             else:
                 item = "{},,,,,No EXIF".format(img_name)
                 self.listWidget.addItem(item)
