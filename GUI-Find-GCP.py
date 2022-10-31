@@ -553,7 +553,7 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.label = QtWidgets.QLabel(self.tab)
-        self.label.setGeometry(QtCore.QRect(30, 10, 350, 31))
+        self.label.setGeometry(QtCore.QRect(30, 10, 351, 31))
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(14)
