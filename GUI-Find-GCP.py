@@ -349,7 +349,7 @@ class ParameterWin(QtWidgets.QWidget, QtWidgets.QApplication):
         self.fixparameter.setText(_translate("parameter", "Fix Parameters"))
         self.pinverted.setText(_translate("parameter", "Inverted"))
     
-    
+
     def display(self):
         self.show()
 
@@ -1076,7 +1076,7 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
     
     def clickMarker(self, pos):
         if self.dragMode()  == QtWidgets.QGraphicsView.NoDrag:
-            self.outputs.addItem('%d, %d, %s' % (pos.x(), pos.y(),
+            self.outputs.addItem('%d %d %s' % (pos.x(), pos.y(),
             re.split(r' |/|\\',self.img_name[self.index_])[-1]))
 
     
