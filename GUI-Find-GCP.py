@@ -360,137 +360,137 @@ class ParameterWin(QtWidgets.QWidget, QtWidgets.QApplication):
             self.pinputfile.setText(self.ipath.split('/')[-1])
             
     def fixparams(self):
-        if self.boxminrate.text() is not '':
+        if self.boxminrate.text() !='':
             self.minrate = float(self.boxminrate.text())
             self.params.minMarkerPerimeterRate = self.minrate
         else:
             self.params.minMarkerPerimeterRate = 0.3
         
-        if self.boxmaxrate.text() is not '':
+        if self.boxmaxrate.text() !='':
             self.maxrate = float(self.boxmaxrate.text())
             self.params.maxMarkerPerimeterRate = self.maxrate    
         else:
             self.params.maxMarkerPerimeterRate = self.params.maxMarkerPerimeterRate
         
-        if self.boxignore.text() is not '':
+        if self.boxignore.text() !='':
             self.ignore = float(self.boxignore.text())
             self.params.perspectiveRemoveIgnoredMarginPerCell = self.ignore
         else:
             self.params.perspectiveRemoveIgnoredMarginPerCell = self.params.perspectiveRemoveIgnoredMarginPerCell
          
-        if self.boxespg.text() is not '':    
+        if self.boxespg.text() !='':    
             self.epsg = int(self.boxespg.text())
         else:
             pass
        
-        if self.boxlimit.text() is not '':    
+        if self.boxlimit.text() !='':    
             self.limit = int(self.boxlimit.text())    
         else:
             self.boxlimit.setText(f'{99}')
         
-        if self.boxseperator.text() is not '':
+        if self.boxseperator.text() !='':
             self.seperator = self.boxseperator.text()
             self.boxseperator.setText(self.seperator)
         else:
             self.boxseperator.setText(" ")
 
-        if self.boxwinmin.text() is not '':
+        if self.boxwinmin.text() !='':
             self.winmin = int(self.boxwinmin.text())
             self.params.adaptiveThreshWinSizeMin = self.winmin
         else:
             self.params.adaptiveThreshWinSizeMin = self.params.adaptiveThreshWinSizeMin
 
-        if self.boxwinmax.text() is not '':
+        if self.boxwinmax.text() !='':
             self.winmax = int(self.boxwinmax.text())
             self.params.adaptiveThreshWinSizeMax = self.winmax
         else:
             self.params.adaptiveThreshWinSizeMax = self.params.adaptiveThreshWinSizeMax
 
-        if self.boxwinstep.text() is not '':
+        if self.boxwinstep.text() !='':
             self.winstep = int(self.boxwinstep.text())
             self.params.adaptiveThreshWinSizeStep = self.winstep
         else:
             self.params.adaptiveThreshWinSizeStep = self.params.adaptiveThreshWinSizeStep
 
-        if self.boxthres.text() is not '':
+        if self.boxthres.text() !='':
             self.thres = float(self.boxthres.text())
             self.params.adaptiveThreshConstant = self.thres
         else:
             self.params.adaptiveThreshConstant = self.params.adaptiveThreshConstant
 
-        if self.boxpoly.text() is not '':
+        if self.boxpoly.text() !='':
             self.poly = float(self.boxpoly.text())
             self.params.polygonalApproxAccuracyRate = self.poly
         else:
             self.params.polygonalApproxAccuracyRate = self.params.polygonalApproxAccuracyRate
         
-        if self.boxcorner.text() is not '':
+        if self.boxcorner.text() !='':
             self.corner = float(self.boxcorner.text())
             self.params.minCornerDistanceRate = self.corner
         else:
             self.params.minCornerDistanceRate = self.params.minCornerDistanceRate
 
-        if self.boxmarkerdist.text() is not '':
+        if self.boxmarkerdist.text() !='':
             self.markerdist = float(self.boxmarkerdist.text())
             self.params.minMarkerDistanceRate = self.markerdist
         else:
             self.params.minMarkerDistanceRate = self.params.minMarkerDistanceRate
 
-        if self.boxborderdist.text() is not '':
+        if self.boxborderdist.text() !='':
             self.borderdist = int(self.boxborderbits.text())
             self.params.minDistanceToBorder = self.borderdist        
         else:
             self.params.minDistanceToBorder = self.params.minDistanceToBorder
 
-        if self.boxborderbits.text() is not '':
+        if self.boxborderbits.text() !='':
             self.borderbits = int(self.boxborderbits.text())
             self.params.markerBorderBits = self.borderbits
         else:
             self.params.markerBorderBits = self.params.markerBorderBits
 
-        if self.boxotsu.text() is not '':
+        if self.boxotsu.text() !='':
             self.otsu = float(self.boxotsu.text())
             self.params.minOtsuStdDev = self.otsu
         else:
             self.params.minOtsuStdDev = self.params.minOtsuStdDev
 
-        if self.boxpersp.text() is not '':
+        if self.boxpersp.text() !='':
             self.persp = int(self.boxpersp.text())
             self.params.perspectiveRemovePixelPerCell = self.persp
         else:
             self.params.perspectiveRemovePixelPerCell = self.params.perspectiveRemovePixelPerCell
 
-        if self.boxerror.text() is not '':
+        if self.boxerror.text() !='':
             self.error = float(self.boxerror.text())
             self.params.maxErroneousBitsInBorderRate = self.error
         else:
             self.params.maxErroneousBitsInBorderRate = self.params.maxErroneousBitsInBorderRate
 
-        if self.boxcorrect.text() is not '':
+        if self.boxcorrect.text() !='':
             self.correct = float(self.boxcorrect.text())
             self.params.errorCorrectionRate = self.correct
         else:
             self.params.errorCorrectionRate = self.params.errorCorrectionRate
 
-        if self.boxrefinement.text() is not '':
+        if self.boxrefinement.text() !='':
             self.refinement = int(self.boxrefinement.text())
             self.params.cornerRefinementMethod = self.refinement
         else:
             self.params.cornerRefinementMethod = self.params.cornerRefinementMethod
 
-        if self.boxrefwin.text() is not '':
+        if self.boxrefwin.text() !='':
             self.refwin = int(self.boxrefwin.text())
             self.params.cornerRefinementWinSize = self.refwin
         else:
             self.params.cornerRefinementWinSize = self.params.cornerRefinementWinSize
 
-        if self.boxmaxiter.text() is not '':
+        if self.boxmaxiter.text() !='':
             self.maxiter = int(self.boxmaxiter.text())
             self.params.cornerRefinementMaxIterations = self.maxiter
         else:
             self.params.cornerRefinementMaxIterations = self.params.cornerRefinementMaxIterations
 
-        if self.boxminacc.text() is not '':
+        if self.boxminacc.text() !='':
             self.minacc = float(self.boxminacc.text())
             self.params.cornerRefinementMinAccuracy = self.minacc
         else:
@@ -984,7 +984,7 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
             except AttributeError:
                 exif = None
             ret = []
-            if exif is not None:
+            if exif !=None:
                 exif_data = {TAGS[k]: v for k, v in exif.items() if k in TAGS}
                 # print(exif_data)             
                 if 'GPSInfo' in exif_data and len(exif_data['GPSInfo']) > 6:
