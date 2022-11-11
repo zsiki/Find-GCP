@@ -4,6 +4,7 @@
 """
 import os
 import sys
+import re
 import cv2
 import glob
 import numpy as np
@@ -348,7 +349,7 @@ class ParameterWin(QtWidgets.QWidget, QtWidgets.QApplication):
         self.fixparameter.setText(_translate("parameter", "Fix Parameters"))
         self.pinverted.setText(_translate("parameter", "Inverted"))
     
-
+    
     def display(self):
         self.show()
 
@@ -505,6 +506,8 @@ class ParameterWin(QtWidgets.QWidget, QtWidgets.QApplication):
 class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
     """ Class for main window
     """
+    photoClicked = QtCore.pyqtSignal(QtCore.QPoint)
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -751,6 +754,22 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
                                     "background-color: rgb(0, 120, 200);}\n")
         font = QtGui.QFont()
         font.setFamily("Arial")
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setItalic(False)
+        font.setWeight(75)
+        self.imgname = QtWidgets.QLabel(self.tab_3)
+        self.imgname.setGeometry(QtCore.QRect(10, 590, 131, 16))
+        self.imgname.setFont(font)
+        self.imgname.setObjectName("imgname")
+        self.checkmark = QtWidgets.QCheckBox(self.tab_3)
+        self.checkmark.setGeometry(QtCore.QRect(730, 590, 131, 20))
+        self.checkmark.setFont(font)
+        self.checkmark.setObjectName("checkmark")
+        self.checkmark.toggled.connect(lambda:self.markMarker())
+        self.photoClicked.connect(self.clickMarker)        
+        font = QtGui.QFont()
+        font.setFamily("Arial")
         font.setPointSize(11)
         font.setBold(True)
         font.setItalic(False)
@@ -850,6 +869,8 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
         self.ED1radioButton.setChecked(True)
         self.selectimage.setChecked(True)
         self.updating_btn(False, False)
+        self.checkmark.setChecked(False)
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -875,6 +896,9 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
         self.openparm.setText(_translate("MainWindow", "Set Parameters"))
         self.delresult.setText(_translate("MainWindow", "Delete Result"))
         self.createfile.setText(_translate("MainWindow", "Create File"))
+        self.imgname.setText(_translate("MainWindow", ""))
+        self.checkmark.setText(_translate("MainWindow", "Mark Undetected"))
+        
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "Find GCP"))
 
     def generate(self):
@@ -1033,6 +1057,29 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
             else:
                 self._zoom = 0
     
+    def toggleDragMode(self):
+        if self.dragMode() == QtWidgets.QGraphicsView.ScrollHandDrag:
+            self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
+        elif not self._photo.pixmap().isNull():
+            self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
+
+    def mousePressEvent(self, event):
+        if self._photo.isUnderMouse():
+            self.photoClicked.emit(self.mapToScene(event.pos()).toPoint())
+        super(Ui_MainWindow, self).mousePressEvent(event)
+    
+    def markMarker(self):
+        if self.checkmark.isChecked() == True:
+            self.toggleDragMode()
+        elif self.checkmark.isChecked() == False:
+            self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
+    
+    def clickMarker(self, pos):
+        if self.dragMode()  == QtWidgets.QGraphicsView.NoDrag:
+            self.outputs.addItem('%d, %d, %s' % (pos.x(), pos.y(),
+            re.split(r' |/|\\',self.img_name[self.index_])[-1]))
+
+    
     def imPath(self):
         if self.selectimage.isChecked():
             self.path_, _ = QtWidgets.QFileDialog.getOpenFileNames(None, "Select Image",os.getcwd(),
@@ -1069,10 +1116,14 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
         if 0 <= img_index < len(self.img_name):
             self.index_= img_index
             filename = self.img_name[self.index_]
+            self.imgname.setText(re.split(r' |/|\\',filename)[-1])
             pixmap = QPixmap(filename)
             self.setPhoto(pixmap)
-    
+        self.markMarker()
+
     def updating_btn(self, previous, next):
+        if self.checkmark.isChecked() == True:
+            self.toggleDragMode()
         self.previous.setEnabled(previous)
         self.next.setEnabled(next)  
               
