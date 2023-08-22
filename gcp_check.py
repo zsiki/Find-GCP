@@ -16,6 +16,7 @@ import pandas as pd
 import PIL
 import PIL.ImageDraw
 import PIL.ImageTk
+import PIL.ImageFont
 from matplotlib import font_manager
 
 class AutoScrollbar(ttk.Scrollbar):
