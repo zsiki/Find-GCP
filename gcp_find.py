@@ -36,9 +36,9 @@ class GcpFind():
         self.args = args
         # prepare aruco
         if args.dict == 99:     # use special 3x3 dictionary
-            self.aruco_dict = aruco.Dictionary_create(32, 3)
+            self.aruco_dict = aruco.Dictionary(32, 3)
         else:
-            self.aruco_dict = aruco.Dictionary_get(args.dict)
+            self.aruco_dict = aruco.getPredefinedDictionary(args.dict)
 
         # set aruco parameters from command line arguments
         self.params = params
@@ -445,7 +445,7 @@ def cmd_params(parser, params):
 if __name__ == "__main__":
     T1 = time.perf_counter()
     # set up command line argument parser
-    params = aruco.DetectorParameters_create()
+    params = aruco.DetectorParameters()
     parser = argparse.ArgumentParser()
     cmd_params(parser, params)
     # parse command line arguments
