@@ -16,6 +16,7 @@ import pandas as pd
 import PIL
 import PIL.ImageDraw
 import PIL.ImageTk
+import PIL.ImageFont
 from matplotlib import font_manager
 
 class AutoScrollbar(ttk.Scrollbar):
@@ -121,15 +122,25 @@ class GcpCheck(tk.Tk):
             a sorted list is also generated with image names
         """
         try:
-            self.gcps = pd.read_csv(self.gcp_file, sep=self.separator, skiprows=1,
-                                    names=["east", "north", "elev", "col", "row", "img", "id"])
-            self.imgs = sorted(list(set(self.gcps["img"])))
+            self.gcps = pd.read_csv(self.gcp_file, sep=self.separator,
+                                    skiprows=1, header=None)
         except FileNotFoundError:
             messagebox.showerror("Error", f"File not found: {self.gcp_file}")
+            return False
+        except UnicodeDecodeError:
+            messagebox.showerror("Error", f"Decode error: {self.gcp_file}")
             return False
         except pd.errors.ParserError:
             messagebox.showerror("Error", f"File parse error: {self.gcp_file}")
             return False
+        if len(self.gcps.columns) == 4:
+            self.gcps.columns = ["col", "row", "img", "id"]
+        elif len(self.gcps.columns) == 7:
+            self.gcps.columns = ["east", "north", "elev", "col", "row", "img", "id"]
+        else:
+            messagebox.showerror("Error", f"Invalid number of columns: {self.gcp_file}")
+            return False
+        self.imgs = sorted(list(set(self.gcps["img"])))
         return True
 
     def scroll_y(self, *args, **kwargs):
