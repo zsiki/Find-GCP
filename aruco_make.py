@@ -4,8 +4,15 @@
     Simple application to generate ArUco markers of different dictionaries
 """
 import argparse
+import cv2
 from cv2 import aruco
 import matplotlib.pyplot as plt
+
+# handle incompatibility introduced in openCV 4.8
+if cv2.__version__ < '4.7':
+    aruco.Dictionary = aruco.Dictionary_create
+    aruco.getPredefinedDictionary = aruco.Dictionary_get
+    aruco.generateImageMarker = aruco.drawMarker
 
 def_dict = aruco.DICT_4X4_100   # default dictionary 4X4
 def_start = 0                   # first marker to generate
@@ -32,13 +39,13 @@ parser.add_argument('-p', '--pad', type=float, default=def_pad,
 args = parser.parse_args()
 
 if args.dict == 99:     # use special 3x3 dictionary
-    aruco_dict = aruco.Dictionary_create(32, 3)
+    aruco_dict = aruco.Dictionary(32, 3)
 else:
-    aruco_dict = aruco.Dictionary_get(args.dict)
+    aruco_dict = aruco.getPredefinedDictionary(args.dict)
 if args.end < args.start:
     args.end = args.start
 for i in range(args.start, args.end+1):
-    img = aruco.drawMarker(aruco_dict, i, 1000)
+    img = aruco.generateImageMarker(aruco_dict, i, 1000)
     if args.gray:
         img[img == 255] = args.value
         plt.figure(facecolor=str(args.value/255))
