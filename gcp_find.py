@@ -16,13 +16,12 @@ import os
 import time
 import glob
 import argparse
-from multiprocessing import Pool
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 from cv2 import aruco
 
-# handle incompatibility introduced in openCV 4.8 
+# handle incompatibility introduced in openCV 4.8
 if cv2.__version__ < '4.7':
     aruco.Dictionary = aruco.Dictionary_create
     aruco.getPredefinedDictionary = aruco.Dictionary_get
@@ -72,13 +71,13 @@ class GcpFind():
         if args.list:
             # list available aruco dictionary names & exit
             for act_dict in self.list_dicts():
-                print('{} : {}'.format(act_dict[0], act_dict[1]), file=sys.stderr)
+                print(f'{act_dict[0]} : {act_dict[1]}', file=sys.stderr)
             # list all aruco parameters
             for par in dir(self.params):
                 if not par.startswith('__'):
                     val = getattr(self.params, par)
                     if type(val) in (int, float, str, bool):
-                        print('{} : {}'.format(par, val), file=sys.stderr)
+                        print(f'{par} : {val}', file=sys.stderr)
             sys.exit(0)
 
         self.coords = {}
@@ -118,7 +117,7 @@ class GcpFind():
         if self.args.input:
             if not os.path.isfile(self.args.input) or \
                not os.access(self.args.input, os.R_OK):
-                print('cannot open input file {}'.format(self.args.input), file=sys.stderr)
+                print(f'cannot open input file {self.args.input}', file=sys.stderr)
                 return False
         return True
 
@@ -127,11 +126,11 @@ class GcpFind():
             input file format: point_id easting northing elevation
             coordinates are stored in coords dict
         """
-        with open(self.args.input, 'r') as finput:
+        with open(self.args.input, 'r', encoding="utf-8") as finput:
             for line in finput:
                 co_list = line.strip().split(args.separator)
                 if len(co_list) < 4:
-                    print("Illegal input: {}".format(line), file=sys.stderr)
+                    print(f"Illegal input: {line}", file=sys.stderr)
                     continue
                 self.coords[int(co_list[0])] = [float(x) for x in co_list[1:4]]
 
@@ -141,12 +140,11 @@ class GcpFind():
         for f_name in self.args.names:
             # read actual image file
             if self.args.verbose:
-                print("processing {}".format(f_name), file=sys.stderr)
+                print(f"processing {f_name}", file=sys.stderr)
             self.process_image(f_name)
         if self.args.verbose:
-            for j in self.gcp_found:
-                print('GCP{}: on {} images {}'.format(j, len(self.gcp_found[j]),
-                                                      self.gcp_found[j]), file=sys.stderr)
+            for j, k in self.gcp_found.items():
+                print(f'GCP{j}: on {len(k)} images {k}', file=sys.stderr)
         self.gcp_output()
 
     def process_image(self, image_name):
@@ -156,7 +154,7 @@ class GcpFind():
         """
         frame = cv2.imread(image_name)
         if frame is None:
-            print('error reading image: {}'.format(image_name), file=sys.stderr)
+            print(f'error reading image: {image_name}', file=sys.stderr)
             return
         # convert image to gray
         if self.args.adjust:
@@ -174,18 +172,18 @@ class GcpFind():
             detector = aruco.ArucoDetector(self.aruco_dict, self.params)
             corners, ids, _ = detector.detectMarkers(gray)
         if ids is None:
-            print('No markers found on image {}'.format(image_name), file=sys.stderr)
+            print(f'No markers found on image {image_name}', file=sys.stderr)
             return
         # check duplicate ids
         idsl = [pid[0] for pid in ids]
         if len(ids) - len(set(idsl)):
-            print('duplicate markers on image {}\nmarker ids: {}'.format(image_name, sorted(idsl)), file=sys.stderr)
+            print(f'duplicate markers on image {image_name}\nmarker ids: {sorted(idsl)}', file=sys.stderr)
         # calculate center & output found markers
         if self.args.verbose:
-            print('  {} GCP markers found'.format(ids.size), file=sys.stderr)
+            print(f'  {ids.size} GCP markers found', file=sys.stderr)
         if self.args.debug:  # show found ids in debug mode
             plt.figure()
-            plt.title("{} GCP, {} duplicate found on {}".format(len(ids), len(ids) - len(set(idsl)), image_name))
+            plt.title(f"{len(ids)} GCP, {len(ids) - len(set(idsl))} duplicate found on {image_name}")
             # show markers on original image
             aruco.drawDetectedMarkers(gray, corners, ids)
             plt.imshow(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
@@ -219,13 +217,13 @@ class GcpFind():
             foutput = self.args.output
         else:
             try:
-                foutput = open(self.args.output, 'w')
+                foutput = open(self.args.output, 'w', encoding="utf-8")
             except Exception:
                 print('cannot open output file', file=sys.stderr)
                 return
         if self.args.type == 'ODM' and self.args.epsg is not None:
             # write epsg code to the beginning of the output
-            foutput.write('EPSG:{}\n'.format(self.args.epsg))
+            foutput.write('EPSG:{self.args.epsg}\n')
 
         for gcp in self.gcps:
             j = gcp[3]
@@ -236,10 +234,9 @@ class GcpFind():
                             self.coords[j][0], self.coords[j][1], self.coords[j][2],
                             gcp[0], gcp[1], gcp[2], j))
                     else:
-                        print("GCP {} over limit it is dropped on image {}".format(
-                            j, gcp[2]), file=sys.stderr)
+                        print(f"GCP {j} over limit it is dropped on image {gcp[2]}", file=sys.stderr)
                 else:
-                    print("No coordinates for {}".format(j), file=sys.stderr)
+                    print(f"No coordinates for {j}", file=sys.stderr)
             elif self.args.type == 'VisualSfM':
                 if j in self.coords:
                     if len(self.gcp_found[j]) <= self.args.limit:
@@ -247,10 +244,9 @@ class GcpFind():
                             gcp[2], gcp[0], gcp[1],
                             self.coords[j][0], self.coords[j][1], self.coords[j][2], j))
                     else:
-                        print("GCP {} over limit it is dropped on image {}".format(
-                            j, gcp[2]), file=sys.stderr)
+                        print(f"GCP {j} over limit it is dropped on image {gcp[2]}", file=sys.stderr)
                 else:
-                    print("No coordinates for {}".format(j), file=sys.stderr)
+                    print(f"No coordinates for {j}", file=sys.stderr)
             else:
                 if j in self.coords:
                     if len(self.gcp_found[j]) <= self.args.limit:
@@ -258,15 +254,13 @@ class GcpFind():
                             self.coords[j][0], self.coords[j][1], self.coords[j][2],
                             gcp[0], gcp[1], gcp[2], j))
                     else:
-                        print("GCP {} over limit it is dropped on image {}".format(
-                            j, gcp[2]), file=sys.stderr)
+                        print(f"GCP {j} over limit it is dropped on image {gcp[2]}", file=sys.stderr)
                 else:
                     if len(self.gcp_found[j]) <= self.args.limit:
                         foutput.write('{} {} {} {}\n'.format(
                             gcp[0], gcp[1], gcp[2], j))
                     else:
-                        print("GCP {} over limit it is dropped on image {}".format(
-                            j, gcp[2]), file=sys.stderr)
+                        print(f"GCP {j} over limit it is dropped on image {gcp[2]}", file=sys.stderr)
         if self.args.output != sys.stdout:
             foutput.close()
 
@@ -297,20 +291,16 @@ def cmd_params(parser, params):
                         help='image files to process')
     # general parameters
     parser.add_argument('-d', '--dict', type=int, default=def_dict,
-                        help='marker dictionary id, default={} (DICT_4X4_100)'
-                        .format(def_dict))
+                        help=f'marker dictionary id, default={def_dict} (DICT_4X4_100)')
     parser.add_argument('-o', '--output', type=str, default=def_output,
                         help='name of output GCP list file, default stdout')
     parser.add_argument('-t', '--type', choices=['ODM', 'VisualSfM'],
                         default=def_type,
-                        help='target program ODM or VisualSfM, default {}'
-                        .format(def_type))
+                        help=f'target program ODM or VisualSfM, default {def_type}')
     parser.add_argument('-i', '--input', type=str, default=def_input,
-                        help='name of input GCP coordinate file, default {}'
-                        .format(def_input))
+                        help=f'name of input GCP coordinate file, default {def_input}')
     parser.add_argument('-s', '--separator', type=str, default=def_separator,
-                        help='input file separator, default {}'
-                        .format(def_separator))
+                        help=f'input file separator, default {def_separator}')
     parser.add_argument('-v', '--verbose', action="store_true",
                         help='verbose output to stdout')
     group = parser.add_mutually_exclusive_group()
@@ -350,83 +340,63 @@ def cmd_params(parser, params):
                         help='detect inverted markers')
     parser.add_argument('--winmin', type=int,
                         default=params.adaptiveThreshWinSizeMin,
-                        help='adaptive tresholding window min size, default {}'
-                        .format(params.adaptiveThreshWinSizeMin))
+                        help=f'adaptive tresholding window min size, default {params.adaptiveThreshWinSizeMin}')
     parser.add_argument('--winmax', type=int,
                         default=params.adaptiveThreshWinSizeMax,
-                        help='adaptive thresholding window max size, default {}'
-                        .format(params.adaptiveThreshWinSizeMax))
+                        help=f'adaptive thresholding window max size, default {params.adaptiveThreshWinSizeMax}')
     parser.add_argument('--winstep', type=int,
                         default=params.adaptiveThreshWinSizeStep,
-                        help='adaptive thresholding window size step , default {}'
-                        .format(params.adaptiveThreshWinSizeStep))
+                        help=f'adaptive thresholding window size step , default {params.adaptiveThreshWinSizeStep}')
     parser.add_argument('--thres', type=float,
                         default=params.adaptiveThreshConstant,
-                        help='adaptive threshold constant, default {}'
-                        .format(params.adaptiveThreshConstant))
+                        help=f'adaptive threshold constant, default {params.adaptiveThreshConstant}')
     parser.add_argument('--minrate', type=float,
                         default=params.minMarkerPerimeterRate,
-                        help='min marker perimeter rate, default {}'
-                        .format(params.minMarkerPerimeterRate))
+                        help='min marker perimeter rate, default {params.minMarkerPerimeterRate}')
     parser.add_argument('--maxrate', type=float,
                         default=params.maxMarkerPerimeterRate,
-                        help='max marker perimeter rate, default {}'
-                        .format(params.maxMarkerPerimeterRate))
+                        help=f'max marker perimeter rate, default {params.maxMarkerPerimeterRate}')
     parser.add_argument('--poly', type=float,
                         default=params.polygonalApproxAccuracyRate,
-                        help='polygonal approx accuracy rate, default {}'
-                        .format(params.polygonalApproxAccuracyRate))
+                        help=f'polygonal approx accuracy rate, default {params.polygonalApproxAccuracyRate}')
     parser.add_argument('--corner', type=float,
                         default=params.minCornerDistanceRate,
-                        help='minimum distance any pair of corners in the same marker, default {}'
-                        .format(params.minCornerDistanceRate))
+                        help=f'minimum distance any pair of corners in the same marker, default {params.minCornerDistanceRate}')
     parser.add_argument('--markerdist', type=float,
                         default=params.minMarkerDistanceRate,
-                        help='minimum distance any pair of corners from different markers, default {}'
-                        .format(params.minMarkerDistanceRate))
+                        help=f'minimum distance any pair of corners from different markers, default {params.minMarkerDistanceRate}')
     parser.add_argument('--borderdist', type=int,
                         default=params.minDistanceToBorder,
-                        help='minimum distance any marker corner to image border, default {}'
-                        .format(params.minDistanceToBorder))
+                        help=f'minimum distance any marker corner to image border, default {params.minDistanceToBorder}')
     parser.add_argument('--borderbits', type=int,
                         default=params.markerBorderBits,
-                        help='width of marker border, default {}'
-                        .format(params.markerBorderBits))
+                        help=f'width of marker border, default {params.markerBorderBits}')
     parser.add_argument('--otsu', type=float, default=params.minOtsuStdDev,
-                        help='minimum stddev of pixel values, default {}'
-                        .format(params.minOtsuStdDev))
+                        help=f'minimum stddev of pixel values, default {params.minOtsuStdDev}')
     parser.add_argument('--persp', type=int,
                         default=params.perspectiveRemovePixelPerCell,
-                        help='number of pixels per cells, default {}'
-                        .format(params.perspectiveRemovePixelPerCell))
+                        help=f'number of pixels per cells, default {params.perspectiveRemovePixelPerCell}')
     parser.add_argument('--ignore', type=float,
                         default=params.perspectiveRemoveIgnoredMarginPerCell,
-                        help='Ignored pixels at cell borders, default {}'
-                        .format(params.perspectiveRemoveIgnoredMarginPerCell))
+                        help=f'Ignored pixels at cell borders, default {params.perspectiveRemoveIgnoredMarginPerCell}')
     parser.add_argument('--error', type=float,
                         default=params.maxErroneousBitsInBorderRate,
-                        help='Border bits error rate, default {}'
-                        .format(params.maxErroneousBitsInBorderRate))
+                        help=f'Border bits error rate, default {params.maxErroneousBitsInBorderRate}')
     parser.add_argument('--correct', type=float,
                         default=params.errorCorrectionRate,
-                        help='Bit correction rate, default {}'
-                        .format(params.errorCorrectionRate))
+                        help=f'Bit correction rate, default {params.errorCorrectionRate}')
     parser.add_argument('--refinement', type=int,
                         default=params.cornerRefinementMethod,
-                        help='Subpixel process method, default {}'
-                        .format(params.cornerRefinementMethod))
+                        help=f'Subpixel process method, default {params.cornerRefinementMethod}')
     parser.add_argument('--refwin', type=int,
                         default=params.cornerRefinementWinSize,
-                        help='Window size for subpixel refinement, default {}'
-                        .format(params.cornerRefinementWinSize))
+                        help=f'Window size for subpixel refinement, default {params.cornerRefinementWinSize}')
     parser.add_argument('--maxiter', type=int,
                         default=params.cornerRefinementMaxIterations,
-                        help='Stop criteria for subpixel process, default {}'
-                        .format(params.cornerRefinementMaxIterations))
+                        help=f'Stop criteria for subpixel process, default {params.cornerRefinementMaxIterations}')
     parser.add_argument('--minacc', type=float,
                         default=params.cornerRefinementMinAccuracy,
-                        help='Stop criteria for subpixel process, default {}'
-                        .format(params.cornerRefinementMinAccuracy))
+                        help=f'Stop criteria for subpixel process, default {params.cornerRefinementMinAccuracy}')
 
 if __name__ == "__main__":
     T1 = time.perf_counter()
