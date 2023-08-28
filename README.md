@@ -9,6 +9,15 @@ A paper is available about this project in the Baltic Journal of Modern Computin
 
 [The project page on OpenHub](https://www.openhub.net/p/Find-GCP)
 
+## News
+
+The Python 2.x compatibility is not maintened after 08/27/2003.
+
+The 3x3 ArUco dictionary is not useable after openCV version 4.6. 
+Downgrade opencv-python and opencv-contrib-python to 4.6.0.66 version if you
+would like to use 3x3 dictionary.
+
+
 ## Installation
 
 [ArUco markers](http://chev.me/arucogen) are black and white square markers which have unique pattern and ID. [OpenCV](https://opencv.org) library has a modul to find ArUco markers in images (you should pip install).
