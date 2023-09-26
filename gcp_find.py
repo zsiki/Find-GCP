@@ -223,7 +223,7 @@ class GcpFind():
                 return
         if self.args.type == 'ODM' and self.args.epsg is not None:
             # write epsg code to the beginning of the output
-            foutput.write('EPSG:{self.args.epsg}\n')
+            foutput.write(f'EPSG:{self.args.epsg}\n')
 
         for gcp in self.gcps:
             j = gcp[3]
