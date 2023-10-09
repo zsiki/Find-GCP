@@ -249,13 +249,9 @@ DJI_0042.JPG,19.120762,47.683671,203.86
 DJI_0043.JPG,19.120725,47.683566,203.86
 ```
 
-#### dict\_gen\_3x3.py
-
-It generates 32 custom 3x3 ArUco dictionary markers in dict\_3x3 subdirectory (png files). File names are 3x3_id.png, where *id* is the ordinal number of the marker.
-
 #### aruco\_make.py
 
-It generates aruco marker images of different standard dictionaries for printing.
+It generates aruco marker images of different standard and 3x3 non-standard dictionaries for printing.
 
 ```
 usage: aruco_make.py [-h] [-d DICT] [-s START] [-e END] [-v]
