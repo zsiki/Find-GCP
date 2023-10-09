@@ -132,7 +132,13 @@ class GcpFind():
                 if len(co_list) < 4:
                     print(f"Illegal input: {line}", file=sys.stderr)
                     continue
-                self.coords[int(co_list[0])] = [float(x) for x in co_list[1:4]]
+                # check coordinates are numerical?
+                try:
+                    _ = [float(x) for x in co_list[1:4]]
+                except:
+                    print("Non-numerical coordinates: {line}", file=sys.stderr)
+                # store original precision of coordinates
+                self.coords[int(co_list[0])] = co_list[1:4]
 
     def process_images(self):
         """ process all images """
@@ -230,7 +236,7 @@ class GcpFind():
             if self.args.type == 'ODM':
                 if j in self.coords:
                     if len(self.gcp_found[j]) <= self.args.limit:
-                        foutput.write('{:.3f} {:.3f} {:.3f} {} {} {} {}\n'.format(
+                        foutput.write('{} {} {} {} {} {} {}\n'.format(
                             self.coords[j][0], self.coords[j][1], self.coords[j][2],
                             gcp[0], gcp[1], gcp[2], j))
                     else:
@@ -240,7 +246,7 @@ class GcpFind():
             elif self.args.type == 'VisualSfM':
                 if j in self.coords:
                     if len(self.gcp_found[j]) <= self.args.limit:
-                        foutput.write('{} {} {} {:.3f} {:.3f} {:.3f} {}\n'.format(
+                        foutput.write('{} {} {} {} {} {} {}\n'.format(
                             gcp[2], gcp[0], gcp[1],
                             self.coords[j][0], self.coords[j][1], self.coords[j][2], j))
                     else:
@@ -250,7 +256,7 @@ class GcpFind():
             else:
                 if j in self.coords:
                     if len(self.gcp_found[j]) <= self.args.limit:
-                        foutput.write('{:.3f} {:.3f} {:.3f} {} {} {} {}\n'.format(
+                        foutput.write('{} {} {} {} {} {} {}\n'.format(
                             self.coords[j][0], self.coords[j][1], self.coords[j][2],
                             gcp[0], gcp[1], gcp[2], j))
                     else:
