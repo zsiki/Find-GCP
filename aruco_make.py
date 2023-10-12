@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 # handle incompatibility introduced in openCV 4.8
 if cv2.__version__ < '4.7':
-    aruco.Dictionary = aruco.Dictionary_create
+    aruco.extendDictionary = aruco.Dictionary_create
     aruco.getPredefinedDictionary = aruco.Dictionary_get
     aruco.generateImageMarker = aruco.drawMarker
 
@@ -39,7 +39,7 @@ parser.add_argument('-p', '--pad', type=float, default=def_pad,
 args = parser.parse_args()
 
 if args.dict == 99:     # use special 3x3 dictionary
-    aruco_dict = aruco.Dictionary(32, 3)
+    aruco_dict = aruco.extendDictionary(32, 3)
 else:
     aruco_dict = aruco.getPredefinedDictionary(args.dict)
 if args.end < args.start:

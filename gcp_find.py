@@ -23,7 +23,7 @@ from cv2 import aruco
 
 # handle incompatibility introduced in openCV 4.8
 if cv2.__version__ < '4.7':
-    aruco.Dictionary = aruco.Dictionary_create
+    aruco.extendDictionary = aruco.Dictionary_create
     aruco.getPredefinedDictionary = aruco.Dictionary_get
     aruco.DetectorParameters = aruco.DetectorParameters_create
 
@@ -41,7 +41,7 @@ class GcpFind():
         self.args = args
         # prepare aruco
         if args.dict == 99:     # use special 3x3 dictionary
-            self.aruco_dict = aruco.Dictionary(32, 3)
+            self.aruco_dict = aruco.extendDictionary(32, 3)
         else:
             self.aruco_dict = aruco.getPredefinedDictionary(args.dict)
 
