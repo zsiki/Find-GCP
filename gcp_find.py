@@ -47,27 +47,28 @@ class GcpFind():
 
         # set aruco parameters from command line arguments
         self.params = params
-        self.params.detectInvertedMarker = args.inverted
-        self.params.adaptiveThreshWinSizeMin = args.winmin
-        self.params.adaptiveThreshWinSizeMax = args.winmax
-        self.params.adaptiveThreshWinSizeStep = args.winstep
         self.params.adaptiveThreshConstant = args.thres
-        self.params.minMarkerPerimeterRate = args.minrate
-        self.params.maxMarkerPerimeterRate = args.maxrate
-        self.params.polygonalApproxAccuracyRate = args.poly
-        self.params.minCornerDistanceRate = args.corner
-        self.params.minMarkerDistanceRate = args.markerdist
-        self.params.minDistanceToBorder = args.borderdist
-        self.params.markerBorderBits = args.borderbits
-        self.params.minOtsuStdDev = args.otsu
-        self.params.perspectiveRemovePixelPerCell = args.persp
-        self.params.perspectiveRemoveIgnoredMarginPerCell = args.ignore
-        self.params.maxErroneousBitsInBorderRate = args.error
-        self.params.errorCorrectionRate = args.correct
-        self.params.cornerRefinementMethod = args.refinement
-        self.params.cornerRefinementWinSize = args.refwin
+        self.params.adaptiveThreshWinSizeMax = args.winmax
+        self.params.adaptiveThreshWinSizeMin = args.winmin
+        self.params.adaptiveThreshWinSizeStep = args.winstep
         self.params.cornerRefinementMaxIterations = args.maxiter
+        self.params.cornerRefinementMethod = args.refinement
         self.params.cornerRefinementMinAccuracy = args.minacc
+        self.params.cornerRefinementWinSize = args.refwin
+        self.params.detectInvertedMarker = args.inverted
+        self.params.errorCorrectionRate = args.correctionrate
+        self.params.markerBorderBits = args.borderbits
+        self.params.maxErroneousBitsInBorderRate = args.error
+        self.params.maxMarkerPerimeterRate = args.maxrate
+        self.params.minCornerDistanceRate = args.corner
+        self.params.minDistanceToBorder = args.borderdist
+        self.params.minMarkerDistanceRate = args.markerdist
+        self.params.minMarkerPerimeterRate = args.minrate
+        self.params.minOtsuStdDev = args.otsu
+        self.params.perspectiveRemoveIgnoredMarginPerCell = args.ignore
+        self.params.perspectiveRemovePixelPerCell = args.persp
+        self.params.polygonalApproxAccuracyRate = args.poly
+        self.params.useAruco3Detection = args.aruco3
         if args.list:
             # list available aruco dictionary names & exit
             for act_dict in self.list_dicts():
@@ -342,23 +343,38 @@ def cmd_params(parser, params):
     parser.add_argument('--limit', type=int, default=def_limit,
                         help='limit the number of records in the output for a unique id')
     # parameters for ArUco detection
-    parser.add_argument('-r', '--inverted', action="store_true",
-                        help='detect inverted markers')
-    parser.add_argument('--winmin', type=int,
-                        default=params.adaptiveThreshWinSizeMin,
-                        help=f'adaptive tresholding window min size, default {params.adaptiveThreshWinSizeMin}')
-    parser.add_argument('--winmax', type=int,
-                        default=params.adaptiveThreshWinSizeMax,
-                        help=f'adaptive thresholding window max size, default {params.adaptiveThreshWinSizeMax}')
-    parser.add_argument('--winstep', type=int,
-                        default=params.adaptiveThreshWinSizeStep,
-                        help=f'adaptive thresholding window size step , default {params.adaptiveThreshWinSizeStep}')
     parser.add_argument('--thres', type=float,
                         default=params.adaptiveThreshConstant,
                         help=f'adaptive threshold constant, default {params.adaptiveThreshConstant}')
+    parser.add_argument('--winmax', type=int,
+                        default=params.adaptiveThreshWinSizeMax,
+                        help=f'adaptive thresholding window max size, default {params.adaptiveThreshWinSizeMax}')
+    parser.add_argument('--winmin', type=int,
+                        default=params.adaptiveThreshWinSizeMin,
+                        help=f'adaptive tresholding window min size, default {params.adaptiveThreshWinSizeMin}')
+    parser.add_argument('--winstep', type=int,
+                        default=params.adaptiveThreshWinSizeStep,
+                        help=f'adaptive thresholding window size step , default {params.adaptiveThreshWinSizeStep}')
+    parser.add_argument('--maxiter', type=int,
+                        default=params.cornerRefinementMaxIterations,
+                        help=f'Stop criteria for subpixel process, default {params.cornerRefinementMaxIterations}')
+    parser.add_argument('--refinement', type=int,
+                        default=params.cornerRefinementMethod,
+                        help=f'Subpixel process method, default {params.cornerRefinementMethod}')
+    parser.add_argument('--minacc', type=float,
+                        default=params.cornerRefinementMinAccuracy,
+                        help=f'Stop criteria for subpixel process, default {params.cornerRefinementMinAccuracy}')
+    parser.add_argument('--refwin', type=int,
+                        default=params.cornerRefinementWinSize,
+                        help=f'Window size for subpixel refinement, default {params.cornerRefinementWinSize}')
+    parser.add_argument('-r', '--inverted', action="store_true",
+                        help=f'detect inverted markers, default {params.detectInvertedMarker}')
+    parser.add_argument('--correctionrate', type=float,
+                        default=params.errorCorrectionRate,
+                        help=f'max error correction, default {params.errorCorrectionRate}')
     parser.add_argument('--minrate', type=float,
                         default=params.minMarkerPerimeterRate,
-                        help='min marker perimeter rate, default {params.minMarkerPerimeterRate}')
+                        help=f'min marker perimeter rate, default {params.minMarkerPerimeterRate}')
     parser.add_argument('--maxrate', type=float,
                         default=params.maxMarkerPerimeterRate,
                         help=f'max marker perimeter rate, default {params.maxMarkerPerimeterRate}')
@@ -388,21 +404,8 @@ def cmd_params(parser, params):
     parser.add_argument('--error', type=float,
                         default=params.maxErroneousBitsInBorderRate,
                         help=f'Border bits error rate, default {params.maxErroneousBitsInBorderRate}')
-    parser.add_argument('--correct', type=float,
-                        default=params.errorCorrectionRate,
-                        help=f'Bit correction rate, default {params.errorCorrectionRate}')
-    parser.add_argument('--refinement', type=int,
-                        default=params.cornerRefinementMethod,
-                        help=f'Subpixel process method, default {params.cornerRefinementMethod}')
-    parser.add_argument('--refwin', type=int,
-                        default=params.cornerRefinementWinSize,
-                        help=f'Window size for subpixel refinement, default {params.cornerRefinementWinSize}')
-    parser.add_argument('--maxiter', type=int,
-                        default=params.cornerRefinementMaxIterations,
-                        help=f'Stop criteria for subpixel process, default {params.cornerRefinementMaxIterations}')
-    parser.add_argument('--minacc', type=float,
-                        default=params.cornerRefinementMinAccuracy,
-                        help=f'Stop criteria for subpixel process, default {params.cornerRefinementMinAccuracy}')
+    parser.add_argument('--aruco3', action="store_true",
+                        help=f'use ArUco3 detection, default {params.useAruco3Detection}')
 
 if __name__ == "__main__":
     T1 = time.perf_counter()
