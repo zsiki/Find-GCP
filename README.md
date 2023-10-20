@@ -332,12 +332,12 @@ Find ArUco markers in an image and output marker IDs and image coordinates of ma
 ```
 ./gcp_find.py samples/markers.png
 
-16 502 342 markers.png
-15 328 342 markers.png
-14 152 342 markers.png
-13 502 142 markers.png
-12 328 142 markers.png
-11 152 142 markers.png
+502 342 markers.png 16
+328 342 markers.png 15
+152 342 markers.png 14
+502 142 markers.png 13
+328 142 markers.png 12
+152 142 markers.png 11
 ```
 
 ### Sample 2
@@ -349,18 +349,22 @@ The next command will generate the necessary text file for ODM.
 ./gcp_find.py -v -t ODM -i samples/A3.txt --epsg 23700 -o samples/gcp_list.txt --minrate 0.01 --ignore 0.33 -d 99 samples/DJI_017[234].JPG
 
 processing samples/DJI_0172.JPG
-  5 GCP markers found
+duplicate markers on image samples/DJI_0172.JPG
+marker ids: [2, 3, 4, 8, 9, 9]
+  6 GCP markers found
 processing samples/DJI_0173.JPG
   5 GCP markers found
 processing samples/DJI_0174.JPG
-  7 GCP markers found
-GCP9: on 3 images ['samples/DJI_0172.JPG', 'samples/DJI_0173.JPG', 'samples/DJI_0174.JPG']
+  8 GCP markers found
+GCP9: on 4 images ['samples/DJI_0172.JPG', 'samples/DJI_0172.JPG', 'samples/DJI_0173.JPG', 'samples/DJI_0174.JPG']
 GCP8: on 3 images ['samples/DJI_0172.JPG', 'samples/DJI_0173.JPG', 'samples/DJI_0174.JPG']
 GCP3: on 3 images ['samples/DJI_0172.JPG', 'samples/DJI_0173.JPG', 'samples/DJI_0174.JPG']
 GCP4: on 3 images ['samples/DJI_0172.JPG', 'samples/DJI_0173.JPG', 'samples/DJI_0174.JPG']
 GCP2: on 3 images ['samples/DJI_0172.JPG', 'samples/DJI_0173.JPG', 'samples/DJI_0174.JPG']
 GCP1: on 1 images ['samples/DJI_0174.JPG']
 GCP0: on 1 images ['samples/DJI_0174.JPG']
+GCP10: on 1 images ['samples/DJI_0174.JPG']
+No coordinates for 10
 ```
 
 The gcp_list.txt output file which is ready for use with ODM or WebODM. Copy the gcp_list.txt into your images directory using ODM and add the
@@ -374,12 +378,13 @@ switch to your ODM command.
 The gcp_list.txt file should look like:
 
 ```
-EPSG:2370
+EPSG:23700
 650530.705 237530.488 104.066 3206 2391 DJI_0172.JPG 9
 650538.926 237536.529 104.113 1952 2323 DJI_0172.JPG 8
 650534.729 237526.552 104.267 3124 1703 DJI_0172.JPG 3
 650542.850 237532.382 104.165 1908 1622 DJI_0172.JPG 4
 650546.305 237521.605 104.217 2419 368 DJI_0172.JPG 2
+650530.705 237530.488 104.066 188 2010 DJI_0172.JPG 9
 650530.705 237530.488 104.066 3172 2413 DJI_0173.JPG 9
 650538.926 237536.529 104.113 1921 2343 DJI_0173.JPG 8
 650534.729 237526.552 104.267 3091 1727 DJI_0173.JPG 3
@@ -401,15 +406,14 @@ Photos (DJI0087.jpg and DJI0088.jpg) made by a DJI Phantom 4 Pro. There are thre
 ```
 python3 gcp_find.py --minrate 0.01 samples/bme/DJI_008[78].jpg
 
-5 2832 1845 DJI_0087.jpg
-3 2472 731 DJI_0087.jpg
-5 3024 3556 DJI_0088.jpg
-3 2654 2458 DJI_0088.jpg
-0 2448 1315 DJI_0088.jpg
-6 3094 1299 DJI_0088.jpg
+2832 1844 DJI_0087.jpg 5
+1963 1764 DJI_0087.jpg 4
+2472 732 DJI_0087.jpg 3
+3024 3556 DJI_0088.jpg 5
+2654 2458 DJI_0088.jpg 3
+2448 1315 DJI_0088.jpg 0
+3094 1300 DJI_0088.jpg 6
 ```
-
-Marker 4 was not detected.
 
 ### Sample 4
 
@@ -418,24 +422,31 @@ DJI\_0181.png.
 
 ```
 python3 gcp_find.py -d 99 --minrate 0.01 --ignore 0.33 samples/bme/DJI_018[01].jpg 
-3 3458 3251 DJI_0180.jpg
-4 2700 3229 DJI_0180.jpg
-2 2981 2414 DJI_0180.jpg
-1 2663 2114 DJI_0180.jpg
-7 2644 1038 DJI_0180.jpg
-0 3401 2042 DJI_0180.jpg
-5 2879 1655 DJI_0180.jpg
-6 3328 1214 DJI_0180.jpg
-9 3671 2746 DJI_0181.jpg
-8 2897 2733 DJI_0181.jpg
-3 3602 2322 DJI_0181.jpg
-4 2850 2299 DJI_0181.jpg
-2 3128 1502 DJI_0181.jpg
-1 2812 1207 DJI_0181.jpg
-0 3545 1138 DJI_0181.jpg
-7 2792 152 DJI_0181.jpg
-5 3026 758 DJI_0181.jpg
-6 3471 327 DJI_0181.jpg
+
+duplicate markers on image samples/bme/DJI_0180.jpg
+marker ids: [0, 1, 1, 2, 3, 4, 5, 6, 7, 28]
+3459 3250 DJI_0180.jpg 3
+2700 3229 DJI_0180.jpg 4
+2982 2414 DJI_0180.jpg 2
+2664 2113 DJI_0180.jpg 1
+2644 1038 DJI_0180.jpg 7
+3402 2042 DJI_0180.jpg 0
+2879 1655 DJI_0180.jpg 5
+3328 1214 DJI_0180.jpg 6
+2982 2409 DJI_0180.jpg 28
+2584 64 DJI_0180.jpg 1
+3671 2746 DJI_0181.jpg 9
+2897 2733 DJI_0181.jpg 8
+3602 2322 DJI_0181.jpg 3
+2850 2299 DJI_0181.jpg 4
+3128 1502 DJI_0181.jpg 2
+2812 1208 DJI_0181.jpg 1
+3545 1138 DJI_0181.jpg 0
+2792 153 DJI_0181.jpg 7
+241 1618 DJI_0181.jpg 31
+3026 758 DJI_0181.jpg 5
+3471 327 DJI_0181.jpg 6
+2070 418 DJI_0181.jpg 15
 ```
 
-All markers found.
+At 2584,64 on image DJI_0180.jpg is a false match.
