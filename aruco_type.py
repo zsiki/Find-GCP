@@ -1,7 +1,7 @@
 import cv2
 
 ARUCO_TYPE = {
-	"DICT_3X3": cv2.aruco.Dictionary_create(32, 3),
+	"DICT_3X3": 99,
 	"DICT_4X4_50": cv2.aruco.DICT_4X4_50,
 	"DICT_4X4_100": cv2.aruco.DICT_4X4_100,
 	"DICT_4X4_250": cv2.aruco.DICT_4X4_250,
