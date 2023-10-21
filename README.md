@@ -56,27 +56,28 @@ This small utility can be used together with photogrammetric programs like Open 
 
 ```
 usage: gcp_find.py [-h] [-d DICT] [-o OUTPUT] [-t {ODM,VisualSfM}] [-i INPUT]
-                   [-s SEPARATOR] [-v] [--debug | --multi] [-l] [--epsg EPSG]
-                   [-a] [--markersize MARKERSIZE] [--markerstyle MARKERSTYLE]
+                   [-s SEPARATOR] [-v] [--debug] [-l] [--epsg EPSG] [-a]
+                   [--markersize MARKERSIZE] [--markerstyle MARKERSTYLE]
                    [--markerstyle1 MARKERSTYLE1] [--edgecolor EDGECOLOR]
                    [--edgewidth EDGEWIDTH] [--fontsize FONTSIZE]
                    [--fontcolor FONTCOLOR] [--fontcolor1 FONTCOLOR1]
                    [--fontweight FONTWEIGHT] [--fontweight1 FONTWEIGHT1]
-                   [--limit LIMIT] [--nez] [-r] [--winmin WINMIN]
-                   [--winmax WINMAX] [--winstep WINSTEP] [--thres THRES]
-                   [--minrate MINRATE] [--maxrate MAXRATE] [--poly POLY]
-                   [--corner CORNER] [--markerdist MARKERDIST]
-                   [--borderdist BORDERDIST] [--borderbits BORDERBITS]
-                   [--otsu OTSU] [--persp PERSP] [--ignore IGNORE]
-                   [--error ERROR] [--correct CORRECT]
-                   [--refinement REFINEMENT] [--refwin REFWIN]
-                   [--maxiter MAXITER] [--minacc MINACC]
-                   [file_names [file_names ...]]
+                   [--limit LIMIT] [--thres THRES] [--winmax WINMAX]
+                   [--winmin WINMIN] [--winstep WINSTEP] [--maxiter MAXITER]
+                   [--refinement REFINEMENT] [--minacc MINACC]
+                   [--refwin REFWIN] [-r] [--correctionrate CORRECTIONRATE]
+                   [--borderbits BORDERBITS] [--error ERROR]
+                   [--maxrate MAXRATE] [--corner CORNER]
+                   [--borderdist BORDERDIST] [--markerdist MARKERDIST]
+                   [--lengthratio LENGTHRATIO] [--minrate MINRATE]
+                   [--otsu OTSU] [--ignore IGNORE] [--persp PERSP]
+                   [--poly POLY] [--aruco3]
+                   [file_names ...]
 
 positional arguments:
   file_names            image files to process
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -d DICT, --dict DICT  marker dictionary id, default=1 (DICT_4X4_100)
   -o OUTPUT, --output OUTPUT
@@ -89,7 +90,6 @@ optional arguments:
                         input file separator, default
   -v, --verbose         verbose output to stdout
   --debug               show detected markers on image
-  --multi               process images paralel
   -l, --list            output dictionary names and ids and exit
   --epsg EPSG           epsg code for gcp coordinates, default None
   -a, --adjust          adjust colors by built in lookup table
@@ -120,37 +120,38 @@ optional arguments:
                         debug
   --limit LIMIT         limit the number of records in the output for a unique
                         id
-  --nez                 set the coordinate order in GCP input to
-                        North,East,Elevation (compatible with GCPEditorPro)
-  -r, --inverted        detect inverted markers
-  --winmin WINMIN       adaptive tresholding window min size, default 3
-  --winmax WINMAX       adaptive thresholding window max size, default 23
-  --winstep WINSTEP     adaptive thresholding window size step , default 10
   --thres THRES         adaptive threshold constant, default 7.0
-  --minrate MINRATE     min marker perimeter rate, default 0.03
+  --winmax WINMAX       adaptive thresholding window max size, default 23
+  --winmin WINMIN       adaptive tresholding window min size, default 3
+  --winstep WINSTEP     adaptive thresholding window size step , default 10
+  --maxiter MAXITER     Stop criteria for subpixel process, default 30
+  --refinement REFINEMENT
+                        Subpixel process method, default 0
+  --minacc MINACC       Stop criteria for subpixel process, default 0.1
+  --refwin REFWIN       Window size for subpixel refinement, default 5
+  -r, --inverted        detect inverted markers, default False
+  --correctionrate CORRECTIONRATE
+                        max error correction, default 0.6
+  --borderbits BORDERBITS
+                        width of marker border, default 1
+  --error ERROR         Border bits error rate, default 0.35
   --maxrate MAXRATE     max marker perimeter rate, default 4.0
-  --poly POLY           polygonal approx accuracy rate, default 0.03
   --corner CORNER       minimum distance any pair of corners in the same
                         marker, default 0.05
-  --markerdist MARKERDIST
-                        minimum distance any pair of corners from different
-                        markers, default 0.05
   --borderdist BORDERDIST
                         minimum distance any marker corner to image border,
                         default 3
-  --borderbits BORDERBITS
-                        width of marker border, default 1
+  --markerdist MARKERDIST
+                        minimum distance any pair of corners from different
+                        markers, default 0.05
+  --lengthratio LENGTHRATIO
+                        range [0,1], default 0.0
+  --minrate MINRATE     min marker perimeter rate, default 0.03
   --otsu OTSU           minimum stddev of pixel values, default 5.0
-  --persp PERSP         number of pixels per cells, default 4
   --ignore IGNORE       Ignored pixels at cell borders, default 0.13
-  --error ERROR         Border bits error rate, default 0.35
-  --correct CORRECT     Bit correction rate, default 0.6
-  --refinement REFINEMENT
-                        Subpixel process method, default 0
-  --refwin REFWIN       Window size for subpixel refinement, default 5
-  --maxiter MAXITER     Stop criteria for subpixel process, default 30
-  --minacc MINACC       Stop criteria for subpixel process, default 0.1
-
+  --persp PERSP         number of pixels per cells, default 4
+  --poly POLY           polygonal approx accuracy rate, default 0.03
+  --aruco3              use ArUco3 detection, default False
 ```
 
 List of the available dictionary codes (see --list):
@@ -173,18 +174,15 @@ List of the available dictionary codes (see --list):
 14 : DICT_7X7_250
 15 : DICT_7X7_1000
 16 : DICT_ARUCO_ORIGINAL
-17 : DICT_APRILTAG_16H5
 17 : DICT_APRILTAG_16h5
-18 : DICT_APRILTAG_25H9
 18 : DICT_APRILTAG_25h9
-19 : DICT_APRILTAG_36H10
 19 : DICT_APRILTAG_36h10
-20 : DICT_APRILTAG_36H11
 20 : DICT_APRILTAG_36h11
+21 : DICT_ARUCO_MIP_36H12
 99 : DICT_3X3_32 custom
 ```
 
-Parameters from *winmin* to *minacc* are customizable parameters for ArUco detection and are explaned in the OpenCV [Aruco documentation](https://docs.opencv.org/trunk/d5/dae/tutorial_aruco_detection.html). The two most important parameters are *minrate* and *ignore*. Usually the default values of these parameters are not perfect.
+Parameters from *winmax* to *aruco3* are customizable parameters for ArUco detection and are explaned in the OpenCV [Aruco documentation](https://docs.opencv.org/trunk/d5/dae/tutorial_aruco_detection.html). The two most important parameters are *minrate* and *ignore*. Usually the default values of these parameters are not perfect.
 
 *minrate* defines the minimal size of a marker in a relative way. For example if the larger image size is 5472 pixels and the *minrate* parameter is 0.01, then the minimal perimeter of an ArUco marker should be 0.01 \* 5472 = 54 pixels, and the minimal size of the marker side is 54 / 4 = 13 pixels. Smaller marker candidates are dropped. Our exprerience is the minimal marker side should be 20-30 pixels to detect 4x4 markers. Using the special 3x3 markers (see: dict\_gen\_3x3.py) the size of the marker can be reduced. So you can calculate marker size in centimetres if you know the pixel size in centimetres, in case of 30-50 metres flight altitude, it is 1-2 cm (DJI Phantom Pro). You should use 20-40 cm large markers.
 
@@ -212,6 +210,15 @@ Sample imput file for GCP coordinates (pointID easting northing elevation):
 
 See our publication in Baltic Journal of Modern Computing:
 [Automatic Recognition of ArUco Codes in Land Surveying Tasks](https://www.bjmc.lu.lv/fileadmin/user_upload/lu_portal/projekti/bjmc/Contents/9_1_06_Siki.pdf)
+
+Marker detection is not perfect, there may be false pozitive matches and some markers couldn't be
+detected. Please use *gcp_check.py* utility to make a quick visual check.
+The smaller the internal matrix of ArUco marker the higher the chance for false matches.
+
+![false_match](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/false_match.png)
+
+Fugure 4 False match and the original found marker
+
 
 ### Utilities
 
