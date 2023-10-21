@@ -63,6 +63,7 @@ class GcpFind():
         self.params.minCornerDistanceRate = args.corner
         self.params.minDistanceToBorder = args.borderdist
         self.params.minMarkerDistanceRate = args.markerdist
+        self.minMarkerLengthRatioOriginalImg = args.lengthratio
         self.params.minMarkerPerimeterRate = args.minrate
         self.params.minOtsuStdDev = args.otsu
         self.params.perspectiveRemoveIgnoredMarginPerCell = args.ignore
@@ -101,11 +102,11 @@ class GcpFind():
 
             :return: sorted list of available AruCo dictionaries
         """
-        dict_list = [(99, 'DICT_3X3_32 custom')]
+        dicts = {99: 'DICT_3X3_32 custom'}
         for name in aruco.__dict__:
             if name.startswith('DICT_'):
-                dict_list.append((aruco.__dict__[name], name))
-        return sorted(dict_list)
+                dicts[aruco.__dict__[name]] = name
+        return sorted(list(zip(dicts.keys(), dicts.values())))
 
     def check_params(self):
         """ check command line params
@@ -372,38 +373,42 @@ def cmd_params(parser, params):
     parser.add_argument('--correctionrate', type=float,
                         default=params.errorCorrectionRate,
                         help=f'max error correction, default {params.errorCorrectionRate}')
-    parser.add_argument('--minrate', type=float,
-                        default=params.minMarkerPerimeterRate,
-                        help=f'min marker perimeter rate, default {params.minMarkerPerimeterRate}')
-    parser.add_argument('--maxrate', type=float,
-                        default=params.maxMarkerPerimeterRate,
-                        help=f'max marker perimeter rate, default {params.maxMarkerPerimeterRate}')
-    parser.add_argument('--poly', type=float,
-                        default=params.polygonalApproxAccuracyRate,
-                        help=f'polygonal approx accuracy rate, default {params.polygonalApproxAccuracyRate}')
-    parser.add_argument('--corner', type=float,
-                        default=params.minCornerDistanceRate,
-                        help=f'minimum distance any pair of corners in the same marker, default {params.minCornerDistanceRate}')
-    parser.add_argument('--markerdist', type=float,
-                        default=params.minMarkerDistanceRate,
-                        help=f'minimum distance any pair of corners from different markers, default {params.minMarkerDistanceRate}')
-    parser.add_argument('--borderdist', type=int,
-                        default=params.minDistanceToBorder,
-                        help=f'minimum distance any marker corner to image border, default {params.minDistanceToBorder}')
     parser.add_argument('--borderbits', type=int,
                         default=params.markerBorderBits,
                         help=f'width of marker border, default {params.markerBorderBits}')
-    parser.add_argument('--otsu', type=float, default=params.minOtsuStdDev,
-                        help=f'minimum stddev of pixel values, default {params.minOtsuStdDev}')
-    parser.add_argument('--persp', type=int,
-                        default=params.perspectiveRemovePixelPerCell,
-                        help=f'number of pixels per cells, default {params.perspectiveRemovePixelPerCell}')
-    parser.add_argument('--ignore', type=float,
-                        default=params.perspectiveRemoveIgnoredMarginPerCell,
-                        help=f'Ignored pixels at cell borders, default {params.perspectiveRemoveIgnoredMarginPerCell}')
     parser.add_argument('--error', type=float,
                         default=params.maxErroneousBitsInBorderRate,
                         help=f'Border bits error rate, default {params.maxErroneousBitsInBorderRate}')
+    parser.add_argument('--maxrate', type=float,
+                        default=params.maxMarkerPerimeterRate,
+                        help=f'max marker perimeter rate, default {params.maxMarkerPerimeterRate}')
+    parser.add_argument('--corner', type=float,
+                        default=params.minCornerDistanceRate,
+                        help=f'minimum distance any pair of corners in the same marker, default {params.minCornerDistanceRate}')
+    parser.add_argument('--borderdist', type=int,
+                        default=params.minDistanceToBorder,
+                        help=f'minimum distance any marker corner to image border, default {params.minDistanceToBorder}')
+    parser.add_argument('--markerdist', type=float,
+                        default=params.minMarkerDistanceRate,
+                        help=f'minimum distance any pair of corners from different markers, default {params.minMarkerDistanceRate}')
+    parser.add_argument('--lengthratio', type=float,
+                        default=params.minMarkerLengthRatioOriginalImg,
+                        help=f'range [0,1], default {params.minMarkerLengthRatioOriginalImg}')
+    parser.add_argument('--minrate', type=float,
+                        default=params.minMarkerPerimeterRate,
+                        help=f'min marker perimeter rate, default {params.minMarkerPerimeterRate}')
+    parser.add_argument('--otsu', type=float, default=params.minOtsuStdDev,
+                        help=f'minimum stddev of pixel values, default {params.minOtsuStdDev}')
+    # TODO minSideLengthCanonicalImg missing
+    parser.add_argument('--ignore', type=float,
+                        default=params.perspectiveRemoveIgnoredMarginPerCell,
+                        help=f'Ignored pixels at cell borders, default {params.perspectiveRemoveIgnoredMarginPerCell}')
+    parser.add_argument('--persp', type=int,
+                        default=params.perspectiveRemovePixelPerCell,
+                        help=f'number of pixels per cells, default {params.perspectiveRemovePixelPerCell}')
+    parser.add_argument('--poly', type=float,
+                        default=params.polygonalApproxAccuracyRate,
+                        help=f'polygonal approx accuracy rate, default {params.polygonalApproxAccuracyRate}')
     parser.add_argument('--aruco3', action="store_true",
                         help=f'use ArUco3 detection, default {params.useAruco3Detection}')
 
