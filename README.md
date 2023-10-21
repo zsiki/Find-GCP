@@ -213,7 +213,7 @@ See our publication in Baltic Journal of Modern Computing:
 
 Marker detection is not perfect, there may be false pozitive matches and some markers couldn't be
 detected. Please use *gcp_check.py* utility to make a quick visual check.
-The smaller the internal matrix of ArUco marker the higher the chance for false matches.
+The smaller the internal matrix of ArUco marker the higher the chance for false matche.
 
 ![false_match](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/false_match.png)
 
@@ -311,7 +311,7 @@ optional arguments:
 
 ![marked_gcps](https://raw.githubusercontent.com/zsiki/Find-GCP/master/samples/gcps.png)
 
-Figure 4 Original image and found GCPs marked
+Figure 5 Original image and found GCPs marked
 
 #### gsd\_cal
 
