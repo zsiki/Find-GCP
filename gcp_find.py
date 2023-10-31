@@ -15,6 +15,7 @@ import sys
 import os
 import time
 import glob
+import json
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
@@ -47,29 +48,37 @@ class GcpFind():
 
         # set aruco parameters from command line arguments
         self.params = params
-        self.params.adaptiveThreshConstant = args.thres
-        self.params.adaptiveThreshWinSizeMax = args.winmax
-        self.params.adaptiveThreshWinSizeMin = args.winmin
-        self.params.adaptiveThreshWinSizeStep = args.winstep
-        self.params.cornerRefinementMaxIterations = args.maxiter
-        self.params.cornerRefinementMethod = args.refinement
-        self.params.cornerRefinementMinAccuracy = args.minacc
-        self.params.cornerRefinementWinSize = args.refwin
-        self.params.detectInvertedMarker = args.inverted
-        self.params.errorCorrectionRate = args.correctionrate
-        self.params.markerBorderBits = args.borderbits
-        self.params.maxErroneousBitsInBorderRate = args.error
-        self.params.maxMarkerPerimeterRate = args.maxrate
-        self.params.minCornerDistanceRate = args.corner
-        self.params.minDistanceToBorder = args.borderdist
-        self.params.minMarkerDistanceRate = args.markerdist
-        self.minMarkerLengthRatioOriginalImg = args.lengthratio
-        self.params.minMarkerPerimeterRate = args.minrate
-        self.params.minOtsuStdDev = args.otsu
-        self.params.perspectiveRemoveIgnoredMarginPerCell = args.ignore
-        self.params.perspectiveRemovePixelPerCell = args.persp
-        self.params.polygonalApproxAccuracyRate = args.poly
-        self.params.useAruco3Detection = args.aruco3
+        if args.aruco_params is None:
+            self.params.adaptiveThreshConstant = args.thres
+            self.params.adaptiveThreshWinSizeMax = args.winmax
+            self.params.adaptiveThreshWinSizeMin = args.winmin
+            self.params.adaptiveThreshWinSizeStep = args.winstep
+            self.params.cornerRefinementMaxIterations = args.maxiter
+            self.params.cornerRefinementMethod = args.refinement
+            self.params.cornerRefinementMinAccuracy = args.minacc
+            self.params.cornerRefinementWinSize = args.refwin
+            self.params.detectInvertedMarker = args.inverted
+            self.params.errorCorrectionRate = args.correctionrate
+            self.params.markerBorderBits = args.borderbits
+            self.params.maxErroneousBitsInBorderRate = args.error
+            self.params.maxMarkerPerimeterRate = args.maxrate
+            self.params.minCornerDistanceRate = args.corner
+            self.params.minDistanceToBorder = args.borderdist
+            self.params.minMarkerDistanceRate = args.markerdist
+            self.minMarkerLengthRatioOriginalImg = args.lengthratio
+            self.params.minMarkerPerimeterRate = args.minrate
+            self.params.minOtsuStdDev = args.otsu
+            self.params.perspectiveRemoveIgnoredMarginPerCell = args.ignore
+            self.params.perspectiveRemovePixelPerCell = args.persp
+            self.params.polygonalApproxAccuracyRate = args.poly
+            self.params.useAruco3Detection = args.aruco3
+        else :
+            # read params from json
+            with open(args.aruco_params) as f:
+                data = f.read()
+            js = json.loads(data)
+            for par in js:
+                setattr(self.params, par, js[par])
         if args.list:
             # list available aruco dictionary names & exit
             for act_dict in self.list_dicts():
@@ -344,6 +353,8 @@ def cmd_params(parser, params):
     parser.add_argument('--limit', type=int, default=def_limit,
                         help='limit the number of records in the output for a unique id')
     # parameters for ArUco detection
+    parser.add_argument('--aruco_params', type=str, default=None,
+                        help='all ArUco detection parameters are read from a JSON file, other ArUco detection parameters are ignored from the command line')
     parser.add_argument('--thres', type=float,
                         default=params.adaptiveThreshConstant,
                         help=f'adaptive threshold constant, default {params.adaptiveThreshConstant}')

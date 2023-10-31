@@ -62,8 +62,9 @@ usage: gcp_find.py [-h] [-d DICT] [-o OUTPUT] [-t {ODM,VisualSfM}] [-i INPUT]
                    [--edgewidth EDGEWIDTH] [--fontsize FONTSIZE]
                    [--fontcolor FONTCOLOR] [--fontcolor1 FONTCOLOR1]
                    [--fontweight FONTWEIGHT] [--fontweight1 FONTWEIGHT1]
-                   [--limit LIMIT] [--thres THRES] [--winmax WINMAX]
-                   [--winmin WINMIN] [--winstep WINSTEP] [--maxiter MAXITER]
+                   [--limit LIMIT] [--aruco_params ARUCO_PARAMS]
+                   [--thres THRES] [--winmax WINMAX] [--winmin WINMIN]
+                   [--winstep WINSTEP] [--maxiter MAXITER]
                    [--refinement REFINEMENT] [--minacc MINACC]
                    [--refwin REFWIN] [-r] [--correctionrate CORRECTIONRATE]
                    [--borderbits BORDERBITS] [--error ERROR]
@@ -120,6 +121,10 @@ options:
                         debug
   --limit LIMIT         limit the number of records in the output for a unique
                         id
+  --aruco_params ARUCO_PARAMS
+                        all ArUco detection parameters are read from a JSON
+                        file, other ArUco detection parameters are ignored
+                        from the command line
   --thres THRES         adaptive threshold constant, default 7.0
   --winmax WINMAX       adaptive thresholding window max size, default 23
   --winmin WINMIN       adaptive tresholding window min size, default 3
@@ -380,7 +385,7 @@ The gcp_list.txt output file which is ready for use with ODM or WebODM. Copy the
     --gcp ./images/gcp_list.txt
 ```
 
-switch to your ODM command.
+switch to your ODM command. In case of WebODM upload gcp_list.txt file with your images.
 
 The gcp_list.txt file should look like:
 
@@ -404,6 +409,23 @@ EPSG:23700
 650546.305 237521.605 104.217 2725 879 DJI_0174.JPG 2
 650552.086 237521.011 104.129 2239 403 DJI_0174.JPG 1
 650544.828 237514.298 104.215 3408 322 DJI_0174.JPG 0
+```
+
+Alternatively you can set all ArUco marker recognition parameters from a 
+JSON file using --aruco_params switch. It is enough to set parameters where default is not 
+suiteable. If you create the following JSON file (aruco_params.json)
+
+```
+{
+    "minMarkerPerimeterRate" : 0.01,
+    "perspectiveRemoveIgnoredMarginPerCell" : 0.33
+}
+```
+
+then you can change the command line:
+
+```
+./gcp_find.py -v -t ODM -i samples/A3.txt --epsg 23700 -o samples/gcp_list.txt --aruco_params aruco_params.json -d 99 samples/DJI_017[234].JPG
 ```
 
 ### Sample 3
