@@ -18,6 +18,7 @@ import glob
 import json
 import argparse
 import numpy as np
+from numpy.linalg import norm
 import matplotlib.pyplot as plt
 import cv2
 from cv2 import aruco
@@ -212,7 +213,7 @@ class GcpFind():
             # calculate center of aruco code
             x = int(round(np.average(corners[i][0][:, 0])))
             y = int(round(np.average(corners[i][0][:, 1])))
-            self.gcps.append((x, y, os.path.basename(image_name), j))
+            self.gcps.append((x, y, os.path.basename(image_name), j, corners[i][0]))
             if self.args.debug:
                 if j in self.coords:
                     plt.plot(x, y, args.markerstyle, markersize=self.args.markersize,
@@ -264,6 +265,26 @@ class GcpFind():
                         print(f"GCP {j} over limit it is dropped on image {gcp[2]}", file=sys.stderr)
                 else:
                     print(f"No coordinates for {j}", file=sys.stderr)
+            if self.args.type == 'Meshroom':
+                if j in self.coords:
+                    if len(self.gcp_found[j]) <= self.args.limit:
+                        corners = gcp[4]
+                        tl = corners[2]
+                        bl = corners[1]
+                        br = corners[0]
+                        tr = corners[3]
+                        
+                        max_sides = max(norm(tl-bl), norm(bl-br), norm(br-tr), norm(tr-tl))
+                        max_diagonal = max(0.707*norm(tl-br), 0.707*norm(tr-bl))
+                        
+                        size = 0.5 * max(max_sides, max_diagonal)
+                        
+                        foutput.write('{} {} {} {} {:.4f}\n'.format(
+                            gcp[0], gcp[1], gcp[2], j, size))
+                    else:
+                        print(f"GCP {j} over limit it is dropped on image {gcp[2]}", file=sys.stderr)
+                else:
+                    print(f"No coordinates for {j}", file=sys.stderr)
             else:
                 if j in self.coords:
                     if len(self.gcp_found[j]) <= self.args.limit:
@@ -311,7 +332,7 @@ def cmd_params(parser, params):
                         help=f'marker dictionary id, default={def_dict} (DICT_4X4_100)')
     parser.add_argument('-o', '--output', type=str, default=def_output,
                         help='name of output GCP list file, default stdout')
-    parser.add_argument('-t', '--type', choices=['ODM', 'VisualSfM'],
+    parser.add_argument('-t', '--type', choices=['ODM', 'VisualSfM', 'Meshroom'],
                         default=def_type,
                         help=f'target program ODM or VisualSfM, default {def_type}')
     parser.add_argument('-i', '--input', type=str, default=def_input,
