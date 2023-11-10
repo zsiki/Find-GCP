@@ -481,7 +481,7 @@ At 2584,64 on image DJI_0180.jpg is a false match.
 
 ### Sample 5
 
-Using the same images as [Sample 3](#sample-3), the following command shows an example of the Meshroom output. This file can be used in Meshroom with the [GCP marker additions](https://github.com/MrClock8163/MeshroomGCPMarkerAdditions).
+Using the same images as [Sample 2](#sample-2), the following command shows an example of the Meshroom output. This file can be used in Meshroom with the [GCP marker additions](https://github.com/MrClock8163/MeshroomGCPMarkerAdditions).
 
 ```
 ./gcp_find.py -t Meshroom -i samples/A3.txt -o samples/gcp_list.txt --minrate 0.01 --ignore 0.33 -d 99 samples/DJI_017[234].JPG
