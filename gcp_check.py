@@ -135,6 +135,8 @@ class GcpCheck(tk.Tk):
             return False
         if len(self.gcps.columns) == 4:
             self.gcps.columns = ["col", "row", "img", "id"]
+        if len(self.gcps.columns) == 5:
+            self.gcps.columns = ["col", "row", "img", "id", "size"]
         elif len(self.gcps.columns) == 7:
             self.gcps.columns = ["east", "north", "elev", "col", "row", "img", "id"]
         else:
