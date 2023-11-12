@@ -75,7 +75,7 @@ class GcpFind():
             self.params.useAruco3Detection = args.aruco3
         else :
             # read params from json
-            with open(args.aruco_params) as f:
+            with open(args.aruco_params, encoding='ascii') as f:
                 data = f.read()
             js = json.loads(data)
             for par in js:
@@ -138,7 +138,7 @@ class GcpFind():
             input file format: point_id easting northing elevation
             coordinates are stored in coords dict
         """
-        with open(self.args.input, 'r', encoding="utf-8") as finput:
+        with open(self.args.input, 'r', encoding="ascii") as finput:
             for line in finput:
                 co_list = line.strip().split(args.separator)
                 if len(co_list) < 4:
@@ -147,7 +147,7 @@ class GcpFind():
                 # check coordinates are numerical?
                 try:
                     _ = [float(x) for x in co_list[1:4]]
-                except:
+                except ValueError:
                     print("Non-numerical coordinates: {line}", file=sys.stderr)
                 # store original precision of coordinates
                 self.coords[int(co_list[0])] = co_list[1:4]
@@ -235,7 +235,7 @@ class GcpFind():
             foutput = self.args.output
         else:
             try:
-                foutput = open(self.args.output, 'w', encoding="utf-8")
+                foutput = open(self.args.output, 'w', encoding="ascii")
             except Exception:
                 print('cannot open output file', file=sys.stderr)
                 return
@@ -248,9 +248,8 @@ class GcpFind():
             if self.args.type == 'ODM':
                 if j in self.coords:
                     if len(self.gcp_found[j]) <= self.args.limit:
-                        foutput.write('{} {} {} {} {} {} {}\n'.format(
-                            self.coords[j][0], self.coords[j][1], self.coords[j][2],
-                            gcp[0], gcp[1], gcp[2], j))
+                        foutput.write(f"{self.coords[j][0]} {self.coords[j][1]} {self.coords[j][2]} {gcp[0]} {gcp[1]} {gcp[2]} {j}\n")
+                        # .format( self.coords[j][0], self.coords[j][1], self.coords[j][2], gcp[0], gcp[1], gcp[2], j))
                     else:
                         print(f"GCP {j} over limit it is dropped on image {gcp[2]}", file=sys.stderr)
                 else:
@@ -258,14 +257,13 @@ class GcpFind():
             elif self.args.type == 'VisualSfM':
                 if j in self.coords:
                     if len(self.gcp_found[j]) <= self.args.limit:
-                        foutput.write('{} {} {} {} {} {} {}\n'.format(
-                            gcp[2], gcp[0], gcp[1],
-                            self.coords[j][0], self.coords[j][1], self.coords[j][2], j))
+                        foutput.write(f"{gcp[2]} {gcp[0]} {gcp[1]} {self.coords[j][0]} {self.coords[j][1]} {self.coords[j][2]} {j}\n")
+                        #.format( gcp[2], gcp[0], gcp[1], self.coords[j][0], self.coords[j][1], self.coords[j][2], j))
                     else:
                         print(f"GCP {j} over limit it is dropped on image {gcp[2]}", file=sys.stderr)
                 else:
                     print(f"No coordinates for {j}", file=sys.stderr)
-            if self.args.type == 'Meshroom':
+            elif self.args.type == 'Meshroom':
                 if j in self.coords:
                     if len(self.gcp_found[j]) <= self.args.limit:
                         corners = gcp[4]
@@ -273,14 +271,14 @@ class GcpFind():
                         bl = corners[1]
                         br = corners[0]
                         tr = corners[3]
-                        
+
                         max_sides = max(norm(tl-bl), norm(bl-br), norm(br-tr), norm(tr-tl))
                         max_diagonal = max(0.707*norm(tl-br), 0.707*norm(tr-bl))
-                        
+
                         size = 0.5 * max(max_sides, max_diagonal)
-                        
-                        foutput.write('{} {} {} {} {:.4f}\n'.format(
-                            gcp[0], gcp[1], gcp[2], j, size))
+
+                        foutput.write(f"{gcp[0]} {gcp[1]} {gcp[2]} {j} {size:.4f}\n")
+                        #.format( gcp[0], gcp[1], gcp[2], j, size))
                     else:
                         print(f"GCP {j} over limit it is dropped on image {gcp[2]}", file=sys.stderr)
                 else:
@@ -288,15 +286,14 @@ class GcpFind():
             else:
                 if j in self.coords:
                     if len(self.gcp_found[j]) <= self.args.limit:
-                        foutput.write('{} {} {} {} {} {} {}\n'.format(
-                            self.coords[j][0], self.coords[j][1], self.coords[j][2],
-                            gcp[0], gcp[1], gcp[2], j))
+                        foutput.write(f"{self.coords[j][0]} {self.coords[j][1]} {self.coords[j][2]} {gcp[0]} {gcp[1]} {gcp[2]} {j}\n")
+                        # .format( self.coords[j][0], self.coords[j][1], self.coords[j][2], gcp[0], gcp[1], gcp[2], j))
                     else:
                         print(f"GCP {j} over limit it is dropped on image {gcp[2]}", file=sys.stderr)
                 else:
                     if len(self.gcp_found[j]) <= self.args.limit:
-                        foutput.write('{} {} {} {}\n'.format(
-                            gcp[0], gcp[1], gcp[2], j))
+                        foutput.write(f"{gcp[0]} {gcp[1]} {gcp[2]} {j}\n")
+                        # .format( gcp[0], gcp[1], gcp[2], j))
                     else:
                         print(f"GCP {j} over limit it is dropped on image {gcp[2]}", file=sys.stderr)
         if self.args.output != sys.stdout:
