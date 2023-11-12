@@ -121,18 +121,25 @@ class GcpCheck(tk.Tk):
             pandas data frame is created
             a sorted list is also generated with image names
         """
-        try:
-            self.gcps = pd.read_csv(self.gcp_file, sep=self.separator,
-                                    skiprows=1, header=None)
-        except FileNotFoundError:
-            messagebox.showerror("Error", f"File not found: {self.gcp_file}")
-            return False
-        except UnicodeDecodeError:
-            messagebox.showerror("Error", f"Decode error: {self.gcp_file}")
-            return False
-        except pd.errors.ParserError:
-            messagebox.showerror("Error", f"File parse error: {self.gcp_file}")
-            return False
+        retry = True
+        skiprows =0
+        while retry:
+            try:
+                self.gcps = pd.read_csv(self.gcp_file, sep=self.separator,
+                                        skiprows=skiprows, header=None)
+                retry = False
+            except FileNotFoundError:
+                messagebox.showerror("Error", f"File not found: {self.gcp_file}")
+                return False
+            except UnicodeDecodeError:
+                messagebox.showerror("Error", f"Decode error: {self.gcp_file}")
+                return False
+            except pd.errors.ParserError:
+                if retry:
+                    skiprows = 1
+                else:
+                    messagebox.showerror("Error", f"File parse error: {self.gcp_file}")
+                    return False
         if len(self.gcps.columns) == 4:
             self.gcps.columns = ["col", "row", "img", "id"]
         if len(self.gcps.columns) == 5:
@@ -215,14 +222,17 @@ class GcpCheck(tk.Tk):
                          str(rec["id"]), font=self.font, fill=self.style["fontcolor"],
                          stroke_width=20)
             self.container = self.canvas.create_rectangle(0, 0, self.width, self.height, width=0)
-            self.imscale = 1.0  # scale for the canvaas image
+            self.imscale = 1.0
+        
+        canvas_width = self.canvas.winfo_width()
+        canvas_height = self.canvas.winfo_height()
         bbox1 = self.canvas.bbox(self.container)  # get image area
         # Remove 1 pixel shift at the sides of the bbox1
         bbox1 = (bbox1[0] + 1, bbox1[1] + 1, bbox1[2] - 1, bbox1[3] - 1)
         bbox2 = (self.canvas.canvasx(0),  # get visible area of the canvas
                  self.canvas.canvasy(0),
-                 self.canvas.canvasx(self.canvas.winfo_width()),
-                 self.canvas.canvasy(self.canvas.winfo_height()))
+                 self.canvas.canvasx(canvas_width),
+                 self.canvas.canvasy(canvas_height))
         bbox = [min(bbox1[0], bbox2[0]), min(bbox1[1], bbox2[1]),  # get scroll region box
                 max(bbox1[2], bbox2[2]), max(bbox1[3], bbox2[3])]
         if bbox[0] == bbox2[0] and bbox[2] == bbox2[2]:  # whole image in the visible area
@@ -246,6 +256,7 @@ class GcpCheck(tk.Tk):
             self.canvas.lower(imageid)  # set image into background
             self.canvas.imagetk = imagetk  # keep an extra reference to prevent garbage-collection
 
+        #canvas.scale(tk.ALL, x, y, xfactor, factor)    TODO zoom extent
 
     def ShowAll(self):
         """ Show alll images """
