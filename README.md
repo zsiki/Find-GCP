@@ -83,7 +83,7 @@ options:
   -d DICT, --dict DICT  marker dictionary id, default=1 (DICT_4X4_100)
   -o OUTPUT, --output OUTPUT
                         name of output GCP list file, default stdout
-  -t {ODM,VisualSfM}, --type {ODM,VisualSfM}
+  -t {ODM,VisualSfM,Meshroom}, --type {ODM,VisualSfM,Meshroom}
                         target program ODM or VisualSfM, default
   -i INPUT, --input INPUT
                         name of input GCP coordinate file, default None
@@ -235,7 +235,6 @@ This small program lists GPS position from exif information of images to the sta
 
 ```
 Usage: ./exif_pos.py image_file(s)
-
 ```
  
 Sample output of the program:
@@ -479,3 +478,30 @@ marker ids: [0, 1, 1, 2, 3, 4, 5, 6, 7, 28]
 ```
 
 At 2584,64 on image DJI_0180.jpg is a false match.
+
+### Sample 5
+
+Using the same images as [Sample 2](#sample-2), the following command shows an example of the Meshroom output. This file can be used in Meshroom with the [GCP marker additions](https://github.com/MrClock8163/MeshroomGCPMarkerAdditions).
+
+```
+./gcp_find.py -t Meshroom -i samples/A3.txt -o samples/gcp_list.txt --minrate 0.01 --ignore 0.33 -d 99 samples/DJI_017[234].JPG
+
+3206 2391 DJI_0172.JPG 9 17.0000
+1952 2323 DJI_0172.JPG 8 16.7643
+3124 1703 DJI_0172.JPG 3 16.5303
+1908 1622 DJI_0172.JPG 4 16.5076
+2419 368 DJI_0172.JPG 2 16.5680
+188 2010 DJI_0172.JPG 9 56.6414
+3172 2413 DJI_0173.JPG 9 16.5076
+1921 2343 DJI_0173.JPG 8 16.5303
+3091 1727 DJI_0173.JPG 3 16.5303
+1880 1644 DJI_0173.JPG 4 16.5303
+2393 396 DJI_0173.JPG 2 16.5303
+3535 2892 DJI_0174.JPG 9 16.5000
+2287 2838 DJI_0174.JPG 8 17.0294
+3444 2206 DJI_0174.JPG 3 16.5303
+2236 2136 DJI_0174.JPG 4 16.5076
+2725 879 DJI_0174.JPG 2 16.5303
+2239 403 DJI_0174.JPG 1 16.0078
+3408 322 DJI_0174.JPG 0 16.0312
+```
