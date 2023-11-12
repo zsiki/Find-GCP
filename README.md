@@ -11,7 +11,9 @@ A paper is available about this project in the Baltic Journal of Modern Computin
 
 ## News
 
-The Python 2.x compatibility is not maintened after 08/27/2003.
+- New command line switch (--aruco\_params) to specify all ArUco command line parameters in a JSON file
+- New output format parameter to generate GCP file for Meshroom
+- The Python 2.x compatibility is not maintened after 08/27/2003.
 
 ## Installation
 
@@ -412,7 +414,7 @@ EPSG:23700
 
 Alternatively you can set all ArUco marker recognition parameters from a 
 JSON file using --aruco_params switch. It is enough to set parameters where default is not 
-suiteable. If you create the following JSON file (aruco_params.json)
+suitable. If you create the following JSON file (aruco_params.json)
 
 ```
 {
@@ -486,6 +488,14 @@ Using the same images as [Sample 2](#sample-2), the following command shows an e
 ```
 ./gcp_find.py -t Meshroom -i samples/A3.txt -o samples/gcp_list.txt --minrate 0.01 --ignore 0.33 -d 99 samples/DJI_017[234].JPG
 
+duplicate markers on image samples/DJI_0172.JPG
+marker ids: [2, 3, 4, 8, 9, 9]
+No coordinates for 10
+```
+
+The gcp_list.txt should look like:
+
+```
 3206 2391 DJI_0172.JPG 9 17.0000
 1952 2323 DJI_0172.JPG 8 16.7643
 3124 1703 DJI_0172.JPG 3 16.5303
