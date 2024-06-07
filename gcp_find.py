@@ -17,6 +17,7 @@ import time
 import glob
 import json
 import argparse
+import packaging.version
 import numpy as np
 from numpy.linalg import norm
 import matplotlib.pyplot as plt
@@ -24,7 +25,7 @@ import cv2
 from cv2 import aruco
 
 # handle incompatibility introduced in openCV 4.8
-if cv2.__version__ < '4.7':
+if packaging.version.parse(cv2.__version__) < packaging.version.parse('4.7'):
     aruco.extendDictionary = aruco.Dictionary_create
     aruco.getPredefinedDictionary = aruco.Dictionary_get
     aruco.DetectorParameters = aruco.DetectorParameters_create
@@ -182,7 +183,7 @@ class GcpFind():
         else:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # find markers
-        if cv2.__version__ < '4.8':
+        if packaging.version.parse(cv2.__version__) < packaging.version.parse('4.8'):
             corners, ids, _ = aruco.detectMarkers(gray,
                                                   self.aruco_dict,
                                                   parameters=self.params)
