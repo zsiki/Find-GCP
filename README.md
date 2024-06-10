@@ -515,3 +515,7 @@ The gcp_list.txt should look like:
 2239 403 DJI_0174.JPG 1 16.0078
 3408 322 DJI_0174.JPG 0 16.0312
 ```
+
+The First two columns contain the position of the ArUco marker, the third is
+the name of the image file, the fourth is the ID of the market, the fifth is
+the half of the size of max(side, diagonal).
