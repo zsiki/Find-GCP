@@ -25,7 +25,7 @@ import cv2
 from cv2 import aruco
 
 # handle incompatibility introduced in openCV 4.8
-if packaging.version.parse(cv2.__version__) < packaging.version.parse('4.7'):
+if packaging.version.parse(cv2.__version__) < packaging.version.parse('4.8'):
     aruco.extendDictionary = aruco.Dictionary_create
     aruco.getPredefinedDictionary = aruco.Dictionary_get
     aruco.DetectorParameters = aruco.DetectorParameters_create
