@@ -42,7 +42,7 @@ class GcpCheck(tk.Tk):
     """ class to check found GCPs visually """
 
     def __init__(self, gcp_style, gcp_file=None, separator=" ", width=700, height=550,
-                 img_path=''):
+                 img_path='./'):
         """ initialize
 
             :param gcp_file: output file of gcp_find.py
@@ -169,7 +169,7 @@ class GcpCheck(tk.Tk):
                     return False
         if len(self.gcps.columns) == 4:
             self.gcps.columns = ["col", "row", "img", "id"]
-        if len(self.gcps.columns) == 5:
+        elif len(self.gcps.columns) == 5:
             self.gcps.columns = ["col", "row", "img", "id", "size"]
         elif len(self.gcps.columns) == 7:
             self.gcps.columns = ["east", "north", "elev", "col", "row", "img", "id"]
@@ -230,6 +230,8 @@ class GcpCheck(tk.Tk):
         name =self.imgs[self.img_no]
         if self.title() != name:    # new image to display
             self.title(name)   # show image name in title
+            if path.exists(name):
+                img_path = name
             if not path.exists(name):
                 img_path = path.join(self.img_path, name)
             if not path.exists(img_path):
@@ -331,7 +333,7 @@ def cmd_params(parser):
                         help='GCP file to process')
     parser.add_argument('--command', type=str, default='all',
                         help='command all/ID show all images/images with GCP ID')
-    parser.add_argument('--path', type=str, default='',
+    parser.add_argument('--path', type=str, default='./',
                         help='input path for images')
     parser.add_argument('-s', '--separator', type=str, default=def_separator,
                         help=f'input file separator, default {def_separator}')
