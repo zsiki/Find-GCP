@@ -8,6 +8,8 @@
 
 import argparse
 from os import path
+import os
+import sys
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
@@ -123,6 +125,31 @@ class GcpCheck(tk.Tk):
         """
         retry = True
         skiprows =0
+
+         # Check if the file exists
+        if not os.path.isfile(self.gcp_file):
+            print(f"The file {self.gcp_file} does not exist.")
+            sys.exit()
+
+        # Attempt to read the first line to verify CSV structure
+        try:
+            # Open the file and read a sample to check for valid CSV structure
+            with open(self.gcp_file, 'r', encoding='utf-8') as csv_file:
+                # Check if the first row can be read as a CSV line
+                sample = csv_file.readline()
+                if not sample:  # Empty file check
+                    raise argparse.ArgumentTypeError(f"The file '{self.gcp_file}' is empty.")
+                if self.separator not in sample:  # Delimiter check
+                    raise argparse.ArgumentTypeError(f"The file '{self.gcp_file}' does not use {self.separator} as a separator.")
+        except UnicodeDecodeError:
+            print(f"The file '{self.gcp_file}' is not a valid UTF-8 encoded CSV file.")
+            sys.exit()
+        except Exception as e:
+            print(f"Error reading {self.gcp_file}: {e}")
+            sys.exit()
+
+
+
         while retry:
             try:
                 self.gcps = pd.read_csv(self.gcp_file, sep=self.separator,
@@ -223,7 +250,7 @@ class GcpCheck(tk.Tk):
                          stroke_width=20)
             self.container = self.canvas.create_rectangle(0, 0, self.width, self.height, width=0)
             self.imscale = 1.0
-        
+
         canvas_width = self.canvas.winfo_width()
         canvas_height = self.canvas.winfo_height()
         bbox1 = self.canvas.bbox(self.container)  # get image area
@@ -300,7 +327,7 @@ def cmd_params(parser):
     def_fontsize = 200              # text height pixel
     def_fontcolor = 'red'           # inner color for GP ID annotation
 
-    parser.add_argument('name', metavar='file_name', type=str, nargs='?',
+    parser.add_argument('gcp_file_name', metavar='file_name', type=str, nargs='?',
                         help='GCP file to process')
     parser.add_argument('--command', type=str, default='all',
                         help='command all/ID show all images/images with GCP ID')
@@ -325,17 +352,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     cmd_params(parser)
     args = parser.parse_args()
-    if args.name:
-        name = args.name
+    if args.gcp_file_name:
+        gcp_file_name = args.gcp_file_name
     else:
-        name = None
+        gcp_file_name = None
     style = {'markersize': args.markersize,
              'edgecolor': args.edgecolor,
              'edgewidth': args.edgewidth,
              'fontsize': args.fontsize,
              'fontcolor': args.fontcolor,
             }
-    gcp_c = GcpCheck(style, name, args.separator, img_path=args.path)
+    gcp_c = GcpCheck(style, gcp_file_name, args.separator, img_path=args.path)
     gcp_c.mainloop()
     #if args.command == "all":
     #    gcp_c.ShowAll()
