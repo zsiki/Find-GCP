@@ -24,6 +24,7 @@ class AutoScrollbar(ttk.Scrollbar):
         Works only if you use the grid geometry manager
     """
     def set(self, lo, hi):
+        """ set scollbar range """
         if float(lo) <= 0.0 and float(hi) >= 1.0:
             self.grid_remove()
         else:
@@ -31,9 +32,11 @@ class AutoScrollbar(ttk.Scrollbar):
             ttk.Scrollbar.set(self, lo, hi)
 
     def pack(self, **kw):
+        """ dummy function """
         raise tk.TclError('Cannot use pack with this widget')
 
     def place(self, **kw):
+        """ dummy function """
         raise tk.TclError('Cannot use place with this widget')
 
 class GcpCheck(tk.Tk):
@@ -82,10 +85,10 @@ class GcpCheck(tk.Tk):
         # Bind events to the Canvas
         self.canvas.bind('<Configure>', self.ShowImage)  # canvas is resized
         self.canvas.bind('<ButtonPress-1>', self.move_from)
-        self.canvas.bind('<B1-Motion>',     self.move_to)
+        self.canvas.bind('<B1-Motion>', self.move_to)
         self.canvas.bind('<MouseWheel>', self.wheel)  # with Windows and MacOS, but not Linux
-        self.canvas.bind('<Button-5>',   self.wheel)  # only with Linux, wheel scroll down
-        self.canvas.bind('<Button-4>',   self.wheel)  # only with Linux, wheel scroll up
+        self.canvas.bind('<Button-5>', self.wheel)  # only with Linux, wheel scroll down
+        self.canvas.bind('<Button-4>', self.wheel)  # only with Linux, wheel scroll up
 
         self.gcp_file = gcp_file
         self.style = gcp_style
@@ -104,15 +107,17 @@ class GcpCheck(tk.Tk):
         font = font_manager.FontProperties(family='sans-serif', weight='normal')
         font_file = font_manager.findfont(font)
         self.font = PIL.ImageFont.truetype(font_file, size=self.style["fontsize"])
-        self.bind("<Configure>",self.ShowImage)
+        self.bind("<Configure>", self.ShowImage)
         if self.gcp_file:
             if self.LoadGcps():
                 self.ShowImage()
 
     def SelectFile(self):
+        """ select and show gcp file """
         self.gcp_file = filedialog.askopenfilename()
         if self.gcp_file:
             if self.LoadGcps():
+                self.img_no = 0
                 self.ShowImage()
 
     def LoadGcps(self):
@@ -122,7 +127,7 @@ class GcpCheck(tk.Tk):
             a sorted list is also generated with image names
         """
         retry = True
-        skiprows =0
+        skiprows = 0
         while retry:
             try:
                 self.gcps = pd.read_csv(self.gcp_file, sep=self.separator,
@@ -140,15 +145,24 @@ class GcpCheck(tk.Tk):
                 else:
                     messagebox.showerror("Error", f"File parse error: {self.gcp_file}")
                     return False
+        # necessary types of columns
+        typs = {"col": "int64", "row": "int64", "img": "object", "id": "int64",
+                "size": "int64", "east": "float64", "north": "float64",
+                "elev": "float64"}
         if len(self.gcps.columns) == 4:
             self.gcps.columns = ["col", "row", "img", "id"]
-        if len(self.gcps.columns) == 5:
+        elif len(self.gcps.columns) == 5:
             self.gcps.columns = ["col", "row", "img", "id", "size"]
         elif len(self.gcps.columns) == 7:
             self.gcps.columns = ["east", "north", "elev", "col", "row", "img", "id"]
         else:
             messagebox.showerror("Error", f"Invalid number of columns: {self.gcp_file}")
             return False
+        for c, t in self.gcps.dtypes.iteritems():
+            if typs[c] != t:
+                messagebox.showerror("Error", f"Invalid column type {t} for '{c}'")
+                return False
+
         self.imgs = sorted(list(set(self.gcps["img"])))
         return True
 
@@ -191,7 +205,7 @@ class GcpCheck(tk.Tk):
             i = min(self.canvas.winfo_width(), self.canvas.winfo_height())
             if i < self.imscale: return  # 1 pixel is bigger than the visible area
             self.imscale *= self.delta
-            scale        *= self.delta
+            scale *= self.delta
         self.canvas.scale('all', x, y, scale, scale)  # rescale all canvas objects
         self.ShowImage()
 
@@ -200,7 +214,7 @@ class GcpCheck(tk.Tk):
         """
         if self.imgs is None or len(self.imgs) == 0:
             return
-        name =self.imgs[self.img_no]
+        name = self.imgs[self.img_no]
         if self.title() != name:    # new image to display
             self.title(name)   # show image name in title
             if not path.exists(name):
@@ -223,7 +237,7 @@ class GcpCheck(tk.Tk):
                          stroke_width=20)
             self.container = self.canvas.create_rectangle(0, 0, self.width, self.height, width=0)
             self.imscale = 1.0
-        
+
         canvas_width = self.canvas.winfo_width()
         canvas_height = self.canvas.winfo_height()
         bbox1 = self.canvas.bbox(self.container)  # get image area
