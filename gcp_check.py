@@ -11,7 +11,7 @@ from os import path
 import os
 import sys
 import tkinter as tk
-from tkinter import ttk
+from tkinter import Tk, ttk
 from tkinter import messagebox
 from tkinter import filedialog
 import pandas as pd
@@ -19,7 +19,10 @@ import PIL
 import PIL.ImageDraw
 import PIL.ImageTk
 import PIL.ImageFont
+from PIL import Image
+
 from matplotlib import font_manager
+from process_raw import DngFile
 
 class AutoScrollbar(ttk.Scrollbar):
     """ A scrollbar that hides itself if it's not needed.
@@ -53,6 +56,9 @@ class GcpCheck(tk.Tk):
             :param img_path: path to images if it is not in the same folder as CGP file
         """
         tk.Tk.__init__(self)
+
+        #__import__("IPython").embed()
+
         self.title("Image Viewer")
         self.geometry(f"{width}x{height}")
         # add menu
@@ -73,7 +79,8 @@ class GcpCheck(tk.Tk):
         vbar.grid(row=1, column=4, sticky='ns')
         hbar.grid(row=2, column=0, sticky='we')
         self.canvas = tk.Canvas(self, highlightthickness=0,
-                                xscrollcommand=hbar.set, yscrollcommand=vbar.set)
+                                xscrollcommand=hbar.set, yscrollcommand=vbar.set,
+                                width=width, height=height/2)
         self.canvas.grid(row=1, column=0, columnspan=3, sticky='nswe')
         self.canvas.update()  # wait till canvas is created
         vbar.configure(command=self.scroll_y)  # bind scrollbars to the canvas
@@ -107,15 +114,12 @@ class GcpCheck(tk.Tk):
         font_file = font_manager.findfont(font)
         self.font = PIL.ImageFont.truetype(font_file, size=self.style["fontsize"])
         self.bind("<Configure>",self.ShowImage)
-        if self.gcp_file:
-            if self.LoadGcps():
-                self.ShowImage()
-
+        if self.gcp_file and self.LoadGcps():
+            self.ShowImage()
     def SelectFile(self):
         self.gcp_file = filedialog.askopenfilename()
-        if self.gcp_file:
-            if self.LoadGcps():
-                self.ShowImage()
+        if self.gcp_file and self.LoadGcps():
+            self.ShowImage()
 
     def LoadGcps(self):
         """ Load GCP image coordinates and image names
@@ -203,9 +207,8 @@ class GcpCheck(tk.Tk):
         x = self.canvas.canvasx(event.x)
         y = self.canvas.canvasy(event.y)
         bbox = self.canvas.bbox(self.container)  # get image area
-        if bbox[0] < x < bbox[2] and bbox[1] < y < bbox[3]:
-            pass  # Ok! Inside the image
-        else: return  # zoom only inside image area
+        if not bbox[0] < x < bbox[2] or not bbox[1] < y < bbox[3]:
+            return  # zoom only inside image area
         scale = 1.0
         # Respond to Linux (event.num) or Windows (event.delta) wheel event
         if event.num == 5 or event.delta == -120:  # scroll down
@@ -236,9 +239,17 @@ class GcpCheck(tk.Tk):
                 img_path = path.join(self.img_path, name)
             if not path.exists(img_path):
                 img_path = path.join(path.split(self.gcp_file)[0], name)
+
             # load image
-            self.image = PIL.Image.open(img_path)
+
+            if 'dng' in img_path.lower():
+                dng = DngFile.read(img_path)
+                self.image = Image.fromarray(dng.postprocess())  # demosaicing by rawpy
+            else :
+                self.image = PIL.Image.open(img_path)
+
             self.width, self.height = self.image.size
+
             # mark GCPs
             img = PIL.ImageDraw.Draw(self.image)
             for index, rec in self.gcps.loc[self.gcps['img'] == name].iterrows():
@@ -250,8 +261,8 @@ class GcpCheck(tk.Tk):
                 img.text((x + self.style["markersize"]/2, y + self.style["markersize"]/2),
                          str(rec["id"]), font=self.font, fill=self.style["fontcolor"],
                          stroke_width=20)
-            self.container = self.canvas.create_rectangle(0, 0, self.width, self.height, width=0)
-            self.imscale = 1.0
+            self.container = self.canvas.create_rectangle(0, 0, self.width/5, self.height/5, width=0)
+            self.imscale = 0.2
 
         canvas_width = self.canvas.winfo_width()
         canvas_height = self.canvas.winfo_height()
@@ -262,19 +273,23 @@ class GcpCheck(tk.Tk):
                  self.canvas.canvasy(0),
                  self.canvas.canvasx(canvas_width),
                  self.canvas.canvasy(canvas_height))
+
         bbox = [min(bbox1[0], bbox2[0]), min(bbox1[1], bbox2[1]),  # get scroll region box
                 max(bbox1[2], bbox2[2]), max(bbox1[3], bbox2[3])]
+
         if bbox[0] == bbox2[0] and bbox[2] == bbox2[2]:  # whole image in the visible area
             bbox[0] = bbox1[0]
             bbox[2] = bbox1[2]
         if bbox[1] == bbox2[1] and bbox[3] == bbox2[3]:  # whole image in the visible area
             bbox[1] = bbox1[1]
             bbox[3] = bbox1[3]
+
         self.canvas.configure(scrollregion=bbox)  # set scroll region
         x1 = max(bbox2[0] - bbox1[0], 0)  # get coordinates (x1,y1,x2,y2) of the image tile
         y1 = max(bbox2[1] - bbox1[1], 0)
         x2 = min(bbox2[2], bbox1[2]) - bbox1[0]
         y2 = min(bbox2[3], bbox1[3]) - bbox1[1]
+
         if int(x2 - x1) > 0 and int(y2 - y1) > 0:  # show image if it in the visible area
             x = min(int(x2 / self.imscale), self.width)   # sometimes it is larger on 1 pixel...
             y = min(int(y2 / self.imscale), self.height)  # ...and sometimes not
@@ -364,7 +379,15 @@ if __name__ == "__main__":
              'fontsize': args.fontsize,
              'fontcolor': args.fontcolor,
             }
-    gcp_c = GcpCheck(style, gcp_file_name, args.separator, img_path=args.path)
+
+    # app = Tk()
+    # width = int(app.winfo_screenwidth()/2)
+    # height = int(app.winfo_screenheight()/2)
+    # print(f'{width=} {height=}')
+    # app.quit()
+    width = 1024
+    height = 768
+    gcp_c = GcpCheck(style, gcp_file_name, args.separator,width=width,height=height ,img_path=args.path)
     gcp_c.mainloop()
     #if args.command == "all":
     #    gcp_c.ShowAll()
