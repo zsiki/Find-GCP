@@ -17,26 +17,31 @@ A paper is available about this project in the Baltic Journal of Modern Computin
 
 ## Installation
 
-[ArUco markers](http://chev.me/arucogen) are black and white square markers which have unique pattern and ID. [OpenCV](https://opencv.org) library has a modul to find ArUco markers in images (you should pip install).
+[ArUco markers](http://chev.me/arucogen) are black and white square markers which have unique pattern and ID. [OpenCV](https://opencv.org) library has a modul to find ArUco markers in images.
 
-```
-pip install opencv-python opencv-contrib-python PIL pil.imagetk numpy matplotlib
-```
+### Pipenv installation
+Pipenv should be installed. [Instructions here](https://github.com/pypa/pipenv?tab=readme-ov-file#installation)
 
+### Clone the repo
 Clone the Find-GCP GitHub repo or download the zip file
 
 ```
 git clone https://github.com/zsiki/Find-GCP.git
 ```
-
-or 
-
+or
 ```
 wget https://github.com/zsiki/Find-GCP/archive/refs/heads/master.zip
 unzip master.zip
 ```
-
 You can also download zip using the **Code** button on the GitHub page of the project.
+
+### Dependencies installations
+Go to the Find-GCP directory and then :
+
+```
+pipenv install
+```
+
 
 ## Preparing ArUco markers
 
@@ -51,6 +56,11 @@ When you fix your markers on the field please let enough space around the outer 
 Figure 1 Non-clear and clear border
 
 ## Usage
+Before using the scripts virtualenv should be ativated with
+
+```
+pipenv shell
+```
 
 ### gcp_find.py
 
@@ -238,7 +248,7 @@ This small program lists GPS position from exif information of images to the sta
 ```
 Usage: ./exif_pos.py image_file(s)
 ```
- 
+
 Sample output of the program:
 
 ```
@@ -412,8 +422,8 @@ EPSG:23700
 650544.828 237514.298 104.215 3408 322 DJI_0174.JPG 0
 ```
 
-Alternatively you can set all ArUco marker recognition parameters from a 
-JSON file using --aruco_params switch. It is enough to set parameters where default is not 
+Alternatively you can set all ArUco marker recognition parameters from a
+JSON file using --aruco_params switch. It is enough to set parameters where default is not
 suitable. If you create the following JSON file (aruco_params.json)
 
 ```
@@ -447,11 +457,11 @@ python3 gcp_find.py --minrate 0.01 samples/bme/DJI_008[78].jpg
 
 ### Sample 4
 
-Photos (DJI\_0180.jpg and DJI\_0181.jpg) made by DJI Phantom 4 Pro, flying alttitude 50 m. There are eight 3x3 black/grey GCPs on image DJI\_0180.png and ten on 
+Photos (DJI\_0180.jpg and DJI\_0181.jpg) made by DJI Phantom 4 Pro, flying alttitude 50 m. There are eight 3x3 black/grey GCPs on image DJI\_0180.png and ten on
 DJI\_0181.png.
 
 ```
-python3 gcp_find.py -d 99 --minrate 0.01 --ignore 0.33 samples/bme/DJI_018[01].jpg 
+python3 gcp_find.py -d 99 --minrate 0.01 --ignore 0.33 samples/bme/DJI_018[01].jpg
 
 duplicate markers on image samples/bme/DJI_0180.jpg
 marker ids: [0, 1, 1, 2, 3, 4, 5, 6, 7, 28]
