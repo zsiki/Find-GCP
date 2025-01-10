@@ -23,6 +23,7 @@ from numpy.linalg import norm
 import matplotlib.pyplot as plt
 import cv2
 from cv2 import aruco
+from process_raw import DngFile
 
 # handle incompatibility introduced in openCV 4.8
 if packaging.version.parse(cv2.__version__) < packaging.version.parse('4.8'):
@@ -171,7 +172,11 @@ class GcpFind():
 
             :param image_name: path to image to process
         """
-        frame = cv2.imread(image_name)
+        if 'dng' in image_name.lower():
+            dng = DngFile.read(image_name)
+            frame = dng.postprocess()  # demosaicing by rawpy
+        else :
+            frame = cv2.imread(image_name)
         if frame is None:
             print(f'error reading image: {image_name}', file=sys.stderr)
             return

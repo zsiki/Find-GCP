@@ -16,6 +16,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtCore import QRegExp, QObject, QThread
 from PyQt5.QtGui import QPixmap
+from process_raw import DngFile
 
 class ParameterWin(QtWidgets.QWidget, QtWidgets.QApplication):
     def __init__(self, parent=None):
@@ -259,7 +260,7 @@ class ParameterWin(QtWidgets.QWidget, QtWidgets.QApplication):
         font.setItalic(False)
         font.setWeight(70)
         self.pinputfile = QtWidgets.QLabel(self.centralwidget)
-        self.pinputfile.setGeometry(QtCore.QRect(10, 190, 171, 16))     
+        self.pinputfile.setGeometry(QtCore.QRect(10, 190, 171, 16))
         self.pinputfile.setFont(font)
         self.pinputfile.setTextFormat(QtCore.Qt.AutoText)
         self.pinputfile.setObjectName("pinputfile")
@@ -297,7 +298,7 @@ class ParameterWin(QtWidgets.QWidget, QtWidgets.QApplication):
                                     "min-width:10px;}\n"
                                     "QPushButton:hover{border:2px solid;\n"
                                     "background-color: rgb(0, 120, 200);}\n")
-       
+
         self.pinverted = QtWidgets.QLabel(self.centralwidget)
         self.pinverted.setGeometry(QtCore.QRect(570, 310, 111, 16))
         self.pinverted.setStyleSheet("font: 75 10pt \"MS Shell Dlg 2\";")
@@ -306,7 +307,7 @@ class ParameterWin(QtWidgets.QWidget, QtWidgets.QApplication):
         self.comboInverted = QtWidgets.QComboBox(self.centralwidget)
         self.comboInverted.setGeometry(QtCore.QRect(570, 330, 111, 22))
         self.comboInverted.setObjectName("comboInverted")
-        
+
         self.retranslateUi(self)
         QtCore.QMetaObject.connectSlotsByName(self)
 
@@ -348,7 +349,7 @@ class ParameterWin(QtWidgets.QWidget, QtWidgets.QApplication):
         self.poutput.setText(_translate("parameter", "Output File Name"))
         self.fixparameter.setText(_translate("parameter", "Fix Parameters"))
         self.pinverted.setText(_translate("parameter", "Inverted"))
-    
+
 
     def display(self):
         self.show()
@@ -358,36 +359,36 @@ class ParameterWin(QtWidgets.QWidget, QtWidgets.QApplication):
             self.ipath, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Input File",os.getcwd(),
             "Text documents (*.txt);;")
             self.pinputfile.setText(self.ipath.split('/')[-1])
-            
+
     def fixparams(self):
         if self.boxminrate.text() !='':
             self.minrate = float(self.boxminrate.text())
             self.params.minMarkerPerimeterRate = self.minrate
         else:
             self.params.minMarkerPerimeterRate = 0.3
-        
+
         if self.boxmaxrate.text() !='':
             self.maxrate = float(self.boxmaxrate.text())
-            self.params.maxMarkerPerimeterRate = self.maxrate    
+            self.params.maxMarkerPerimeterRate = self.maxrate
         else:
             self.params.maxMarkerPerimeterRate = self.params.maxMarkerPerimeterRate
-        
+
         if self.boxignore.text() !='':
             self.ignore = float(self.boxignore.text())
             self.params.perspectiveRemoveIgnoredMarginPerCell = self.ignore
         else:
             self.params.perspectiveRemoveIgnoredMarginPerCell = self.params.perspectiveRemoveIgnoredMarginPerCell
-         
-        if self.boxespg.text() !='':    
+
+        if self.boxespg.text() !='':
             self.epsg = int(self.boxespg.text())
         else:
             pass
-       
-        if self.boxlimit.text() !='':    
-            self.limit = int(self.boxlimit.text())    
+
+        if self.boxlimit.text() !='':
+            self.limit = int(self.boxlimit.text())
         else:
             self.boxlimit.setText(f'{99}')
-        
+
         if self.boxseperator.text() !='':
             self.seperator = self.boxseperator.text()
             self.boxseperator.setText(self.seperator)
@@ -423,7 +424,7 @@ class ParameterWin(QtWidgets.QWidget, QtWidgets.QApplication):
             self.params.polygonalApproxAccuracyRate = self.poly
         else:
             self.params.polygonalApproxAccuracyRate = self.params.polygonalApproxAccuracyRate
-        
+
         if self.boxcorner.text() !='':
             self.corner = float(self.boxcorner.text())
             self.params.minCornerDistanceRate = self.corner
@@ -438,7 +439,7 @@ class ParameterWin(QtWidgets.QWidget, QtWidgets.QApplication):
 
         if self.boxborderdist.text() !='':
             self.borderdist = int(self.boxborderbits.text())
-            self.params.minDistanceToBorder = self.borderdist        
+            self.params.minDistanceToBorder = self.borderdist
         else:
             self.params.minDistanceToBorder = self.params.minDistanceToBorder
 
@@ -495,12 +496,12 @@ class ParameterWin(QtWidgets.QWidget, QtWidgets.QApplication):
             self.params.cornerRefinementMinAccuracy = self.minacc
         else:
             self.params.cornerRefinementMinAccuracy = self.params.cornerRefinementMinAccuracy
-        
+
         if self.comboInverted.currentText() == 'False':
             self.params.detectInvertedMarker = False
         else:
             self.params.detectInvertedMarker = True
-        
+
         self.close()
 
 class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
@@ -636,7 +637,7 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
         self.listWidget.setObjectName("listWidget")
         self.listWidget.setStyleSheet("color:white;\n"
                                     "background-color:rgb(99,102,106);\n"
-                                    "font:bold 12px;")   
+                                    "font:bold 12px;")
         self.EDlabel_3 = QtWidgets.QLabel(self.tab_2)
         self.EDlabel_3.setGeometry(QtCore.QRect(600, 10, 71, 21))
         font = QtGui.QFont()
@@ -731,7 +732,7 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
                                     "min-width:10px;}\n"
                                     "QPushButton:hover{border:2px solid;\n"
                                     "background-color: rgb(0, 120, 200);}\n")
-        
+
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(9)
@@ -767,7 +768,7 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
         self.checkmark.setFont(font)
         self.checkmark.setObjectName("checkmark")
         self.checkmark.toggled.connect(lambda:self.markMarker())
-        self.photoClicked.connect(self.clickMarker)        
+        self.photoClicked.connect(self.clickMarker)
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(11)
@@ -821,7 +822,7 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
                                     "padding:4px;\n"
                                     "min-width:10px;}\n"
                                     "QPushButton:hover{border:2px solid;\n"
-                                    "background-color: rgb(0, 120, 200);}\n") 
+                                    "background-color: rgb(0, 120, 200);}\n")
         self.createfile = QtWidgets.QPushButton(self.tab_3, clicked=lambda:self.createFile())
         self.createfile.setGeometry(QtCore.QRect(1050, 0, 101, 31))
         self.createfile.setObjectName("createfile")
@@ -835,7 +836,7 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
                                     "padding:4px;\n"
                                     "min-width:10px;}\n"
                                     "QPushButton:hover{border:2px solid;\n"
-                                    "background-color: rgb(0, 120, 200);}\n") 
+                                    "background-color: rgb(0, 120, 200);}\n")
         self._scene.addItem(self._photo)
         self.setScene(self._scene)
         self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
@@ -898,13 +899,13 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
         self.createfile.setText(_translate("MainWindow", "Create File"))
         self.imgname.setText(_translate("MainWindow", ""))
         self.checkmark.setText(_translate("MainWindow", "Mark Undetected"))
-        
+
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "Find GCP"))
 
     def generate(self):
         if self.GMcomboBox.currentText() == 'Select Type':
             self.label.setText('Select a valid type')
-        
+
         if os.path.exists(f'{self.GMcomboBox.currentText()}'):
             if not os.path.isdir(f'{self.GMcomboBox.currentText()}'):
                 self.label.setText(f'{self.GMcomboBox.currentText()} is not a folder')
@@ -916,24 +917,24 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
             except:
                 print('[INFO] Cannot Create')
                 exit(2)
-        
+
         if f"{self.GMcomboBox.currentText()}" != 'Select Type':
             if f"{self.GMcomboBox.currentText()}" == 'DICT_3X3':
                 arucoDict = ARUCO_TYPE.get(self.GMcomboBox.currentText())
                 for i in range(32):
                     tag = np.zeros((300, 300, 1), dtype="uint8")
-                    marker = cv2.aruco.drawMarker(arucoDict, i, 300, tag, 1) 
+                    marker = cv2.aruco.drawMarker(arucoDict, i, 300, tag, 1)
                     cv2.imwrite('{}/{}_{}.png'.format(self.GMcomboBox.currentText(),self.GMcomboBox.currentText(),i), marker)
                 self.label.setText(f'Successfully Generated {self.GMcomboBox.currentText()}')
             else:
                 arucoDict = cv2.aruco.Dictionary_get(ARUCO_TYPE.get(self.GMcomboBox.currentText()))
-                for i in range(32):    
+                for i in range(32):
                     tag = np.zeros((300, 300, 1), dtype="uint8")
                     marker = cv2.aruco.drawMarker(arucoDict, i, 300, tag, 1)
                     cv2.imwrite('{}/{}_{}.png'.format(self.GMcomboBox.currentText(),
                     self.GMcomboBox.currentText(), i), marker)
                 self.label.setText(f'Successfully Generated {self.GMcomboBox.currentText()}')
-    
+
     def path(self):
         if self.ED1radioButton.isChecked():
             self.path_, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Open Image",os.getcwd(),
@@ -943,9 +944,9 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
         elif self.EDradioButton_2.isChecked():
             self.path_ = QtWidgets.QFileDialog.getExistingDirectory(None, "Select Directory", os.getcwd())
             self.path_ = self.path_ +'/*.[jJ][pP][gG]'
-    
+
     def exif(self):
-        if self.path_ == '': 
+        if self.path_ == '':
             self.EDlabel_2.setText('No Image or Directory')
         else:
             pass
@@ -986,7 +987,7 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
             ret = []
             if exif !=None:
                 exif_data = {TAGS[k]: v for k, v in exif.items() if k in TAGS}
-                # print(exif_data)             
+                # print(exif_data)
                 if 'GPSInfo' in exif_data and len(exif_data['GPSInfo']) > 6:
                     ret = [to_degrees(exif_data['GPSInfo'][3], exif_data['GPSInfo'][4]),
                         to_degrees(exif_data['GPSInfo'][1], exif_data['GPSInfo'][2]),
@@ -1002,7 +1003,7 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
                 self.listWidget.addItem(item)
             elif len(ret) == 1:
                 item = "{},,,,{}".format(img_name, ret[0])
-                self.listWidget.addItem(item)       
+                self.listWidget.addItem(item)
             else:
                 item = "{},,,,,No EXIF".format(img_name)
                 self.listWidget.addItem(item)
@@ -1056,7 +1057,7 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
                 self.fitInView()
             else:
                 self._zoom = 0
-    
+
     def toggleDragMode(self):
         if self.dragMode() == QtWidgets.QGraphicsView.ScrollHandDrag:
             self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
@@ -1067,19 +1068,19 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
         if self._photo.isUnderMouse():
             self.photoClicked.emit(self.mapToScene(event.pos()).toPoint())
         super(Ui_MainWindow, self).mousePressEvent(event)
-    
+
     def markMarker(self):
         if self.checkmark.isChecked() == True:
             self.toggleDragMode()
         elif self.checkmark.isChecked() == False:
             self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
-    
+
     def clickMarker(self, pos):
         if self.dragMode()  == QtWidgets.QGraphicsView.NoDrag:
             self.outputs.addItem('%d %d %s' % (pos.x(), pos.y(),
             re.split(r' |/|\\',self.img_name[self.index_])[-1]))
 
-    
+
     def imPath(self):
         if self.selectimage.isChecked():
             self.path_, _ = QtWidgets.QFileDialog.getOpenFileNames(None, "Select Image",os.getcwd(),
@@ -1094,20 +1095,20 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
 
     def nxt(self):
         self.current_index += 1
-    
+
     def prvs(self):
         self.current_index -= 1
 
     @property
     def current_index(self):
         return self.index_
-    
+
     @current_index.setter
     def current_index(self, img_index):
         if img_index <= 0 and len(self.img_name) <= 0:
             self.updating_btn(False, False)
         elif img_index < 0:
-            self.updating_btn(False, True)  
+            self.updating_btn(False, True)
         elif img_index >= (len(self.img_name) -1):
             self.updating_btn(True, False)
         else:
@@ -1125,19 +1126,25 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
         if self.checkmark.isChecked() == True:
             self.toggleDragMode()
         self.previous.setEnabled(previous)
-        self.next.setEnabled(next)  
-              
+        self.next.setEnabled(next)
+
     def runn(self):
         def getImage(img):
             gcp_found = {}
             coords = {}
             gcps = []
-            image = cv2.imread(img)
+
+            if 'dng' in img.lower():
+                dng = DngFile.read(img)
+                image = dng.postprocess()  # demosaicing by rawpy
+            else :
+                image = cv2.imread(img)
+
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             if f'{self.ParameterWindow.combomt.currentText()}' != 'DICT_3X3':
                 arucoDict = cv2.aruco.Dictionary_get(ARUCO_TYPE.get(self.ParameterWindow.combomt.currentText()))
             else:
-                arucoDict = ARUCO_TYPE['DICT_3X3']    
+                arucoDict = ARUCO_TYPE['DICT_3X3']
             (corners, ids, rejected) = cv2.aruco.detectMarkers(gray,arucoDict,
              parameters=self.ParameterWindow.params)
 
@@ -1164,13 +1171,13 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
                     print('{} GCP markers found'.format(ids.size))
 
             def verbose(verb):
-                if self.ParameterWindow.ipath.endswith('.txt'):        
+                if self.ParameterWindow.ipath.endswith('.txt'):
                     for j in verb:
                         print('GCP{}: on {} images {}'.format(j, len(verb[j]),
                                                         verb[j]))
             if len(corners) > 0:
                 for i in range(ids.size):
-                    j = ids[i][0] 
+                    j = ids[i][0]
                     if j not in gcp_found:
                         gcp_found[j] = []
                     gcp_found[j].append(img)
@@ -1205,7 +1212,7 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
                                 j, gcp[2]))
                     else:
                         self.outputs("No coordinates for {}".format(j))
-        
+
                 else:
                     if j in coords and self.ParameterWindow.boxlimit.text() != "":
                         if len(gcp_found[j]) <= int(self.ParameterWindow.boxlimit.text()):
@@ -1222,13 +1229,13 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
                         else:
                             self.outputs.addItem("GCP {} over limit it is dropped on image {}".format(
                                 j, gcp[2]))
-        
+
         checkProgress = 0
         if self.img_name:
             self.pbar.setRange(0,len(self.img_name))
-            self.pbar.setFormat("Progress")           
+            self.pbar.setFormat("Progress")
 
-        if type(self.path_) == list: 
+        if type(self.path_) == list:
             for img in self.path_:
                 checkProgress +=1
                 getImage(img)
@@ -1242,12 +1249,12 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
         sleep(0.05)
         self.pbar.setValue(0)
         self.pbar.setFormat("Results")
-     
+
     def clrOutput(self):
-        self.outputs.clear()        
+        self.outputs.clear()
 
     def createFile(self):
-        listresults = [self.outputs.item(i).text() for i in range(self.outputs.count())]            
+        listresults = [self.outputs.item(i).text() for i in range(self.outputs.count())]
         if self.ParameterWindow.outputfile.text() != '':
             try:
                 with open(f'{self.ParameterWindow.outputfile.text()}.txt', 'w') as finput:
@@ -1259,11 +1266,11 @@ class Ui_MainWindow(QtWidgets.QGraphicsView,QtWidgets.QWidget):
                     finput.close()
             except Exception:
                 self.outputs.addItem('Cannot Open')
-        
+
     def delResults(self):
         delete = self.outputs.currentRow()
         self.outputs.takeItem(delete)
-        
+
 
 if __name__ == "__main__":
     import sys
