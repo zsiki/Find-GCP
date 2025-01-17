@@ -84,7 +84,7 @@ usage: gcp_find.py [-h] [-d DICT] [-o OUTPUT] [-t {ODM,VisualSfM}] [-i INPUT]
                    [--borderdist BORDERDIST] [--markerdist MARKERDIST]
                    [--lengthratio LENGTHRATIO] [--minrate MINRATE]
                    [--otsu OTSU] [--ignore IGNORE] [--persp PERSP]
-                   [--poly POLY] [--aruco3]
+                   [--poly POLY] [--aruco3] [--basename]
                    [file_names ...]
 
 positional arguments:
@@ -169,6 +169,7 @@ options:
   --persp PERSP         number of pixels per cells, default 4
   --poly POLY           polygonal approx accuracy rate, default 0.03
   --aruco3              use ArUco3 detection, default False
+  --basename            basename for image files
 ```
 
 List of the available dictionary codes (see --list):

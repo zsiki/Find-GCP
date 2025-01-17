@@ -219,7 +219,12 @@ class GcpFind():
             # calculate center of aruco code
             x = int(round(np.average(corners[i][0][:, 0])))
             y = int(round(np.average(corners[i][0][:, 1])))
-            self.gcps.append((x, y, os.path.abspath(image_name), j, corners[i][0]))
+            if args.basename :
+                self.gcps.append((x, y, os.path.basename(image_name), j, corners[i][0]))
+            else :
+                self.gcps.append((x, y, os.path.abspath(image_name), j, corners[i][0]))
+
+
             if self.args.debug:
                 if j in self.coords:
                     plt.plot(x, y, args.markerstyle, markersize=self.args.markersize,
@@ -446,6 +451,8 @@ def cmd_params(parser, params):
                         help=f'polygonal approx accuracy rate, default {params.polygonalApproxAccuracyRate}')
     parser.add_argument('--aruco3', action="store_true",
                         help=f'use ArUco3 detection, default {params.useAruco3Detection}')
+    parser.add_argument('--basename', action="store_true", default=False,
+                        help='basename for image files')
 
 if __name__ == "__main__":
     T1 = time.perf_counter()
