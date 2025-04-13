@@ -126,13 +126,13 @@ class GcpCheck(tk.Tk):
             pandas data frame is created
             a sorted list is also generated with image names
         """
-        retry = True
+        retry = 0
         skiprows = 0
-        while retry:
+        while retry < 2:
             try:
                 self.gcps = pd.read_csv(self.gcp_file, sep=self.separator,
                                         skiprows=skiprows, header=None)
-                retry = False
+                break
             except FileNotFoundError:
                 messagebox.showerror("Error", f"File not found: {self.gcp_file}")
                 return False
@@ -140,7 +140,8 @@ class GcpCheck(tk.Tk):
                 messagebox.showerror("Error", f"Decode error: {self.gcp_file}")
                 return False
             except pd.errors.ParserError:
-                if retry:
+                retry += 1
+                if retry < 2:
                     skiprows = 1
                 else:
                     messagebox.showerror("Error", f"File parse error: {self.gcp_file}")
@@ -158,7 +159,7 @@ class GcpCheck(tk.Tk):
         else:
             messagebox.showerror("Error", f"Invalid number of columns: {self.gcp_file}")
             return False
-        for c, t in self.gcps.dtypes.iteritems():
+        for c, t in self.gcps.dtypes.items():
             if typs[c] != t:
                 messagebox.showerror("Error", f"Invalid column type {t} for '{c}'")
                 return False
