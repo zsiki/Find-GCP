@@ -522,14 +522,14 @@ the half of the size of max(side, diagonal).
 
 ### Sample 6
 
-This is a sample for handhelded camera (Sony DSC-WX350) to prepare GCP-s fors
+This is a sample for handhelded camera (Sony DSC-WX350) to prepare GCP-s for
 an ODM project.  There are 17 images and 10 ArUco markers. The 3D coordinates
 of the markers are in the *gcp_coo.txt* file. The size of the images is 4896x3672.
 The marker size on the image is ~30-40 pixels. Let's calculate a value for *minrate*.
 The formula for the relation of image_width (larger size of image in pixels) and 
 and marker size on image is:
 
-$image_width x minrate / 4 = marker_size_pixels$
+$image-width x minrate / 4 = marker-size-pixels$
 
 $4896 x minrate / 4 = 30$
 
