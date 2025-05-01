@@ -310,7 +310,7 @@ def cmd_params(parser, params):
     def_output = sys.stdout         # default output to stdout
     def_input = None                # default no input coordinates
     def_separator = " "             # default separator is space
-    def_type = ""                   # default output type
+    def_type = None                 # default output type
     def_markersize = 10             # marker size of debug image
     def_markerstyle = "ro"          # marker style with GCP coords
     def_markerstyle1 = "r^"          # marker style without GCP coords
@@ -336,7 +336,7 @@ def cmd_params(parser, params):
     parser.add_argument('-i', '--input', type=str, default=def_input,
                         help=f'name of input GCP coordinate file, default {def_input}')
     parser.add_argument('-s', '--separator', type=str, default=def_separator,
-                        help=f'input file separator, default {def_separator}')
+                        help=f'input file separator, default "{def_separator}"')
     parser.add_argument('-v', '--verbose', action="store_true",
                         help='verbose output to stdout')
     group = parser.add_mutually_exclusive_group()
@@ -350,30 +350,30 @@ def cmd_params(parser, params):
                         help='adjust colors by built in lookup table')
     # parameters for marker display
     parser.add_argument('--markersize', type=int, default=def_markersize,
-                        help='marker size on debug image, use together with debug')
+                        help='marker size on debug image, use together with debug, default: {def_markersize}')
     parser.add_argument('--markerstyle', type=str, default=def_markerstyle,
-                        help='marker style for point with coordinates, use together with debug')
+                        help='marker style for point with coordinates, use together with debug, default: {def_markerstyle}')
     parser.add_argument('--markerstyle1', type=str, default=def_markerstyle1,
-                        help='marker style for point without coordinates, use together with debug')
+                        help='marker style for point without coordinates, use together with debugi, default: {def_markerstyle1}')
     parser.add_argument('--edgecolor', type=str, default=def_edgecolor,
-                        help='marker edge color, use together with debug')
+                        help='marker edge color, use together with debug, default: {def_edgecolor}')
     parser.add_argument('--edgewidth', type=int, default=def_edgewidth,
-                        help='marker edge width, use together with debug')
+                        help='marker edge width, use together with debug, default: {def_edgewidth}')
     parser.add_argument('--fontsize', type=int, default=def_fontsize,
-                        help='font size on debug image, use together with debug')
+                        help='font size on debug image, use together with debug, default: {def_fontsize}')
     parser.add_argument('--fontcolor', type=str, default=def_fontcolor,
-                        help='inner font color on debug image, use together with debug')
+                        help='inner font color on debug image, use together with debug, default: {def_fontcolor}')
     parser.add_argument('--fontcolor1', type=str, default=def_fontcolor1,
                         help='outer font color on debug image, use together with debug')
     parser.add_argument('--fontweight', type=str, default=def_fontweight,
-                        help='inner font weight on debug image, use together with debug')
+                        help='inner font weight on debug image, use together with debug, default: {def_fontweight}')
     parser.add_argument('--fontweight1', type=str, default=def_fontweight1,
-                        help='outer font weight on debug image, use together with debug')
+                        help='outer font weight on debug image, use together with debug, default: {def_fontweight1}')
     parser.add_argument('--limit', type=int, default=def_limit,
-                        help='limit the number of records in the output for a unique id')
+                        help='limit the number of records in the output for a unique ids, default: no limit')
     # parameters for ArUco detection
     parser.add_argument('--aruco_params', type=str, default=None,
-                        help='all ArUco detection parameters are read from a JSON file, other ArUco detection parameters are ignored from the command line')
+                        help='all ArUco detection parameters are read from a JSON file, other ArUco detection parameters are ignored from the command line, default: None')
     parser.add_argument('--thres', type=float,
                         default=params.adaptiveThreshConstant,
                         help=f'adaptive threshold constant, default {params.adaptiveThreshConstant}')
