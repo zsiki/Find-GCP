@@ -43,7 +43,7 @@ class GcpCheck(tk.Tk):
     """ class to check found GCPs visually """
 
     def __init__(self, gcp_style, gcp_file=None, separator=" ", width=700, height=550,
-                 img_path=''):
+                 img_path='', command='all'):
         """ initialize
 
             :param gcp_file: output file of gcp_find.py
@@ -93,10 +93,11 @@ class GcpCheck(tk.Tk):
         self.gcp_file = gcp_file
         self.style = gcp_style
         self.separator = separator
+        self.command = command
         self.width = None
         self.height = None
         self.img_path = img_path
-        self.imscale = 1.0  # scale for the canvaas image
+        self.imscale = 1.0  # scale for the canvas image
         self.delta = 1.3    # zoom magnitude
         # load GCP file
         self.gcps = []
@@ -164,6 +165,9 @@ class GcpCheck(tk.Tk):
                 messagebox.showerror("Error", f"Invalid column type {t} for '{c}'")
                 return False
 
+        # limit for one GCP
+        if self.command != 'all':
+           self.gcps = self.gcps.loc[self.gcps['id'] == int(self.command)]
         self.imgs = sorted(list(set(self.gcps["img"])))
         return True
 
@@ -216,8 +220,9 @@ class GcpCheck(tk.Tk):
         if self.imgs is None or len(self.imgs) == 0:
             return
         name = self.imgs[self.img_no]
-        if self.title() != name:    # new image to display
-            self.title(name)   # show image name in title
+        title = f"{name} id: {str(self.command)}"
+        if self.title() != title:    # new image to display
+            self.title(title)   # show image name in title
             if not path.exists(name):
                 img_path = path.join(self.img_path, name)
             if not path.exists(img_path):
@@ -318,11 +323,11 @@ def cmd_params(parser):
     parser.add_argument('name', metavar='file_name', type=str, nargs='?',
                         help='GCP file to process')
     parser.add_argument('--command', type=str, default='all',
-                        help='command all/ID show all images/images with GCP ID')
+                        help='command all/ID show all images/images with GCP ID, default: all')
     parser.add_argument('--path', type=str, default='',
-                        help='input path for images')
+                        help='input path for images, only use it if CGP file is in a different folder')
     parser.add_argument('-s', '--separator', type=str, default=def_separator,
-                        help=f'input file separator, default {def_separator}')
+                        help=f'input file separator, default "{def_separator}"')
 
     # parameters for marker display
     parser.add_argument('--markersize', type=int, default=def_markersize,
@@ -350,11 +355,5 @@ if __name__ == "__main__":
              'fontsize': args.fontsize,
              'fontcolor': args.fontcolor,
             }
-    gcp_c = GcpCheck(style, name, args.separator, img_path=args.path)
+    gcp_c = GcpCheck(style, name, args.separator, img_path=args.path, command=args.command)
     gcp_c.mainloop()
-    #if args.command == "all":
-    #    gcp_c.ShowAll()
-    #elif re.match("^[0-9]+$", args.command):
-    #    gcp_c.ShowId(int(args.command))
-    #else:
-    #    gcp_c.ShowImage(args.command)
