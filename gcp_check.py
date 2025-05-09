@@ -225,6 +225,8 @@ class GcpCheck(tk.Tk):
             self.title(title)   # show image name in title
             if not path.exists(name):
                 img_path = path.join(self.img_path, name)
+            else:
+                img_path = name
             if not path.exists(img_path):
                 img_path = path.join(path.split(self.gcp_file)[0], name)
             # load image
